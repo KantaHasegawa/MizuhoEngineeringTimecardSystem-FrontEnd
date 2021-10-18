@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import Layout from '../../components/Layout';
-import axios from 'axios'
+import axios from '../../helper/customAxios'
 import { Controller, useForm } from 'react-hook-form'
 import { TextField, Button } from "@material-ui/core";
 import { useRecoilState } from 'recoil';
@@ -20,7 +20,7 @@ const LoginPage = () => {
   const [user, setUser] = useRecoilState(userState);
   const onSubmit = async (data: FormData) => {
     try {
-      const result: any = await axios.post(`${process.env.NEXT_PUBLIC_API_HOST}/auth/login`, data)
+      const result: any = await axios.post(`auth/login`, data)
       setAccessToken(result.data.accessToken)
       setUser(data.username)
       router.push("/")
