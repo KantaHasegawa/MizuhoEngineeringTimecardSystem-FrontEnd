@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router'
 import Layout from '../../components/Layout';
-import axios from '../../helper/customAxios'
 import { Controller, useForm } from 'react-hook-form'
 import { TextField, Button } from "@material-ui/core";
 import { useRecoilState } from 'recoil';
 import { accessTokenState, userState } from '../../components/atoms'
 import { useState } from 'react';
+import useAxios from '../../hooks/useAxios'
 
 type FormData = {
   username: string;
@@ -13,6 +13,7 @@ type FormData = {
 };
 
 const LoginPage = () => {
+  const axios = useAxios();
   const router = useRouter();
   const [serverSideError, setServerSideError] = useState<string>("")
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
@@ -25,13 +26,7 @@ const LoginPage = () => {
       setUser(data.username)
       router.push("/")
     } catch (err: any) {
-      console.log(err.response.status)
-      console.log(err.response.statusText)
-      const errorMessage =
-        err.response.status === 404 ? "ユーザーが存在しません"
-          : err.response.status === 400 ? "パスワードが間違っています"
-            : ""
-      setServerSideError(errorMessage)
+      setServerSideError(err.response.data.message)
     }
   }
   return (
@@ -40,33 +35,33 @@ const LoginPage = () => {
       <div className="error">
         <p>{serverSideError}</p>
       </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="form">
-            <Controller
-              name="username"
-              control={control}
-              defaultValue=""
-              rules={{ required: true, pattern: {value: /^[ぁ-んァ-ヶｱ-ﾝﾞﾟ一-龠]*$/, message: ""} }}
-              render={({ field }) => <TextField label="ユーザー名" {...field} />}
-            />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="form">
+          <Controller
+            name="username"
+            control={control}
+            defaultValue=""
+            rules={{ required: true, pattern: { value: /^[ぁ-んァ-ヶｱ-ﾝﾞﾟ一-龠]*$/, message: "" } }}
+            render={({ field }) => <TextField label="ユーザー名" {...field} />}
+          />
         </div>
         <p>{errors.username?.type === 'required' && "ユーザー名は必須です"}</p>
         <p>{errors.username?.type === 'pattern' && "ユーザー名は日本語で入力してください"}</p>
-          <div className="form">
-            <Controller
-              name="password"
-              control={control}
-              defaultValue=""
-              rules={{ required: true, pattern: { value: /^[0-9a-zA-Z]+$/, message: "" } }}
-              render={({ field }) => <TextField label="パスワード" {...field} />}
-            />
+        <div className="form">
+          <Controller
+            name="password"
+            control={control}
+            defaultValue=""
+            rules={{ required: true, pattern: { value: /^[0-9a-zA-Z]+$/, message: "" } }}
+            render={({ field }) => <TextField label="パスワード" {...field} />}
+          />
         </div>
         <p>{errors.password?.type === 'required' && "パスワードは必須です"}</p>
         <p>{errors.password?.type === 'pattern' && "パスワードは半角英数字で入力してください"}</p>
         <Button type="submit">
           ログイン
         </Button>
-        </form>
+      </form>
       <p>{accessToken}</p>
     </Layout>
   )
