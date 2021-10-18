@@ -25,7 +25,13 @@ const LoginPage = () => {
       setUser(data.username)
       router.push("/")
     } catch (err: any) {
-      setServerSideError(err.response.data.message)
+      console.log(err.response.status)
+      console.log(err.response.statusText)
+      const errorMessage =
+        err.response.status === 404 ? "ユーザーが存在しません"
+          : err.response.status === 400 ? "パスワードが間違っています"
+            : ""
+      setServerSideError(errorMessage)
     }
   }
   return (
