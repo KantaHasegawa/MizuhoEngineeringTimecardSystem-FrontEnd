@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router'
 import Layout from '../../components/Layout';
-import axios from 'axios'
 import { Controller, useForm } from 'react-hook-form'
 import { TextField, Button } from "@material-ui/core";
 import { useRecoilState } from 'recoil';
 import { accessTokenState, userState } from '../../components/atoms'
 import { useState } from 'react';
+import ky from '../../helper/customKy'
 
 type FormData = {
   username: string;
@@ -20,12 +20,18 @@ const LoginPage = () => {
   const [user, setUser] = useRecoilState(userState);
   const onSubmit = async (data: FormData) => {
     try {
-      const result: any = await axios.post(`${process.env.NEXT_PUBLIC_API_HOST}/auth/login`, data)
-      setAccessToken(result.data.accessToken)
+      const result: any = await ky.post("auth/login", { json: data }).json()
+      setAccessToken(result.accessToken)
       setUser(data.username)
       router.push("/")
     } catch (err: any) {
-      setServerSideError(err.response.data.message)
+      console.log(err.response.status)
+      console.log(err.response.statusText)
+      const errorMessage =
+        err.response.status === 404 ? "ユーザーが存在しません"
+          : err.response.status === 400 ? "パスワードが間違っています"
+            : ""
+      setServerSideError(errorMessage)
     }
   }
   return (
