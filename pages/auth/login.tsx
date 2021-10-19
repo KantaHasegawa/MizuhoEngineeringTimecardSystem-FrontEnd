@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import Layout from '../../components/Layout';
 import { Controller, useForm } from 'react-hook-form'
 import { TextField, Button } from "@material-ui/core";
@@ -24,7 +25,7 @@ const LoginPage = () => {
       const result: any = await axios.post(`auth/login`, data)
       setAccessToken(result.data.accessToken)
       setUser(data.username)
-      router.push("/")
+    router.push("/")
     } catch (err: any) {
       setServerSideError(err.response.data.message)
     }
@@ -62,7 +63,9 @@ const LoginPage = () => {
           ログイン
         </Button>
       </form>
-      <p>{accessToken}</p>
+      <Link href="/auth/signup">
+        <a>サインアップ</a>
+      </Link>
     </Layout>
   )
 }

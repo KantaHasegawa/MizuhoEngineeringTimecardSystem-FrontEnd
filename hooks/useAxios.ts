@@ -24,14 +24,12 @@ const useAxios = () => {
   }, async (error) => {
     if (error.config && error.response && error.response.data.message === "jwt expired") {
       try {
-        const result: any = await api.post("auth/refresh", { refreshToken: refreshToken })
+        const result: any = await axios.post(`${process.env.NEXT_PUBLIC_API_HOST}auth/refresh`, { refreshToken: refreshToken })
         setAccessToken(result.data.accessToken)
-        console.log("success token refresh");
         const config = error.config;
         config.headers['Authorization'] = 'Bearer ' + result.data.accessToken;
         return axios.request(error.config);
       } catch (err) {
-        console.log("failure token refresh");
         router.push("/auth/login")
       }
     }
