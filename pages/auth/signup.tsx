@@ -20,7 +20,7 @@ const SignUpPage = () => {
   const accessToken = useRecoilValue(accessTokenState)
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
   const { user, isLoading, isError } = useCurrentUser(accessToken);
-  if (user && user.role !== "admin") router.push("/")
+  if ((!isLoading && !user) || ( user && user.role !== "admin")) router.push("/")
   const onSubmit = async (data: FormData) => {
     try {
       await axios.post(`user/signup`, data)
