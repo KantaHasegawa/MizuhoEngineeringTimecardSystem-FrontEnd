@@ -4,7 +4,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { TextField, Button } from "@material-ui/core";
 import { useState } from 'react';
 import useAxios from '../../hooks/useAxios';
-import useCheckUserRole from '../../hooks/useCheckUserRole'
+import useCurrentUser from '../../hooks/useCurrentUser'
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from '../../components/atoms';
 
@@ -19,8 +19,8 @@ const SignUpPage = () => {
   const [serverSideError, setServerSideError] = useState<string>("")
   const accessToken = useRecoilValue(accessTokenState)
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
-  const { isLoading, isError } = useCheckUserRole("admin", accessToken);
-  if (isError) router.push("/")
+  const { user, isLoading, isError } = useCurrentUser(accessToken);
+  if (user && user.role !== "admin") router.push("/")
   const onSubmit = async (data: FormData) => {
     try {
       await axios.post(`user/signup`, data)
@@ -34,6 +34,7 @@ const SignUpPage = () => {
     <Layout title="ミズホエンジニアリング | サインアップ">
       {isLoading ? <div>loading</div>
         : isError ? <div>error</div>
+          : user.role !== "admin" ? <div>You don't have permission</div>
           :
           <>
             <h1>サインアップ</h1>
