@@ -6,11 +6,10 @@ const useCheckUserRole = (role: string, accessToken: string) => {
 
   const fetcher = async (url: string): Promise<any> => {
     const res = await axios.get(url);
-    console.log(res)
     return res.data
   }
 
-  const { data, error } = useSWR([`auth/currentuser/${role}`,accessToken], fetcher)
+  const { data, error } = useSWR([`auth/role/${role}`,accessToken], fetcher)
   return {
     user: data,
     isLoading: !error && !data,
