@@ -21,8 +21,8 @@ const LoginPage = () => {
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   const setUser = useSetRecoilState(userState);
-  const { user, isLoading } = useCurrentUser(accessToken)
-  if (user) router.push("/")
+  const { currentUser, currentUserIsLoading } = useCurrentUser(accessToken)
+  if (currentUser) router.push("/")
   const onSubmit = async (data: FormData) => {
     try {
       const result: any = await axios.post(`auth/login`, data)
@@ -36,8 +36,8 @@ const LoginPage = () => {
   return (
     <Layout title="ミズホエンジニアリング | ログイン">
       {
-        isLoading ? <div>Loading now</div>:
-        user ? <div>Logined</div> :
+        currentUserIsLoading ? <div>Loading now</div>:
+        currentUser ? <div>Logined</div> :
           <>
             <h1>ログイン</h1>
             <div className="error">

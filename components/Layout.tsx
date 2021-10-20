@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import Logout from './Logout'
+import styles from '../styels/layout.module.scss'
 
 type Props = {
   children?: ReactNode
@@ -31,7 +32,9 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => (
         | <Logout></Logout>
       </nav>
     </header>
-    {children}
+    <div className={styles.container}>
+      {children}
+    </div>
     <footer>
       <hr />
       <span>I'm here to stay (Footer)</span>

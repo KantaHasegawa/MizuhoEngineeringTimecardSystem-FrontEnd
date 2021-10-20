@@ -19,8 +19,8 @@ const SignUpPage = () => {
   const [serverSideError, setServerSideError] = useState<string>("")
   const accessToken = useRecoilValue(accessTokenState)
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
-  const { user, isLoading, isError } = useCurrentUser(accessToken);
-  if ((!isLoading && !user) || ( user && user.role !== "admin")) router.push("/")
+  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
+  if ((!currentUserIsLoading && !currentUser) || ( currentUser && currentUser.role !== "admin")) router.push("/")
   const onSubmit = async (data: FormData) => {
     try {
       await axios.post(`user/signup`, data)
@@ -32,9 +32,9 @@ const SignUpPage = () => {
 
   return (
     <Layout title="ミズホエンジニアリング | サインアップ">
-      {isLoading ? <div>loading</div>
-        : isError ? <div>error</div>
-          : user.role !== "admin" ? <div>You don't have permission</div>
+      {currentUserIsLoading ? <div>loading</div>
+        : currentUserIsError ? <div>error</div>
+          : currentUser.role !== "admin" ? <div>You don't have permission</div>
           :
           <>
             <h1>サインアップ</h1>

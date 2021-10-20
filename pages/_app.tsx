@@ -1,6 +1,7 @@
 // import App from 'next/app'
 
 import { RecoilRoot } from "recoil"
+import '../styels/global.scss';
 
 function MyApp({ Component, pageProps }) {
   return (

@@ -1,7 +1,18 @@
 import useSWR from 'swr'
 import useAxios from './useAxios'
 
-const useCurrentUser = (accessToken: string) => {
+type TypeUser = {
+  attendance: string
+  password: string
+  role: string
+  user: string
+}
+
+type TypeUserList = {
+  users: TypeUser[]
+}
+
+const useCurrentUser = () => {
   const axios = useAxios(); //カスタマイズした設定のaxiosインスタンスを取得
 
   const fetcher = async (url: string): Promise<any> => {
@@ -9,11 +20,11 @@ const useCurrentUser = (accessToken: string) => {
     return res.data
   }
 
-  const { data, error } = useSWR(["auth/currentuser", accessToken], fetcher)
+  const { data, error } = useSWR<TypeUserList>(["user/index"], fetcher)
+  console.log(data)
   return {
-    currentUser: data,
-    currentUserIsLoading: !error && !data,
-    currentUserIsError: error
+    userList: data,
+    userListIsError: error
   }
 }
 
