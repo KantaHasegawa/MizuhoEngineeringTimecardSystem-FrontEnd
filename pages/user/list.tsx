@@ -6,29 +6,50 @@ import { accessTokenState } from '../../components/atoms';
 import useUserList from '../../hooks/useUserList'
 import React, { useState } from 'react'
 import ReactPaginate from 'react-paginate'
+import { Button } from "@material-ui/core";
+import { getAllUserIDs } from '../../lib/userLibrary'
+import { useSWRConfig } from 'swr'
+import useAxios from "../../hooks/useAxios";
+import Link from 'next/link'
 
 const UserListPage = () => {
   const router = useRouter();
+  const axios = useAxios();
+  const { mutate } = useSWRConfig()
   const accessToken = useRecoilValue(accessTokenState)
   const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
   if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== "admin")) router.push("/")
   const { userList, userListIsError } = useUserList();
   const [pageNumber, setPageNumber] = useState(0);
-
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = userList ? Math.ceil(userList.users.length / usersPerPage) : 0
+  const pageCount = userList ? Math.ceil(userList.params.length / usersPerPage) : 0
 
-  const DisplayUsers = ({ user }: {user:any}) => {
+
+  const onClickDeleteUser = async (user: string) => {
+    try {
+      await axios.delete(`user/delete/${user}`)
+      mutate('user/index')
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const DisplayUsers = ({ user }: { user: any }) => {
     return (
-        <div className="user">
-          <h3>{user.user}</h3>
-        </div>
+      <div className="user">
+        <h3>{user.user}</h3>
+        <Link href={`edit/${user.user}`}>
+          <a>パスワードを変更</a>
+        </Link>
+        <Button onClick={async () => onClickDeleteUser(user.user)}>削除</Button>
+      </div>
     )
   }
 
-  const changePage = ({ selected }: {selected: any}) => {
+  const changePage = ({ selected }: { selected: any }) => {
     setPageNumber(selected);
+    getAllUserIDs();
   };
 
   return (
@@ -45,7 +66,7 @@ const UserListPage = () => {
                     <div>
                       <h1>User List</h1>
                       {
-                        userList?.users.slice(pagesVisited, pagesVisited + usersPerPage).map((user, index) => {
+                        userList?.params.slice(pagesVisited, pagesVisited + usersPerPage).map((user, index) => {
                           return <DisplayUsers user={user} key={index}></DisplayUsers>
                         })
                       }

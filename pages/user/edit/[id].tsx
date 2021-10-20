@@ -1,31 +1,39 @@
-import { useRouter } from 'next/router'
-import Layout from '../../components/Layout';
+import { useRouter } from 'next/router';
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '../../../components/atoms';
+import Layout from '../../../components/Layout'
+import useCurrentUser from '../../../hooks/useCurrentUser';
+import { getAllUserIDs } from '../../../lib/userLibrary'
+import useUserShow from '../../../hooks/useUserShow'
 import { Controller, useForm } from 'react-hook-form'
 import { TextField, Button } from "@material-ui/core";
 import { useState } from 'react';
-import useAxios from '../../hooks/useAxios';
-import useCurrentUser from '../../hooks/useCurrentUser'
-import { useRecoilValue } from "recoil";
-import { accessTokenState } from '../../components/atoms';
+import useAxios from '../../../hooks/useAxios';
+
+type TypeParams = {
+  id: string
+}
 
 type FormData = {
-  username: string;
   password: string;
 };
 
-const SignUpPage = () => {
+export const UserEditPage = ({ user }: { user: string }) => {
   const axios = useAxios();
   const router = useRouter();
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
   const [serverSideError, setServerSideError] = useState<string>("")
   const accessToken = useRecoilValue(accessTokenState)
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
   const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
   if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== "admin")) router.push("/")
   const onSubmit = async (data: FormData) => {
+    const params = {
+      password: data.password,
+      username: user
+    }
     try {
-      await axios.post(`user/signup`, data)
+      await axios.post(`user/edit`, params)
       reset({
-        username: "",
         password: ""
       });
     } catch (err: any) {
@@ -33,30 +41,18 @@ const SignUpPage = () => {
       setServerSideError(err.response?.data?.message)
     }
   }
-
   return (
-    <Layout title="ミズホエンジニアリング | サインアップ">
+    <Layout title="ミズホエンジニアリング | 社員詳細">
       {currentUserIsLoading ? <div>loading</div>
         : currentUserIsError ? <div>error</div>
           : currentUser.role !== "admin" ? <div>You don't have permission</div>
             :
             <>
-              <h1>サインアップ</h1>
+              <h3>{user}</h3>
               <div className="error">
                 <p>{serverSideError}</p>
               </div>
               <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="form">
-                  <Controller
-                    name="username"
-                    control={control}
-                    defaultValue=""
-                    rules={{ required: true, pattern: { value: /^[ぁ-んァ-ヶｱ-ﾝﾞﾟ一-龠]*$/, message: "" } }}
-                    render={({ field }) => <TextField label="ユーザー名" {...field} />}
-                  />
-                </div>
-                <p>{errors.username?.type === 'required' && "ユーザー名は必須です"}</p>
-                <p>{errors.username?.type === 'pattern' && "ユーザー名は日本語で入力してください"}</p>
                 <div className="form">
                   <Controller
                     name="password"
@@ -80,4 +76,20 @@ const SignUpPage = () => {
   )
 }
 
-export default SignUpPage
+export const getStaticPaths = async () => {
+  const paths = await getAllUserIDs();
+  return {
+    paths,
+    fallback: false
+  }
+}
+
+export const getStaticProps = ({ params }: { params: TypeParams }) => {
+  return {
+    props: {
+      user: params.id
+    }
+  }
+}
+
+export default UserEditPage;

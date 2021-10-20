@@ -8,11 +8,7 @@ type TypeUser = {
   user: string
 }
 
-type TypeUserList = {
-  params: TypeUser[]
-}
-
-const useUserList = () => {
+const useUserList = (user: string) => {
   const axios = useAxios(); //カスタマイズした設定のaxiosインスタンスを取得
 
   const fetcher = async (url: string): Promise<any> => {
@@ -20,10 +16,10 @@ const useUserList = () => {
     return res.data
   }
 
-  const { data, error } = useSWR<TypeUserList>("user/index", fetcher)
+  const { data, error } = useSWR<TypeUser>([`user/show/${user}`], fetcher)
   return {
-    userList: data,
-    userListIsError: error
+    userShow: data,
+    userShowIsError: error
   }
 }
 
