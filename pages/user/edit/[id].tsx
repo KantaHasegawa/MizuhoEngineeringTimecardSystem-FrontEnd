@@ -4,7 +4,6 @@ import { accessTokenState } from '../../../components/atoms';
 import Layout from '../../../components/Layout'
 import useCurrentUser from '../../../hooks/useCurrentUser';
 import { getAllUserIDs } from '../../../lib/userLibrary'
-import useUserShow from '../../../hooks/useUserShow'
 import { Controller, useForm } from 'react-hook-form'
 import { TextField, Button } from "@material-ui/core";
 import { useState } from 'react';
@@ -42,7 +41,7 @@ export const UserEditPage = ({ user }: { user: string }) => {
     }
   }
   return (
-    <Layout title="ミズホエンジニアリング | 社員詳細">
+    <Layout title="ミズホエンジニアリング | パスワード変更">
       {currentUserIsLoading ? <div>loading</div>
         : currentUserIsError ? <div>error</div>
           : currentUser.role !== "admin" ? <div>You don't have permission</div>
