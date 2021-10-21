@@ -10,6 +10,7 @@ import { useSWRConfig } from 'swr'
 import useAxios from "../../hooks/useAxios";
 import Link from 'next/link'
 import useUserRelationList from '../../hooks/useUserRelationList'
+import { Button } from "@material-ui/core";
 
 type TypeParams = {
   id: string
@@ -27,6 +28,16 @@ const UserShowPage = ({ user }: { user: string }) => {
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
   const pageCount = userRelationList ? Math.ceil(userRelationList.params.length / usersPerPage) : 0
+
+  const onClickDeleteUser = async (user: string) => {
+    try {
+      await axios.delete(`user/delete/${user}`)
+      mutate('user/index')
+      router.push("/user/list")
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   const DisplayUserRelationList = ({ relation }: { relation: any }) => {
     return (
@@ -50,6 +61,10 @@ const UserShowPage = ({ user }: { user: string }) => {
             :
             <>
               <h1>{user}</h1>
+              <Button onClick={async () => onClickDeleteUser(user)}>削除</Button>
+              <Link href={`/user/edit/${user}`}>
+                <a>パスワード変更</a>
+              </Link>
               {
                 !userRelationList ? <div>loading</div>
                   : userRelationListIsError ? <div>error</div>

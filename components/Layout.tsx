@@ -22,11 +22,15 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => (
           <a>Home</a>
         </Link>{' '}
         |{' '}
-        <Link href="/about">
-          <a>About</a>
+        <Link href="/auth/login">
+          <a>login</a>
         </Link>{' '}
         |{' '}
-        <Link href="/users">
+        <Link href="/auth/signup">
+          <a>signup</a>
+        </Link>{' '}
+        |{' '}
+        <Link href="/user/list">
           <a>Users List</a>
         </Link>{' '}
         | <Logout></Logout>

@@ -26,23 +26,14 @@ const UserListPage = () => {
   const pageCount = userList ? Math.ceil(userList.params.length / usersPerPage) : 0
 
 
-  const onClickDeleteUser = async (user: string) => {
-    try {
-      await axios.delete(`user/delete/${user}`)
-      mutate('user/index')
-    } catch (err) {
-      console.log(err)
-    }
-  }
+
 
   const DisplayUsers = ({ user }: { user: any }) => {
     return (
       <div className="user">
-        <h3>{user.user}</h3>
-        <Link href={`edit/${user.user}`}>
-          <a>パスワードを変更</a>
+        <Link href={`${user.user}`}>
+        <a>{user.user}</a>
         </Link>
-        <Button onClick={async () => onClickDeleteUser(user.user)}>削除</Button>
       </div>
     )
   }
