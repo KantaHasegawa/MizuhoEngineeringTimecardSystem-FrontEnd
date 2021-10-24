@@ -71,6 +71,9 @@ const UserShowPage = ({ user }: { user: string }) => {
                     :
                     <div>
                       <h3>登録済の勤務地</h3>
+                      <Link href={`/user/relation/${user}`}>
+                        <a>勤務地の編集</a>
+                      </Link>
                       {
                         userRelationList?.params.slice(pagesVisited, pagesVisited + usersPerPage).map((relation, index) => {
                           return <DisplayUserRelationList relation={relation} key={index}></DisplayUserRelationList>
