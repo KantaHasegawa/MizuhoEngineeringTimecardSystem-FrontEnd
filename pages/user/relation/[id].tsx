@@ -3,12 +3,15 @@ import useCurrentUser from "../../../hooks/useCurrentUser";
 import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../../components/atoms";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { getAllUserIDs } from "../../../lib/userLibrary";
-import useDataAPI from "../../../hooks/useDataAPI";
-import useUserRelationEdit from "../../../hooks/useUserRelationEdit";
+import useUserRelationEdit, {
+  TypeUserRelation,
+} from "../../../hooks/useUserRelationEdit";
 import Select from "react-select";
 import { Button } from "@material-ui/core";
+import useAxios from "../../../hooks/useAxios";
+import { mutate } from "swr";
 
 type TypeParams = {
   id: string;
@@ -21,7 +24,10 @@ type TypeSelectedOption = {
 
 const UserShowPage = ({ user }: { user: string }) => {
   const router = useRouter();
+  const axios = useAxios();
   const accessToken = useRecoilValue(accessTokenState);
+  const [selectedOption, setSelectedOption] =
+    useState<TypeSelectedOption>(null);
   const { currentUser, currentUserIsLoading, currentUserIsError } =
     useCurrentUser(accessToken);
   if (
@@ -29,43 +35,46 @@ const UserShowPage = ({ user }: { user: string }) => {
     (currentUser && currentUser.role !== "admin")
   )
     router.push("/");
-  const [
-    state,
-    selectBoxItems,
-    setSelectBoxItems,
-    selectedItems,
-    setSelectedItems,
-    reload,
-    setReload
-  ] = useUserRelationEdit(user);
-  const [selectedOption, setSelectedOption] =
-    useState<TypeSelectedOption>(null);
 
-  const SelectedItemsComponent = ({ item }: { item: any }) => {
+  const { userSelectBoxResponse, userSelectBoxResponseIsError } =
+    useUserRelationEdit(user);
+
+  const onSubmit = async () => {
+    if (!selectedOption?.value) return;
+    try {
+      const params = {
+        user: user,
+        workspot: selectedOption.value,
+      };
+      await axios.post("relation/new", params);
+      mutate(`relation/user/selectbox/${user}`);
+      setSelectedOption(null)
+    } catch (err) {
+      console.log(err)
+    }
+  };
+
+  const onDelete = async (workspot: string) => {
+    try {
+      const params = {
+        user: user,
+        workspot: workspot
+      }
+      await axios.post("relation/delete", params)
+      mutate(`relation/user/selectbox/${user}`)
+      setSelectedOption(null)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  const UserRelationList = ({ item }: { item: TypeUserRelation }) => {
     return (
       <div>
         {item.workspot}
-        {item.new ? <Button variant="outlined">cancel</Button> : <p>it's old item</p>}
+        <Button variant="outlined" onClick={async() => onDelete(item.workspot)}>delete</Button>
       </div>
     )
-  };
-
-  const onClickAddItem = () => {
-    //selectedOptionをオブジェクト化してselectedItemsに追加
-    if (!selectedOption) return;
-    const addItem = {
-      workspot: selectedOption.value,
-      delete: false,
-      new: true
-    };
-    setSelectedItems([...selectedItems, addItem]);
-    //selectBoxiTemsから削除
-    const newArray = selectBoxItems.filter(
-      (item: any) => item.value !== selectedOption.value
-    );
-    setSelectBoxItems(newArray);
-    //selecredoptionにnullを代入
-    setSelectedOption(null);
   };
 
   return (
@@ -79,44 +88,30 @@ const UserShowPage = ({ user }: { user: string }) => {
       ) : (
         <>
           <div>{user}</div>
-          {state.isLoading ? (
+          {!userSelectBoxResponse ? (
             <div>loading</div>
-          ) : state.isError ? (
-            <div>error</div>
+          ) : userSelectBoxResponseIsError ? (
+            <div>has error</div>
           ) : (
             <div>
-              <div>
-                <h3>選択する</h3>
-                {selectBoxItems ? (
-                  <Select
-                    defaultValue={selectedOption}
-                    value={selectedOption}
-                    onChange={setSelectedOption}
-                    options={selectBoxItems}
-                    isClearable={true}
-                  />
-                ) : (
-                  <div>loading</div>
-                )}
-                <Button
-                  variant="outlined"
-                  disabled={!selectedOption}
-                  onClick={onClickAddItem}
-                >
-                  追加
-                </Button>
-              </div>
-              <div>
-                <h3>選択済み</h3>
-                {selectedItems.map((item: any, index: any) => {
+              <Select
+                defaultValue={selectedOption}
+                value={selectedOption}
+                onChange={setSelectedOption}
+                options={userSelectBoxResponse.selectBoxItems}
+                isClearable={true}
+              />
+              <Button variant="outlined" onClick={async() => onSubmit()}>登録</Button>
+              <h3>登録済みの勤務地</h3>
+              {userSelectBoxResponse &&
+                userSelectBoxResponse.relations.map((item, index) => {
                   return (
-                    <SelectedItemsComponent
+                    <UserRelationList
                       item={item}
                       key={index}
-                    ></SelectedItemsComponent>
+                    ></UserRelationList>
                   );
                 })}
-              </div>
             </div>
           )}
         </>

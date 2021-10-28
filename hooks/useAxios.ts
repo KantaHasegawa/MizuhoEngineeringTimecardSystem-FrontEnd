@@ -10,7 +10,7 @@ const useAxios = () => {
   const refreshToken = Cookies.get("refreshToken")
   const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_HOST,
-    timeout: 1000,
+    timeout: 10000,
     withCredentials: true
   });
   api.interceptors.request.use(

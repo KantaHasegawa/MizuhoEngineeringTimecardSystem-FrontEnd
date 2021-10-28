@@ -1,7 +1,7 @@
 import useSWR from 'swr'
 import useAxios from './useAxios'
 
-type TypeUserRelation = {
+export type TypeUserRelation = {
   workspot: string,
   user: string,
   attendance: string,
@@ -21,7 +21,7 @@ const useUserRelationList = (user: string) => {
     return res.data
   }
 
-  const { data, error } = useSWR<TypeUserRelationList>(`user/relation/index/${user}`, fetcher)
+  const { data, error } = useSWR<TypeUserRelationList>(`relation/user/${user}`, fetcher)
   return {
     userRelationList: data,
     userRelationListIsError: error
