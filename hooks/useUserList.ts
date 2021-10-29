@@ -1,30 +1,103 @@
-import useSWR from 'swr'
-import useAxios from './useAxios'
+import React, { Fragment, useState, useEffect, useReducer } from "react";
+import axios from "axios";
+import useAxios from "./useAxios";
 
 type TypeUser = {
-  attendance: string
-  password: string
-  role: string
-  user: string
+  params: {
+    attendance: string;
+    password: string;
+    role: string;
+    user: string;
+  }[]
+};
+
+type TypeState = {
+  isLoading: boolean;
+  isError: boolean;
+  data: string[];
+};
+
+type TypeFetchInitAction = {
+  type: "FETCH_INIT",
 }
 
-type TypeUserList = {
-  params: TypeUser[]
-}
+type TypeFetchSuccessAction = {
+  type: "FETCH_SUCCESS";
+  payload: string[]
+};
 
-const useUserList = () => {
-  const axios = useAxios(); //カスタマイズした設定のaxiosインスタンスを取得
+type TypeFetchFailureAction = {
+  type: "FETCH_FAILURE";
+};
 
-  const fetcher = async (url: string): Promise<any> => {
-    const res = await axios.get(url);
-    return res.data
+type TypeAction = TypeFetchInitAction | TypeFetchSuccessAction | TypeFetchFailureAction
+
+const dataFetchReducer = (state: TypeState, action: TypeAction) => {
+  switch (action.type) {
+    case "FETCH_INIT":
+      return {
+        ...state,
+        isLoading: true,
+        isError: false,
+      };
+    case "FETCH_SUCCESS":
+      return {
+        ...state,
+        isLoading: false,
+        isError: false,
+        data: action.payload,
+      };
+    case "FETCH_FAILURE":
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
+      };
+    default:
+      throw new Error();
   }
+};
 
-  const { data, error } = useSWR<TypeUserList>("user/index", fetcher)
-  return {
-    userList: data,
-    userListIsError: error
-  }
-}
+const useDataApi = (url: string) => {
+  const axios = useAxios()
+  const [userListState, setUserListState] = useState<string[]>(
+    []
+  );
+  const [state, dispatch] = useReducer(dataFetchReducer, {
+    isLoading: false,
+    isError: false,
+    data: []
+  });
+  useEffect(() => {
+    let didCancel = false;
 
-export default useUserList;
+    const fetchData = async () => {
+      dispatch({ type: "FETCH_INIT" });
+
+      try {
+        const result = await axios.get<TypeUser>(url);
+        const userArray = result.data.params.map((item) => {
+          return (item.user)
+        })
+        if (!didCancel) {
+          dispatch({ type: "FETCH_SUCCESS", payload: userArray });
+          setUserListState(userArray)
+        }
+      } catch (error) {
+        if (!didCancel) {
+          dispatch({ type: "FETCH_FAILURE" });
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      didCancel = true;
+    };
+  }, []);
+
+  return {state, userListState, setUserListState};
+};
+
+export default useDataApi;
