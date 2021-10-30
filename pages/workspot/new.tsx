@@ -31,7 +31,7 @@ const options = {
 const WorkspotNewPage = () => {
   const axios = useAxios();
   const accessToken = useRecoilValue(accessTokenState);
-  const [center, setCenter] = useState({ lat: 43.048225, lng: 141.49701 });
+  const [center, setCenter] = useState({ lat: 35.1346609, lng: 136.9381131 });
   const { control, handleSubmit, reset } = useForm<FormData>();
   const { currentUser, currentUserIsLoading, currentUserIsError } =
     useCurrentUser(accessToken);
@@ -105,8 +105,8 @@ const WorkspotNewPage = () => {
               <GoogleMap
                 id="map"
                 mapContainerStyle={mapContainerStyle}
-                zoom={14} // デフォルトズーム倍率を指定します。
-                center={center} // 札幌周辺にデフォルトのセンターを指定しました。
+                zoom={14}
+                center={center}
                 options={options}
                 onLoad={onMapLoad}
                 onDragEnd={onDragEnd}
