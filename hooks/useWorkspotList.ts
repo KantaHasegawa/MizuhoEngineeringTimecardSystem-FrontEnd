@@ -1,31 +1,104 @@
-import useSWR from 'swr'
-import useAxios from './useAxios'
+import { useState, useEffect, useReducer } from "react";
+import useAxios from "./useAxios";
 
 type TypeWorkspot = {
-  user: string,
-  attendance: string,
-  workspot: string,
-  latitude: number,
-  longitude: number
-}
+  params: {
+    workspot: string;
+    user: string;
+    attendance: string;
+    latitude: number;
+    longitude: number;
+  }[];
+};
 
-type TypeWorkspotList = {
-  params: TypeWorkspot[]
-}
+type TypeState = {
+  isLoading: boolean;
+  isError: boolean;
+  data: string[];
+};
+
+type TypeFetchInitAction = {
+  type: "FETCH_INIT";
+};
+
+type TypeFetchSuccessAction = {
+  type: "FETCH_SUCCESS";
+  payload: string[];
+};
+
+type TypeFetchFailureAction = {
+  type: "FETCH_FAILURE";
+};
+
+type TypeAction =
+  | TypeFetchInitAction
+  | TypeFetchSuccessAction
+  | TypeFetchFailureAction;
+
+const dataFetchReducer = (state: TypeState, action: TypeAction) => {
+  switch (action.type) {
+    case "FETCH_INIT":
+      return {
+        ...state,
+        isLoading: true,
+        isError: false,
+      };
+    case "FETCH_SUCCESS":
+      return {
+        ...state,
+        isLoading: false,
+        isError: false,
+        data: action.payload,
+      };
+    case "FETCH_FAILURE":
+      return {
+        ...state,
+        isLoading: false,
+        isError: true,
+      };
+    default:
+      throw new Error();
+  }
+};
 
 const useWorkspotList = () => {
-  const axios = useAxios(); //カスタマイズした設定のaxiosインスタンスを取得
+  const axios = useAxios();
+  const [workspotListState, setWorkspotListState] = useState<string[]>([]);
+  const [state, dispatch] = useReducer(dataFetchReducer, {
+    isLoading: false,
+    isError: false,
+    data: [],
+  });
+  useEffect(() => {
+    let didCancel = false;
 
-  const fetcher = async (url: string): Promise<any> => {
-    const res = await axios.get(url);
-    return res.data
-  }
+    const fetchData = async () => {
+      dispatch({ type: "FETCH_INIT" });
 
-  const { data, error } = useSWR<TypeWorkspotList>("workspot/index", fetcher)
-  return {
-    workspotList: data,
-    workspotListIsError: error
-  }
-}
+      try {
+        const result = await axios.get<TypeWorkspot>("workspot/index");
+        const workspotArray = result.data.params.map((item) => {
+          return item.workspot;
+        });
+        if (!didCancel) {
+          dispatch({ type: "FETCH_SUCCESS", payload: workspotArray });
+          setWorkspotListState(workspotArray);
+        }
+      } catch (error) {
+        if (!didCancel) {
+          dispatch({ type: "FETCH_FAILURE" });
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      didCancel = true;
+    };
+  }, []);
+
+  return { state, workspotListState, setWorkspotListState };
+};
 
 export default useWorkspotList;

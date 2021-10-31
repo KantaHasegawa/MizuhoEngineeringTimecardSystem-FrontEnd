@@ -1,21 +1,15 @@
-import Layout from "../../components/Layout";
-import useCurrentUser from "../../hooks/useCurrentUser";
-import { useRouter } from "next/router";
-import { useRecoilValue } from "recoil";
-import { accessTokenState } from "../../components/atoms";
 import React, { useState } from "react";
-import ReactPaginate from "react-paginate";
 import { Button, TextField } from "@material-ui/core";
-import { getAllUserIDs } from "../../lib/userLibrary";
-import { useSWRConfig } from "swr";
-import useAxios from "../../hooks/useAxios";
+import useCurrentUser from "../../hooks/useCurrentUser";
+import Layout from "../../components/Layout";
+import { accessTokenState } from "../../components/atoms";
+import { useRecoilValue } from "recoil";
+import router from "next/router";
+import useWorkspotList from "../../hooks/useWorkspotList";
+import ReactPaginate from "react-paginate";
 import Link from "next/link";
-import useUserList from "../../hooks/useUserList";
 
-const UserListPage = () => {
-  const router = useRouter();
-  const axios = useAxios();
-  const { mutate } = useSWRConfig();
+const WorkspotListPage = () => {
   const accessToken = useRecoilValue(accessTokenState);
   const { currentUser, currentUserIsLoading, currentUserIsError } =
     useCurrentUser(accessToken);
@@ -24,20 +18,20 @@ const UserListPage = () => {
     (currentUser && currentUser.role !== "admin")
   )
     router.push("/");
-  const { state, userListState, setUserListState } = useUserList("user/index");
+  const { state, workspotListState, setWorkspotListState } = useWorkspotList();
   const [inputState, setInputState] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = userListState
-    ? Math.ceil(userListState.length / usersPerPage)
+  const pageCount = workspotListState
+    ? Math.ceil(workspotListState.length / usersPerPage)
     : 0;
 
-  const DisplayUsers = ({ user }:{user: string}) => {
+  const DisplayWorkspotList = ({ workspot }: { workspot: string }) => {
     return (
-      <div className="user">
-        <Link href={`${user}`}>
-          <a>{user}</a>
+      <div className="workspot">
+        <Link href={`${workspot}`}>
+          <a>{workspot}</a>
         </Link>
       </div>
     );
@@ -54,19 +48,19 @@ const UserListPage = () => {
 
   const onSearchHandler = () => {
     const value = inputState;
-    const oldUserList = state.data;
-    let newUserList = oldUserList
+    const oldWorkspotList = state.data;
+    let newWorkspotList = oldWorkspotList
       .map((item: string) => {
         if (item.includes(value)) return item;
       })
       .filter((item): item is string => {
         return item != undefined;
       });
-    setUserListState(newUserList);
+    setWorkspotListState(newWorkspotList);
   };
 
   return (
-    <Layout title="ミズホエンジニアリング | 社員リスト">
+    <Layout title="ミズホエンジニアリング | 勤務地リスト">
       {currentUserIsLoading ? (
         <div>loading</div>
       ) : currentUserIsError ? (
@@ -91,11 +85,16 @@ const UserListPage = () => {
             <div>error</div>
           ) : (
             <div>
-              <h1>User List</h1>
-              {userListState
+              <h1>Workspot List</h1>
+              {workspotListState
                 .slice(pagesVisited, pagesVisited + usersPerPage)
                 .map((item: string, index: number) => {
-                  return <DisplayUsers user={item} key={index}></DisplayUsers>;
+                  return (
+                    <DisplayWorkspotList
+                      workspot={item}
+                      key={index}
+                    ></DisplayWorkspotList>
+                  );
                 })}
 
               <ReactPaginate
@@ -117,4 +116,4 @@ const UserListPage = () => {
   );
 };
 
-export default UserListPage;
+export default WorkspotListPage;

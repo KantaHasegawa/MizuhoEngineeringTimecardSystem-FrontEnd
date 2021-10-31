@@ -1,5 +1,4 @@
-import React, { Fragment, useState, useEffect, useReducer } from "react";
-import axios from "axios";
+import  { useState, useEffect, useReducer } from "react";
 import useAxios from "./useAxios";
 
 type TypeUser = {
@@ -58,7 +57,7 @@ const dataFetchReducer = (state: TypeState, action: TypeAction) => {
   }
 };
 
-const useDataApi = (url: string) => {
+const useUserList = (url: string) => {
   const axios = useAxios()
   const [userListState, setUserListState] = useState<string[]>(
     []
@@ -100,4 +99,4 @@ const useDataApi = (url: string) => {
   return {state, userListState, setUserListState};
 };
 
-export default useDataApi;
+export default useUserList;
