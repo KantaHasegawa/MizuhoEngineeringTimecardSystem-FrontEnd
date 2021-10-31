@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import useAxios from '../hooks/useAxios';
 import { useSetRecoilState } from "recoil";
 import { accessTokenState } from '../components/atoms';

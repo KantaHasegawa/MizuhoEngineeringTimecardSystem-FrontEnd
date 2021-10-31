@@ -57,7 +57,7 @@ const dataFetchReducer = (state: TypeState, action: TypeAction) => {
   }
 };
 
-const useUserList = (url: string) => {
+const useUserList = () => {
   const axios = useAxios()
   const [userListState, setUserListState] = useState<string[]>(
     []
@@ -74,7 +74,7 @@ const useUserList = (url: string) => {
       dispatch({ type: "FETCH_INIT" });
 
       try {
-        const result = await axios.get<TypeUser>(url);
+        const result = await axios.get<TypeUser>("user/index");
         const userArray = result.data.params.map((item) => {
           return (item.user)
         })

@@ -23,7 +23,7 @@ const UserListPage = () => {
     (currentUser && currentUser.role !== "admin")
   )
     router.push("/");
-  const { state, userListState, setUserListState } = useUserList("user/index");
+  const { state, userListState, setUserListState } = useUserList();
   const [inputState, setInputState] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
   const usersPerPage = 10;
