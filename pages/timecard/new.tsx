@@ -17,12 +17,11 @@ import Select from "react-select";
 import useUserList from "../../hooks/useUserList";
 import useWorkspotList from "../../hooks/useWorkspotList";
 import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 dayjs.locale("ja");
+dayjs.extend(isSameOrBefore);
 
-type FormData = {
-  username: string;
-  password: string;
-};
 type TypeSelectedOption = {
   value: string;
   label: string;
@@ -68,6 +67,8 @@ const TimecardNewPage = () => {
 
   const handleAttendanceChange = (newValue: dayjs.Dayjs | null) => {
     setAttendance(newValue);
+    if (!leave) return
+    if(leave.isSameOrBefore(newValue)) setLeave(null)
   };
 
   const handleLeaveChange = (newValue: dayjs.Dayjs | null) => {
