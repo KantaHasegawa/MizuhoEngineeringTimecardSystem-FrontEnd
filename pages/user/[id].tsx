@@ -5,7 +5,7 @@ import { useRecoilValue } from "recoil";
 import { accessTokenState } from '../../components/atoms';
 import React, { useState } from 'react'
 import ReactPaginate from 'react-paginate'
-import { getAllUserIDs } from '../../lib/userLibrary'
+import getAllUserIDs from '../../lib/getAllUserIDs'
 import { useSWRConfig } from 'swr'
 import useAxios from "../../hooks/useAxios";
 import Link from 'next/link'

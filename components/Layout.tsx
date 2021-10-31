@@ -9,7 +9,7 @@ type Props = {
   title?: string
 }
 
-const Layout = ({ children, title = 'This is the default title' }: Props) => (
+const Layout = ({ children, title = "This is the default title" }: Props) => (
   <div>
     <Head>
       <title>{title}</title>
@@ -20,30 +20,32 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => (
       <nav>
         <Link href="/">
           <a>Home</a>
-        </Link>{' '}
-        |{' '}
+        </Link>{" "}
+        |{" "}
         <Link href="/auth/login">
           <a>login</a>
-        </Link>{' '}
-        |{' '}
+        </Link>{" "}
+        |{" "}
         <Link href="/auth/signup">
           <a>signup</a>
-        </Link>{' '}
-        |{' '}
+        </Link>{" "}
+        |{" "}
         <Link href="/user/list">
           <a>Users List</a>
-        </Link>{' '}
+        </Link>{" "}
+        |{" "}
+        <Link href="/workspot/list">
+          <a>Workspot List</a>
+        </Link>{" "}
         | <Logout></Logout>
       </nav>
     </header>
-    <div className={styles.container}>
-      {children}
-    </div>
+    <div className={styles.container}>{children}</div>
     <footer>
       <hr />
       <span>I'm here to stay (Footer)</span>
     </footer>
   </div>
-)
+);
 
 export default Layout

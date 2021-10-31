@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../../components/atoms";
 import React, { useState } from "react";
-import { getAllUserIDs } from "../../../lib/userLibrary";
+import { getAllUserIDs } from "../../../lib/getAllUserIDs";
 import useUserRelationEdit, {
   TypeUserRelation,
 } from "../../../hooks/useUserRelationEdit";

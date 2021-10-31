@@ -6,7 +6,9 @@ type TypeUserID = {
   }
 }
 
-export const getAllUserIDs = async () => {
+const getAllUserIDs = async () => {
   const result = await axios.get<TypeUserID>(`${process.env.NEXT_PUBLIC_API_HOST}user/ids`)
   return result.data
 }
+
+export default getAllUserIDs

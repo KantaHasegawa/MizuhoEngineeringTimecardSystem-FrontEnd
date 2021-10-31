@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { accessTokenState } from '../../../components/atoms';
 import Layout from '../../../components/Layout'
 import useCurrentUser from '../../../hooks/useCurrentUser';
-import { getAllUserIDs } from '../../../lib/userLibrary'
+import { getAllUserIDs } from '../../../lib/getAllUserIDs'
 import { Controller, useForm } from 'react-hook-form'
 import { TextField, Button } from "@material-ui/core";
 import { useState } from 'react';
