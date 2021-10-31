@@ -79,6 +79,10 @@ const WorkspotListPage = () => {
           <Button variant="outlined" onClick={onSearchHandler}>
             検索
           </Button>
+          <br />
+          <Link href="new">
+            <a>勤務地を追加</a>
+          </Link>
           {state.isLoading ? (
             <div>loading</div>
           ) : state.isError ? (

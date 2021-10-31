@@ -4,10 +4,10 @@ import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../../components/atoms";
 import React, { useState } from "react";
-import getAllUserIDs from "../../../lib/getAllUserIDs";
-import useUserRelationEdit, {
-  TypeUserRelation,
-} from "../../../hooks/useUserRelationEdit";
+import getAllWorkspotIDs from "../../../lib/getAllWorkspotIDs";
+import useWorkspotRelationEdit, {
+  TypeWorkspotRelation,
+} from "../../../hooks/useWorkspotRelationEdit";
 import Select from "react-select";
 import { Button } from "@material-ui/core";
 import useAxios from "../../../hooks/useAxios";
@@ -22,7 +22,7 @@ type TypeSelectedOption = {
   label: string;
 } | null;
 
-const UserRelationEditPage = ({ user }: { user: string }) => {
+const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
   const router = useRouter();
   const axios = useAxios();
   const accessToken = useRecoilValue(accessTokenState);
@@ -36,45 +36,47 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
   )
     router.push("/");
 
-  const { userSelectBoxResponse, userSelectBoxResponseIsError } =
-    useUserRelationEdit(user);
+  const { workspotSelectBoxResponse, workspotSelectBoxResponseIsError } =
+    useWorkspotRelationEdit(workspot);
 
   const onSubmit = async () => {
     if (!selectedOption?.value) return;
     try {
       const params = {
-        user: user,
-        workspot: selectedOption.value,
+        user: selectedOption.value,
+        workspot: workspot,
       };
       await axios.post("relation/new", params);
-      mutate(`relation/user/selectbox/${user}`);
-      setSelectedOption(null)
+      mutate(`relation/workspot/selectbox/${workspot}`);
+      setSelectedOption(null);
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
   };
 
-  const onDelete = async (workspot: string) => {
+  const onDelete = async (user: string) => {
     try {
       const params = {
         user: user,
-        workspot: workspot
-      }
-      await axios.post("relation/delete", params)
-      mutate(`relation/user/selectbox/${user}`)
-      setSelectedOption(null)
+        workspot: workspot,
+      };
+      await axios.post("relation/delete", params);
+      mutate(`relation/workspot/selectbox/${workspot}`);
+      setSelectedOption(null);
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
-  }
+  };
 
-  const UserRelationList = ({ item }: { item: TypeUserRelation }) => {
+  const UserRelationList = ({ item }: { item: TypeWorkspotRelation }) => {
     return (
       <div>
-        {item.workspot}
-        <Button variant="outlined" onClick={async() => onDelete(item.workspot)}>delete</Button>
+        {item.user}
+        <Button variant="outlined" onClick={async () => onDelete(item.user)}>
+          delete
+        </Button>
       </div>
-    )
+    );
   };
 
   return (
@@ -87,10 +89,10 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
         <div>You don't have permission</div>
       ) : (
         <>
-          <div>{user}</div>
-          {!userSelectBoxResponse ? (
+          <div>{workspot}</div>
+          {!workspotSelectBoxResponse ? (
             <div>loading</div>
-          ) : userSelectBoxResponseIsError ? (
+          ) : workspotSelectBoxResponseIsError ? (
             <div>has error</div>
           ) : (
             <div>
@@ -98,13 +100,15 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
                 defaultValue={selectedOption}
                 value={selectedOption}
                 onChange={setSelectedOption}
-                options={userSelectBoxResponse.selectBoxItems}
+                options={workspotSelectBoxResponse.selectBoxItems}
                 isClearable={true}
               />
-              <Button variant="outlined" onClick={async() => onSubmit()}>登録</Button>
+              <Button variant="outlined" onClick={async () => onSubmit()}>
+                登録
+              </Button>
               <h3>登録済みの勤務地</h3>
-              {userSelectBoxResponse &&
-                userSelectBoxResponse.relations.map((item, index) => {
+              {workspotSelectBoxResponse &&
+                workspotSelectBoxResponse.relations.map((item, index) => {
                   return (
                     <UserRelationList
                       item={item}
@@ -121,7 +125,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
 };
 
 export const getStaticPaths = async () => {
-  const paths = await getAllUserIDs();
+  const paths = await getAllWorkspotIDs();
   return {
     paths,
     fallback: false,
@@ -131,9 +135,9 @@ export const getStaticPaths = async () => {
 export const getStaticProps = ({ params }: { params: TypeParams }) => {
   return {
     props: {
-      user: params.id,
+      workspot: params.id,
     },
   };
 };
 
-export default UserRelationEditPage;
+export default WorkspotRelationEditPage;

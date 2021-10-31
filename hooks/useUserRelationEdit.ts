@@ -19,7 +19,7 @@ type TypeUserSelectBoxResponse = {
   relations: TypeUserRelation[]
 }
 
-const useUserRelationList = (user: string) => {
+const useUserRelationEdit = (user: string) => {
   const axios = useAxios(); //カスタマイズした設定のaxiosインスタンスを取得
 
   const fetcher = async (url: string): Promise<any> => {
@@ -34,4 +34,4 @@ const useUserRelationList = (user: string) => {
   }
 }
 
-export default useUserRelationList;
+export default useUserRelationEdit;
