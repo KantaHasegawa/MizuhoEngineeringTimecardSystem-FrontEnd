@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import Layout from '../../components/Layout';
 import { Controller, useForm } from 'react-hook-form'
-import { TextField, Button } from "@material-ui/core";
+import { TextField, Button } from "@mui/material";
 import { useState } from 'react';
 import useAxios from '../../hooks/useAxios';
 import useCurrentUser from '../../hooks/useCurrentUser'

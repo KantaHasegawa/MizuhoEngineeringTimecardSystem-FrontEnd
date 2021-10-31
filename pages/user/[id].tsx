@@ -10,7 +10,7 @@ import { useSWRConfig } from 'swr'
 import useAxios from "../../hooks/useAxios";
 import Link from 'next/link'
 import useUserRelationList from '../../hooks/useUserRelationList'
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 
 type TypeParams = {
   id: string

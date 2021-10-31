@@ -9,7 +9,7 @@ import { useSWRConfig } from "swr";
 import useAxios from "../../hooks/useAxios";
 import Link from "next/link";
 import useWorkspotRelationList from "../../hooks/useWorkspotRelationList";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs'
 
 type TypeParams = {

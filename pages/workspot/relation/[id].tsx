@@ -9,7 +9,7 @@ import useWorkspotRelationEdit, {
   TypeWorkspotRelation,
 } from "../../../hooks/useWorkspotRelationEdit";
 import Select from "react-select";
-import { Button } from "@material-ui/core";
+import { Button } from "@mui/material";
 import useAxios from "../../../hooks/useAxios";
 import { mutate } from "swr";
 

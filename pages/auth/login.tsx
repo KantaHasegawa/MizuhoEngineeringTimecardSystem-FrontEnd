@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Layout from '../../components/Layout';
 import { Controller, useForm } from 'react-hook-form'
-import { TextField, Button } from "@material-ui/core";
+import { TextField, Button } from "@mui/material";
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { accessTokenState, userState } from '../../components/atoms'
 import { useState } from 'react';

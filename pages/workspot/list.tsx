@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, TextField } from "@material-ui/core";
+import { Button, TextField } from "@mui/material";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import Layout from "../../components/Layout";
 import { accessTokenState } from "../../components/atoms";
