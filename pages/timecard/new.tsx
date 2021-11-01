@@ -49,6 +49,7 @@ const TimecardNewPage = () => {
         value: item,
       };
     });
+  
   const { state: workspotState } = useWorkspotList();
   const selectBoxWorkspots =
     !workspotState.isLoading &&
