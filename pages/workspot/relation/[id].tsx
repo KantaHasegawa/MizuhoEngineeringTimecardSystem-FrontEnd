@@ -9,7 +9,7 @@ import useWorkspotRelationEdit, {
   TypeWorkspotRelation,
 } from "../../../hooks/useWorkspotRelationEdit";
 import Select from "react-select";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import useAxios from "../../../hooks/useAxios";
 import { mutate } from "swr";
 
@@ -82,7 +82,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
   return (
     <Layout title="ミズホエンジニアリング | 社員詳細">
       {currentUserIsLoading ? (
-        <div>loading</div>
+        <CircularProgress />
       ) : currentUserIsError ? (
         <div>error</div>
       ) : currentUser.role !== "admin" ? (
@@ -91,7 +91,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
         <>
           <div>{workspot}</div>
           {!workspotSelectBoxResponse ? (
-            <div>loading</div>
+                  <CircularProgress />
           ) : workspotSelectBoxResponseIsError ? (
             <div>has error</div>
           ) : (

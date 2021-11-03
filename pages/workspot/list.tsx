@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, TextField } from "@mui/material";
+import { Button, CircularProgress, TextField } from "@mui/material";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import Layout from "../../components/Layout";
 import { accessTokenState } from "../../components/atoms";
@@ -62,7 +62,7 @@ const WorkspotListPage = () => {
   return (
     <Layout title="ミズホエンジニアリング | 勤務地リスト">
       {currentUserIsLoading ? (
-        <div>loading</div>
+        <CircularProgress />
       ) : currentUserIsError ? (
         <div>error</div>
       ) : currentUser.role !== "admin" ? (
@@ -84,7 +84,7 @@ const WorkspotListPage = () => {
             <a>勤務地を追加</a>
           </Link>
           {state.isLoading ? (
-            <div>loading</div>
+            <CircularProgress />
           ) : state.isError ? (
             <div>error</div>
           ) : (

@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../components/atoms";
 import React, { useState } from "react";
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from "@mui/material";
 import useAxios from "../../hooks/useAxios";
 import useUserList from "../../hooks/useUserList";
 import { Controller, useForm } from "react-hook-form";
@@ -216,7 +216,7 @@ const UserListPage = () => {
   return (
     <div>
       {currentUserIsLoading ? (
-        <div>loading</div>
+        <CircularProgress />
       ) : currentUserIsError ? (
         <div>error</div>
       ) : currentUser.role !== "admin" ? (

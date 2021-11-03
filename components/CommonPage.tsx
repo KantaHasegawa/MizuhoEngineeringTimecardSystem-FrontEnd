@@ -7,6 +7,7 @@ import useAxios from "../hooks/useAxios";
 import { mutate } from "swr";
 import { useState } from "react";
 import { TypeUserRelation } from "../hooks/useUserRelationList";
+import { CircularProgress } from "@mui/material";
 dayjs.locale("ja")
 
 type TypeCurrentUser = {
@@ -60,7 +61,7 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
   const MainContents = () => {
     return (
       !latestTimecard ? (
-        <div>loading</div>
+        <CircularProgress />
       ) : latestTimecardIsError ? (
         <div>error</div>
       ) : isTimecardStatus(latestTimecard) === "NotAttend" ? (
@@ -91,7 +92,7 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
       )
     }
     return (
-      !userRelationList ? <div>loading</div>
+      !userRelationList ? <CircularProgress />
         : userRelationListIsError ? <div>error</div>
           : <div>
             {

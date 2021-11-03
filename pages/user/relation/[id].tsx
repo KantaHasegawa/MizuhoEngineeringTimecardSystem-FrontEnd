@@ -9,7 +9,7 @@ import useUserRelationEdit, {
   TypeUserRelation,
 } from "../../../hooks/useUserRelationEdit";
 import Select from "react-select";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import useAxios from "../../../hooks/useAxios";
 import { mutate } from "swr";
 
@@ -72,7 +72,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
     return (
       <div>
         {item.workspot}
-        <Button variant="outlined" onClick={async() => onDelete(item.workspot)}>delete</Button>
+        <Button variant="outlined" onClick={async () => onDelete(item.workspot)}>delete</Button>
       </div>
     )
   };
@@ -80,7 +80,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
   return (
     <Layout title="ミズホエンジニアリング | 社員詳細">
       {currentUserIsLoading ? (
-        <div>loading</div>
+        <CircularProgress />
       ) : currentUserIsError ? (
         <div>error</div>
       ) : currentUser.role !== "admin" ? (
@@ -89,7 +89,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
         <>
           <div>{user}</div>
           {!userSelectBoxResponse ? (
-            <div>loading</div>
+            <CircularProgress />
           ) : userSelectBoxResponseIsError ? (
             <div>has error</div>
           ) : (
@@ -101,7 +101,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
                 options={userSelectBoxResponse.selectBoxItems}
                 isClearable={true}
               />
-              <Button variant="outlined" onClick={async() => onSubmit()}>登録</Button>
+              <Button variant="outlined" onClick={async () => onSubmit()}>登録</Button>
               <h3>登録済みの勤務地</h3>
               {userSelectBoxResponse &&
                 userSelectBoxResponse.relations.map((item, index) => {

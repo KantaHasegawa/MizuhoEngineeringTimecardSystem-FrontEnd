@@ -9,6 +9,7 @@ import useAxios from '../hooks/useAxios';
 import useCurrentUser from '../hooks/useCurrentUser'
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from '../components/atoms';
+import { CircularProgress } from '@material-ui/core';
 
 
 const SignUpPage = () => {
@@ -20,7 +21,7 @@ const SignUpPage = () => {
 
   return (
     <Layout title="ミズホエンジニアリング | ホーム">
-      {currentUserIsLoading ? <div>loading</div>
+      {currentUserIsLoading ? <CircularProgress />
         : currentUserIsError ? <div>error</div>
           : currentUser.role === "admin" ? <AdminPage></AdminPage>
             : <CommonPage user={currentUser}></CommonPage>

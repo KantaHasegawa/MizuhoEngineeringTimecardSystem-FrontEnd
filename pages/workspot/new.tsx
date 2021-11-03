@@ -5,7 +5,7 @@ import {
   Circle,
   Marker,
 } from "@react-google-maps/api";
-import { Button, TextField } from "@mui/material";
+import { Button, CircularProgress, TextField } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import useAxios from "../../hooks/useAxios";
 import useCurrentUser from "../../hooks/useCurrentUser";
@@ -88,7 +88,7 @@ const WorkspotNewPage = () => {
   return (
     <Layout title="ミズホエンジニアリング | サインアップ">
       {currentUserIsLoading ? (
-        <div>loading</div>
+        <CircularProgress />
       ) : currentUserIsError ? (
         <div>error</div>
       ) : currentUser.role !== "admin" ? (
@@ -97,7 +97,7 @@ const WorkspotNewPage = () => {
         <>
           <div>勤務地登録</div>
           {!isLoaded ? (
-            "loading"
+            <CircularProgress />
           ) : loadError ? (
             "error"
           ) : (

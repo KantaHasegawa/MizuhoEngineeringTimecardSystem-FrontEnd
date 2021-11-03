@@ -10,7 +10,7 @@ import { useSWRConfig } from 'swr'
 import useAxios from "../../hooks/useAxios";
 import Link from 'next/link'
 import useUserRelationList from '../../hooks/useUserRelationList'
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 
 type TypeParams = {
   id: string
@@ -55,7 +55,7 @@ const UserShowPage = ({ user }: { user: string }) => {
   return (
     <Layout title="ミズホエンジニアリング | 社員詳細">
 
-      {currentUserIsLoading ? <div>loading</div>
+      {currentUserIsLoading ? <CircularProgress />
         : currentUserIsError ? <div>error</div>
           : currentUser.role !== "admin" ? <div>You don't have permission</div>
             :
@@ -66,7 +66,7 @@ const UserShowPage = ({ user }: { user: string }) => {
                 <a>パスワード変更</a>
               </Link>
               {
-                !userRelationList ? <div>loading</div>
+                !userRelationList ? <CircularProgress />
                   : userRelationListIsError ? <div>error</div>
                     :
                     <div>

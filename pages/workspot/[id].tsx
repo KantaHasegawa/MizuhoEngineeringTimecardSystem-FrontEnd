@@ -9,7 +9,7 @@ import { useSWRConfig } from "swr";
 import useAxios from "../../hooks/useAxios";
 import Link from "next/link";
 import useWorkspotRelationList from "../../hooks/useWorkspotRelationList";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs'
 
 type TypeParams = {
@@ -66,7 +66,7 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
   return (
     <Layout title="ミズホエンジニアリング | 勤務地詳細">
       {currentUserIsLoading ? (
-        <div>loading</div>
+        <CircularProgress />
       ) : currentUserIsError ? (
         <div>error</div>
       ) : currentUser.role !== "admin" ? (
@@ -76,7 +76,7 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
           <h1>{workspot}</h1>
           <Button onClick={async () => onClickDeleteWorkspot(workspot)}>削除</Button>
           {!workspotRelationList ? (
-            <div>loading</div>
+            <CircularProgress />
           ) : workspotRelationListIsError ? (
             <div>error</div>
           ) : (

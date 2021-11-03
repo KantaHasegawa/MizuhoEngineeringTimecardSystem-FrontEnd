@@ -5,7 +5,7 @@ import Layout from '../../../components/Layout'
 import useCurrentUser from '../../../hooks/useCurrentUser';
 import getAllUserIDs from '../../../lib/getAllUserIDs'
 import { Controller, useForm } from 'react-hook-form'
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, CircularProgress } from "@mui/material";
 import { useState } from 'react';
 import useAxios from '../../../hooks/useAxios';
 
@@ -42,7 +42,7 @@ export const UserEditPage = ({ user }: { user: string }) => {
   }
   return (
     <Layout title="ミズホエンジニアリング | パスワード変更">
-      {currentUserIsLoading ? <div>loading</div>
+      {currentUserIsLoading ? <CircularProgress />
         : currentUserIsError ? <div>error</div>
           : currentUser.role !== "admin" ? <div>You don't have permission</div>
             :

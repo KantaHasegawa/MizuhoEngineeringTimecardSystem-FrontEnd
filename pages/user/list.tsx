@@ -5,7 +5,7 @@ import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../components/atoms";
 import React, { useState } from "react";
 import ReactPaginate from "react-paginate";
-import { Button, TextField } from "@mui/material";
+import { Button, CircularProgress, TextField } from "@mui/material";
 import { useSWRConfig } from "swr";
 import useAxios from "../../hooks/useAxios";
 import Link from "next/link";
@@ -32,7 +32,7 @@ const UserListPage = () => {
     ? Math.ceil(userListState.length / usersPerPage)
     : 0;
 
-  const DisplayUsers = ({ user }:{user: string}) => {
+  const DisplayUsers = ({ user }: { user: string }) => {
     return (
       <div className="user">
         <Link href={`${user}`}>
@@ -67,7 +67,7 @@ const UserListPage = () => {
   return (
     <Layout title="ミズホエンジニアリング | 社員リスト">
       {currentUserIsLoading ? (
-        <div>loading</div>
+        <CircularProgress />
       ) : currentUserIsError ? (
         <div>error</div>
       ) : currentUser.role !== "admin" ? (
@@ -85,7 +85,7 @@ const UserListPage = () => {
             検索
           </Button>
           {state.isLoading ? (
-            <div>loading</div>
+            <CircularProgress />
           ) : state.isError ? (
             <div>error</div>
           ) : (

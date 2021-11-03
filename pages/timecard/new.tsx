@@ -3,6 +3,7 @@ import Layout from "../../components/Layout";
 import {
   TextField,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import { useState } from "react";
 import useAxios from "../../hooks/useAxios";
@@ -98,7 +99,7 @@ const TimecardNewPage = () => {
     return (
       <>
         {userState.isLoading ? (
-          <div>loading</div>
+          <CircularProgress />
         ) : userState.isError ? (
           <div>error</div>
         ) : (
@@ -118,7 +119,7 @@ const TimecardNewPage = () => {
     return (
       <>
         {workspotState.isLoading ? (
-          <div>loading</div>
+          <CircularProgress />
         ) : workspotState.isError ? (
           <div>error</div>
         ) : (
@@ -137,7 +138,7 @@ const TimecardNewPage = () => {
   return (
     <Layout title="ミズホエンジニアリング | 勤務登録">
       {currentUserIsLoading ? (
-        <div>loading</div>
+        <CircularProgress />
       ) : currentUserIsError ? (
         <div>error</div>
       ) : currentUser.role !== "admin" ? (
