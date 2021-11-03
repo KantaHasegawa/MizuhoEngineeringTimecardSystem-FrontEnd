@@ -1,6 +1,11 @@
 import useSWR from 'swr'
 import useAxios from './useAxios'
 
+type TypeCurrentUser = {
+  name: string,
+  role: string
+}
+
 const useCurrentUser = (accessToken: string) => {
   const axios = useAxios(); //カスタマイズした設定のaxiosインスタンスを取得
 

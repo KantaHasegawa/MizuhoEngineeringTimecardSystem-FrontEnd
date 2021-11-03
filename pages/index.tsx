@@ -1,15 +1,32 @@
-import Link from 'next/link'
-import Layout from '../components/Layout'
+import { useRouter } from 'next/router'
+import Layout from '../components/Layout';
+import AdminPage from '../components/AdminPage';
+import CommonPage from '../components/CommonPage';
+import { Controller, useForm } from 'react-hook-form'
+import { TextField, Button } from "@mui/material";
+import { useState } from 'react';
+import useAxios from '../hooks/useAxios';
+import useCurrentUser from '../hooks/useCurrentUser'
+import { useRecoilValue } from "recoil";
+import { accessTokenState } from '../components/atoms';
 
-const IndexPage = () => (
-  <Layout title="ミズホエンジニアリング | ホーム">
-    <h1>ミズホエンジニアリングタイムカードシステム　ホーム画面です</h1>
-    <p>
-      <Link href="/auth/login">
-        <a>ログイン</a>
-      </Link>
-    </p>
-  </Layout>
-)
 
-export default IndexPage
+const SignUpPage = () => {
+  const axios = useAxios();
+  const router = useRouter();
+  const accessToken = useRecoilValue(accessTokenState)
+  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
+  if (!currentUserIsLoading && !currentUser) router.push("/auth/login")
+
+  return (
+    <Layout title="ミズホエンジニアリング | ホーム">
+      {currentUserIsLoading ? <div>loading</div>
+        : currentUserIsError ? <div>error</div>
+          : currentUser.role === "admin" ? <AdminPage></AdminPage>
+            : <CommonPage user={currentUser}></CommonPage>
+      }
+    </Layout>
+  )
+}
+
+export default SignUpPage

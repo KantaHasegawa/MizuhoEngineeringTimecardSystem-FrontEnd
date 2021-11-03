@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import Select from 'react-select';
 import dayjs from "dayjs";
 import 'dayjs/locale/ja';
-import useWorkspotRelationEdit from "../../hooks/useWorkspotRelationEdit";
+import { mutate } from "swr";
 dayjs.locale("ja");
 
 type TypeSelectBoxItem = {
@@ -206,6 +206,7 @@ const UserListPage = () => {
           value: attendance.slice(4, 6),
         }
       }
+      mutate(`timecard/common/${user}`)
       onSubmit(data)
     } catch (err) {
       console.log(err)

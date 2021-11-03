@@ -19,6 +19,7 @@ import useWorkspotList from "../../hooks/useWorkspotList";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import "dayjs/locale/ja"
 dayjs.locale("ja");
 dayjs.extend(isSameOrBefore);
 
@@ -49,7 +50,7 @@ const TimecardNewPage = () => {
         value: item,
       };
     });
-  
+
   const { state: workspotState } = useWorkspotList();
   const selectBoxWorkspots =
     !workspotState.isLoading &&
