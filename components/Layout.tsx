@@ -1,8 +1,5 @@
 import React, { ReactNode } from 'react'
-import Link from 'next/link'
 import Head from 'next/head'
-import Logout from './Logout'
-import styles from '../styels/layout.module.scss'
 import { AppBar, Box, Button, IconButton, Toolbar, Typography, Container } from '@material-ui/core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMapMarked, faCalendarAlt, faUsers, faSignInAlt, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
