@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../components/atoms";
 import React, { useState } from "react";
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress } from "@mui/material";
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Container } from "@mui/material";
 import useAxios from "../../hooks/useAxios";
 import useUserList from "../../hooks/useUserList";
 import { Controller, useForm } from "react-hook-form";
@@ -12,7 +12,15 @@ import Select from 'react-select';
 import dayjs from "dayjs";
 import 'dayjs/locale/ja';
 import { mutate } from "swr";
+import Navbar from "../../components/Navbar";
+import Head from 'next/head'
+import { Box } from "@material-ui/core";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 dayjs.locale("ja");
+
+import styles from '../../styels/timecardList.module.scss'
+
 
 type TypeSelectBoxItem = {
   value: string,
@@ -215,6 +223,12 @@ const UserListPage = () => {
 
   return (
     <div>
+      <Head>
+        <title>ミズホエンジニアリング | 勤怠管理表</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
+      <Navbar></Navbar>
       {currentUserIsLoading ? (
         <CircularProgress />
       ) : currentUserIsError ? (
@@ -222,102 +236,107 @@ const UserListPage = () => {
       ) : currentUser.role !== "admin" ? (
         <div>You don't have permission</div>
       ) : (
-        <>
-          <div>
-            <h1>Timecard List</h1>
-            <form onSubmit={handleSubmit(onSubmit)}>
-
-              <Controller
-                name="user"
-                control={control}
-                render={({ field }) => <Select
-                  {...field}
-                  options={userSelectBoxItems || []}
-                  isClearable={true}
-                  placeholder="社員"
-                />}
-              />
-              <Controller
-                name="year"
-                control={control}
-                render={({ field }) => <Select
-                  {...field}
-                  options={yearSelectBoxItems}
-                  isClearable={true}
-                  placeholder="年"
-                />}
-              />
-              <Controller
-                name="month"
-                control={control}
-                render={({ field }) => <Select
-                  {...field}
-                  options={monthSelectBoxItems}
-                  isClearable={true}
-                  placeholder="月"
-                />}
-              />
-              <Button variant="outlined" type="submit" disabled={!watch("user") || !watch("year") || !watch("month")}>確定</Button>
-              <Button variant="outlined" onClick={async () => onExcelHandler()} disabled={!watch("user") || !watch("year") || !watch("month")}>Excel</Button>
-            </form>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="center">日</TableCell>
-                    <TableCell align="center">曜日</TableCell>
-                    <TableCell align="center">出勤地</TableCell>
-                    <TableCell align="center">出勤時刻</TableCell>
-                    <TableCell align="center">退勤時刻</TableCell>
-                    <TableCell align="center">勤務時間</TableCell>
-                    <TableCell align="center">基本労働</TableCell>
-                    <TableCell align="center">時間外労働</TableCell>
-                    <TableCell align="center">休憩時間</TableCell>
+        <div>
+          <Container maxWidth="sm">
+            <Box sx={{ paddingTop: "2rem" }}>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <Controller
+                  name="user"
+                  control={control}
+                  render={({ field }) => <Select
+                    {...field}
+                    className={styles.selectBox}
+                    options={userSelectBoxItems || []}
+                    isClearable={true}
+                    placeholder="社員"
+                  />}
+                />
+                <Controller
+                  name="year"
+                  control={control}
+                  render={({ field }) => <Select
+                    {...field}
+                    className={styles.selectBox}
+                    options={yearSelectBoxItems}
+                    isClearable={true}
+                    placeholder="年"
+                  />}
+                />
+                <Controller
+                  name="month"
+                  control={control}
+                  render={({ field }) => <Select
+                    {...field}
+                    className={styles.selectBox}
+                    options={monthSelectBoxItems}
+                    isClearable={true}
+                    placeholder="月"
+                  />}
+                />
+                <div className={styles.buttonGroupe}>
+                  <Button className={styles.button} variant="outlined" type="submit" disabled={!watch("user") || !watch("year") || !watch("month")}>確定</Button>
+                  <Button className={styles.button} variant="outlined" color="success" onClick={async () => onExcelHandler()} disabled={!watch("user") || !watch("year") || !watch("month")}>Excel</Button>
+                </div>
+              </form>
+            </Box>
+          </Container>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 1300 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center"><h3>日</h3></TableCell>
+                  <TableCell align="center"><h3>曜日</h3></TableCell>
+                  <TableCell align="center"><h3>出勤地</h3></TableCell>
+                  <TableCell align="center"><h3>出勤時刻</h3></TableCell>
+                  <TableCell align="center"><h3>退勤時刻</h3></TableCell>
+                  <TableCell align="center"><h3>勤務時間</h3></TableCell>
+                  <TableCell align="center"><h3>基本労働</h3></TableCell>
+                  <TableCell align="center"><h3>時間外労働</h3></TableCell>
+                  <TableCell align="center"><h3>休憩時間</h3></TableCell>
+                  <TableCell align="center"></TableCell>
+                </TableRow>
+              </TableHead>
+              {!timecard ? (
+                <TableBody>
+                  <TableRow
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell align="center"></TableCell>
+                    <TableCell align="center"></TableCell>
+                    <TableCell align="center"></TableCell>
+                    <TableCell align="center"></TableCell>
+                    <TableCell align="center"></TableCell>
+                    <TableCell align="center"></TableCell>
+                    <TableCell align="center"></TableCell>
+                    <TableCell align="center"></TableCell>
+                    <TableCell align="center"></TableCell>
                     <TableCell align="center"></TableCell>
                   </TableRow>
-                </TableHead>
-                {!timecard ? (
-                  <TableBody>
+                </TableBody>
+              ) : (
+                <TableBody>
+                  {timecard.map((row, index) => (
                     <TableRow
+                      key={index}
                       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                     >
-                      <TableCell align="center"></TableCell>
-                      <TableCell align="center"></TableCell>
-                      <TableCell align="center"></TableCell>
-                      <TableCell align="center"></TableCell>
-                      <TableCell align="center"></TableCell>
-                      <TableCell align="center"></TableCell>
-                      <TableCell align="center"></TableCell>
-                      <TableCell align="center"></TableCell>
-                      <TableCell align="center"></TableCell>
-                      <TableCell align="center"></TableCell>
+                      <TableCell align="center">{row.date}</TableCell>
+                      <TableCell align="center">{row.dayOfWeek}</TableCell>
+                      <TableCell align="center">{row.workspot}</TableCell>
+                      <TableCell align="center">{row.attendance && `${row.attendance.slice(8, 10)}:${row.attendance.slice(10, 12)}`}</TableCell>
+                      <TableCell align="center">{row.leave && `${row.leave.slice(8, 10)}:${row.leave.slice(10, 12)}`}</TableCell>
+                      <TableCell align="center">{row.workTime !== null && `${Math.floor(row.workTime / 60)}時間${row.workTime % 60}分`}</TableCell>
+                      <TableCell align="center">{row.regularWorkTime !== null && `${Math.floor(row.regularWorkTime / 60)}時間${row.regularWorkTime % 60}分`}</TableCell>
+                      <TableCell align="center">{row.irregularWorkTime !== null && `${Math.floor(row.irregularWorkTime / 60)}時間${row.irregularWorkTime % 60}分`}</TableCell>
+                      <TableCell align="center">{row.rest !== null && `${Math.floor(row.rest / 60)}時間${row.rest % 60}分`}</TableCell>
+                      <TableCell align="center">{row.attendance && <div onClick={async () => onDeleteHandler(row.user, row.attendance)}><FontAwesomeIcon icon={faTrashAlt} size="lg" className={styles.trashIcon} /></div>}</TableCell>
                     </TableRow>
-                  </TableBody>
-                ) : (
-                  <TableBody>
-                    {timecard.map((row, index) => (
-                      <TableRow
-                        key={index}
-                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                      >
-                        <TableCell align="center">{row.date}</TableCell>
-                        <TableCell align="center">{row.dayOfWeek}</TableCell>
-                        <TableCell align="center">{row.workspot}</TableCell>
-                        <TableCell align="center">{row.attendance && `${row.attendance.slice(8, 10)}:${row.attendance.slice(10, 12)}`}</TableCell>
-                        <TableCell align="center">{row.leave && `${row.leave.slice(8, 10)}:${row.leave.slice(10, 12)}`}</TableCell>
-                        <TableCell align="center">{row.workTime && `${Math.floor(row.workTime / 60)}時間${row.workTime % 60}分`}</TableCell>
-                        <TableCell align="center">{row.regularWorkTime && `${Math.floor(row.regularWorkTime / 60)}時間${row.regularWorkTime % 60}分`}</TableCell>
-                        <TableCell align="center">{row.irregularWorkTime && `${Math.floor(row.irregularWorkTime / 60)}時間${row.irregularWorkTime % 60}分`}</TableCell>
-                        <TableCell align="center">{row.rest && `${Math.floor(row.rest / 60)}時間${row.rest % 60}分`}</TableCell>
-                        <TableCell align="center">{row.attendance && <Button onClick={async () => onDeleteHandler(row.user, row.attendance)}>delete</Button>}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                )}
-              </Table>
-            </TableContainer>
-          </div>
-        </>
+                  ))}
+                </TableBody>
+              )}
+            </Table>
+          </TableContainer>
+        </div>
       )}
     </div>
   );

@@ -1,0 +1,22 @@
+.selectBox{
+  margin-bottom: 1rem;
+}
+
+.buttonGroupe{
+  text-align: center;
+}
+
+.button{
+  margin: 1rem;
+  width: 6rem
+}
+
+.trashIcon{
+  color: #2484C5;
+  transition: transform 450ms, color 0.7s;
+}
+
+.trashIcon:hover{
+  color: #f44336;
+  transform: scale(1.08);
+}
