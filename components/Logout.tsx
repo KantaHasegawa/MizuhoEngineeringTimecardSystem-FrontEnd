@@ -4,6 +4,9 @@ import useAxios from '../hooks/useAxios';
 import { useSetRecoilState } from "recoil";
 import { accessTokenState } from '../components/atoms';
 import Cookies from 'js-cookie'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import styles from '../styels/layout.module.scss'
 
 const Logout = () => {
   const axios = useAxios();
@@ -20,7 +23,9 @@ const Logout = () => {
     }
   }
   return (
-    <Button onClick={async() => onClickHandler()}>Logout</Button>
+      <div onClick={async () => onClickHandler()} style={{display: "inline"}} >
+      <FontAwesomeIcon icon={faSignOutAlt} size="2x" className={styles.navbarIcon}/>
+      </div>
   )
 }
 

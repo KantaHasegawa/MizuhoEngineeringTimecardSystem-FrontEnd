@@ -1,4 +1,5 @@
 // import App from 'next/app'
+import 'modern-css-reset/dist/reset.min.css'
 
 import { RecoilRoot } from "recoil"
 import '../styels/global.scss';

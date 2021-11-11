@@ -33,7 +33,7 @@ const AdminPage = () => {
       latestTimecardsIsError ? <div>isError</div> : (
         <>
           <div>
-            <h2>未出勤</h2>
+            <h1>未出勤</h1>
             {latestTimecards?.notAttendTimecards.map((item, index) => {
               return (
                 <NotAttend timecard={item} key={index}></NotAttend>
