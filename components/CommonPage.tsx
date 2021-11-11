@@ -49,6 +49,7 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
     try {
       await axios.post("timecard/common", params)
       mutate(`timecard/latest/${user.name}`)
+      mutate(`timecard/latestall`)
       alert("success")
     } catch (err) {
       console.log(err)
