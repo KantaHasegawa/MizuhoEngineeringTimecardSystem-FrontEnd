@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, CircularProgress, TextField } from "@mui/material";
+import { Button, CircularProgress, TextField, Box, Paper } from "@mui/material";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import Layout from "../../components/Layout";
 import { accessTokenState } from "../../components/atoms";
@@ -8,6 +8,16 @@ import router from "next/router";
 import useWorkspotList from "../../hooks/useWorkspotList";
 import ReactPaginate from "react-paginate";
 import Link from "next/link";
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import styles from '../../styels/workspotList.module.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch, faPlusSquare } from '@fortawesome/free-solid-svg-icons'
+
+const Item = styled(Paper)(({ theme }) => ({
+  height: 60,
+  lineHeight: '60px',
+  margin: "1rem",
+}));
 
 const WorkspotListPage = () => {
   const accessToken = useRecoilValue(accessTokenState);
@@ -29,11 +39,11 @@ const WorkspotListPage = () => {
 
   const DisplayWorkspotList = ({ workspot }: { workspot: string }) => {
     return (
-      <div className="workspot">
+      <Box className="workspot">
         <Link href={`${workspot}`}>
-          <a>{workspot}</a>
+          <Item><h4>{workspot}</h4></Item>
         </Link>
-      </div>
+      </Box>
     );
   };
 
@@ -68,38 +78,41 @@ const WorkspotListPage = () => {
       ) : currentUser.role !== "admin" ? (
         <div>You don't have permission</div>
       ) : (
-        <>
+        <Box sx={{ textAlign: "center" }}>
           <TextField
             id="outlined-basic"
             label="検索"
             variant="outlined"
             name="inputText"
+            size="small"
             onChange={onChangeHandler}
           />
-          <Button variant="outlined" onClick={onSearchHandler}>
-            検索
-          </Button>
-          <br />
-          <Link href="new">
-            <a>勤務地を追加</a>
+          <div className={styles.icon} onClick={onSearchHandler}>
+            <FontAwesomeIcon icon={faSearch} size="lg" />
+          </div>
+          <Link href="/workspot/new">
+            <div className={styles.icon} onClick={onSearchHandler}>
+              <FontAwesomeIcon icon={faPlusSquare} size="lg" />
+            </div>
           </Link>
           {state.isLoading ? (
             <CircularProgress />
           ) : state.isError ? (
             <div>error</div>
           ) : (
-            <div>
-              <h1>Workspot List</h1>
-              {workspotListState
-                .slice(pagesVisited, pagesVisited + usersPerPage)
-                .map((item: string, index: number) => {
-                  return (
-                    <DisplayWorkspotList
-                      workspot={item}
-                      key={index}
-                    ></DisplayWorkspotList>
-                  );
-                })}
+            <>
+              <Box sx={{ padding: "1rem" }}>
+                {workspotListState
+                  .slice(pagesVisited, pagesVisited + usersPerPage)
+                  .map((item: string, index: number) => {
+                    return (
+                      <DisplayWorkspotList
+                        workspot={item}
+                        key={index}
+                      ></DisplayWorkspotList>
+                    );
+                  })}
+              </Box>
 
               <ReactPaginate
                 previousLabel={"前"}
@@ -110,11 +123,14 @@ const WorkspotListPage = () => {
                 onPageChange={changePage}
                 containerClassName={"pagination"}
                 pageClassName={"pages pagination"}
+                breakClassName={"pages pagination"}
+                nextClassName={"pages pagination"}
+                previousClassName={"pages pagination"}
                 activeClassName={"active"}
               />
-            </div>
+            </>
           )}
-        </>
+        </Box>
       )}
     </Layout>
   );

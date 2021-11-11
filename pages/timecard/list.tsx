@@ -17,6 +17,7 @@ import Head from 'next/head'
 import { Box } from "@material-ui/core";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import Link from 'next/link'
 dayjs.locale("ja");
 
 import styles from '../../styels/timecardList.module.scss'
@@ -276,6 +277,9 @@ const UserListPage = () => {
                 <div className={styles.buttonGroupe}>
                   <Button className={styles.button} variant="outlined" type="submit" disabled={!watch("user") || !watch("year") || !watch("month")}>確定</Button>
                   <Button className={styles.button} variant="outlined" color="success" onClick={async () => onExcelHandler()} disabled={!watch("user") || !watch("year") || !watch("month")}>Excel</Button>
+                  <Link href="/timecard/new">
+                    <Button className={styles.button} variant="outlined" color="info" >新規作成</Button>
+                  </Link>
                 </div>
               </form>
             </Box>
