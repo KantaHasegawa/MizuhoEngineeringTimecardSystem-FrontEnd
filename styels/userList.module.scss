@@ -1,0 +1,12 @@
+  .icon{
+    display: inline-block;
+    margin-top: 0.7rem;
+    margin-left: 0.3rem;
+    color: #2484C5;
+    transition: transform 450ms, color 0.7s;
+  }
+
+.icon:hover{
+  color: #073C8C;
+  transform: scale(1.08);
+}

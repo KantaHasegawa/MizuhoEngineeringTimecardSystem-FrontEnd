@@ -5,11 +5,21 @@ import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../components/atoms";
 import React, { useState } from "react";
 import ReactPaginate from "react-paginate";
-import { Button, CircularProgress, TextField } from "@mui/material";
+import { Button, CircularProgress, TextField, Box, Paper } from "@mui/material";
 import { useSWRConfig } from "swr";
 import useAxios from "../../hooks/useAxios";
 import Link from "next/link";
 import useUserList from "../../hooks/useUserList";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch, faUserPlus } from '@fortawesome/free-solid-svg-icons'
+import styles from '../../styels/userList.module.scss'
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+
+const Item = styled(Paper)(({ theme }) => ({
+  height: 60,
+  lineHeight: '60px',
+  margin: "1rem",
+}));
 
 const UserListPage = () => {
   const router = useRouter();
@@ -34,11 +44,11 @@ const UserListPage = () => {
 
   const DisplayUsers = ({ user }: { user: string }) => {
     return (
-      <div className="user">
+      <Box className="user">
         <Link href={`${user}`}>
-          <a>{user}</a>
+          <Item><h4>{user}</h4></Item>
         </Link>
-      </div>
+      </Box>
     );
   };
 
@@ -73,30 +83,37 @@ const UserListPage = () => {
       ) : currentUser.role !== "admin" ? (
         <div>You don't have permission</div>
       ) : (
-        <>
+        <Box sx={{ textAlign: "center" }}>
           <TextField
             id="outlined-basic"
             label="検索"
             variant="outlined"
             name="inputText"
             onChange={onChangeHandler}
+            size="small"
           />
-          <Button variant="outlined" onClick={onSearchHandler}>
-            検索
-          </Button>
+
+          <div className={styles.icon} onClick={onSearchHandler}>
+            <FontAwesomeIcon icon={faSearch} size="lg" />
+          </div>
+          <Link href="/auth/signup">
+            <div className={styles.icon} onClick={onSearchHandler}>
+              <FontAwesomeIcon icon={faUserPlus} size="lg" />
+            </div>
+          </Link>
           {state.isLoading ? (
             <CircularProgress />
           ) : state.isError ? (
             <div>error</div>
           ) : (
-            <div>
-              <h1>User List</h1>
-              {userListState
-                .slice(pagesVisited, pagesVisited + usersPerPage)
-                .map((item: string, index: number) => {
-                  return <DisplayUsers user={item} key={index}></DisplayUsers>;
-                })}
-
+            <>
+              <Box sx={{ padding: "1rem" }}>
+                {userListState
+                  .slice(pagesVisited, pagesVisited + usersPerPage)
+                  .map((item: string, index: number) => {
+                    return <DisplayUsers user={item} key={index}></DisplayUsers>;
+                  })}
+              </Box>
               <ReactPaginate
                 previousLabel={"前"}
                 nextLabel={"次"}
@@ -106,11 +123,14 @@ const UserListPage = () => {
                 onPageChange={changePage}
                 containerClassName={"pagination"}
                 pageClassName={"pages pagination"}
+                breakClassName={"pages pagination"}
+                nextClassName={"pages pagination"}
+                previousClassName={"pages pagination"}
                 activeClassName={"active"}
               />
-            </div>
+            </>
           )}
-        </>
+        </Box>
       )}
     </Layout>
   );
