@@ -27,7 +27,6 @@ const Navbar = () => {
               <div className={styles.imageWrapper}>
                 <Link href="/">
                   <Image
-                    className={styles.logo}
                     src={mizuhoLogo}
                     alt="ミズホエンジニアリング"
                     width={100}
