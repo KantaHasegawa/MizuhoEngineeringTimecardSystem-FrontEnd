@@ -1,12 +1,14 @@
 // import App from 'next/app'
-import 'modern-css-reset/dist/reset.min.css'
+// import 'modern-css-reset/dist/reset.min.css'
 
+import { CssBaseline } from "@mui/material";
 import { RecoilRoot } from "recoil"
 import '../styels/global.scss';
 
 function MyApp({ Component, pageProps }) {
   return (
     <RecoilRoot>
+      <CssBaseline />
       <Component {...pageProps} />
     </RecoilRoot>
   )

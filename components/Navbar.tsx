@@ -7,7 +7,7 @@ import Logout from './Logout'
 import styles from '../styels/layout.module.scss'
 import { AppBar, Box, Button, IconButton, Toolbar, Typography, Container } from '@material-ui/core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMapMarked, faCalendarAlt, faUsers, faSignInAlt, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import { faMapMarkedAlt, faCalendarAlt, faUsers, faSignInAlt, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
 import mizuhoLogo from '../public/mizuho-logo.png'
 import useCurrentUser from '../hooks/useCurrentUser'
@@ -48,7 +48,7 @@ const Navbar = () => {
                       <FontAwesomeIcon icon={faCalendarAlt} size="2x" className={styles.navbarIcon} />
                     </Link>
                     <Link href="/workspot/list">
-                      <FontAwesomeIcon icon={faMapMarked} size="2x" className={styles.navbarIcon} />
+                      <FontAwesomeIcon icon={faMapMarkedAlt} size="2x" className={styles.navbarIcon} />
                     </Link>
                     <Logout></Logout>
                   </div>

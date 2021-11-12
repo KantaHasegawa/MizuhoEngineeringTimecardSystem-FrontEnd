@@ -9,11 +9,20 @@ import { useSWRConfig } from 'swr'
 import useAxios from "../../hooks/useAxios";
 import Link from 'next/link'
 import useUserRelationList from '../../hooks/useUserRelationList'
-import { Button, CircularProgress, Grid, Pagination } from "@mui/material";
+import { Button, CircularProgress, Grid, Pagination, Box, SpeedDial, SpeedDialIcon, SpeedDialAction, Paper, Typography } from "@mui/material";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUserEdit, faCalendarAlt, faMapMarkedAlt, faSignInAlt, faSignOutAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { styled } from "@mui/system";
 
 type TypeParams = {
   id: string
 }
+
+const Item = styled(Paper)(({ theme }) => ({
+  height: 60,
+  lineHeight: '60px',
+  margin: "1rem",
+}));
 
 const UserShowPage = ({ user }: { user: string }) => {
   const router = useRouter();
@@ -38,11 +47,41 @@ const UserShowPage = ({ user }: { user: string }) => {
     }
   }
 
+  const SpeedDialComponent = () => {
+    const actions = [
+      {
+        icon: <Link href={`/user/edit/${user}`}><FontAwesomeIcon icon={faUserEdit} size="lg" /></Link>, name: 'パスワードの変更'
+      },
+      {
+        icon: <Link href={`/user/relation/${user}`}><FontAwesomeIcon icon={faMapMarkedAlt} size="lg" /></Link>, name: '勤務地の編集'
+      },
+      { icon: <div onClick={async () => onClickDeleteUser(user)}><FontAwesomeIcon icon={faTrashAlt} size="lg" /></div>, name: '削除' },
+    ];
+    return (
+      <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
+        <SpeedDial
+          ariaLabel="SpeedDial basic example"
+          sx={{ position: 'absolute', bottom: -200, right: 70 }}
+          icon={<SpeedDialIcon />}
+          direction="down"
+        >
+          {actions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+            />
+          ))}
+        </SpeedDial>
+      </Box>
+    )
+  }
+
   const DisplayUserRelationList = ({ relation }: { relation: any }) => {
     return (
-      <div className="user">
-        <h3>{relation.workspot}</h3>
-      </div>
+      <Box className="user">
+        <Item><h4>{relation.workspot}</h4></Item>
+      </Box>
     )
   }
 
@@ -54,37 +93,32 @@ const UserShowPage = ({ user }: { user: string }) => {
           : currentUser.role !== "admin" ? <div>You don't have permission</div>
             :
             <>
-              <h1>{user}</h1>
-              <Button onClick={async () => onClickDeleteUser(user)}>削除</Button>
-              <Link href={`/user/edit/${user}`}>
-                <a>パスワード変更</a>
-              </Link>
-              {
-                !userRelationList ? <CircularProgress />
-                  : userRelationListIsError ? <div>error</div>
-                    :
-                    <div>
-                      <h3>登録済の勤務地</h3>
-                      <Link href={`/user/relation/${user}`}>
-                        <a>勤務地の編集</a>
-                      </Link>
-                      {
-                        userRelationList?.params.slice(pagesVisited, pagesVisited + usersPerPage).map((relation, index) => {
-                          return <DisplayUserRelationList relation={relation} key={index}></DisplayUserRelationList>
-                        })
-                      }
-                      <Grid
-                        container
-                        direction="column"
-                        alignItems="center"
-                        justifyContent="center"
-                      >
-                        <Grid>
-                          <Pagination count={pageCount} color="primary" page={pageNumber} onChange={(e, page) => setPageNumber(page)} />
+              <Typography sx={{ fontSize: "1.5rem", fontWeight: "bold", marginLeft: "3rem"}} >{user}</Typography>
+              <SpeedDialComponent></SpeedDialComponent>
+              <Box sx={{ padding: "0 1rem", textAlign: "center" }}>
+                {
+                  !userRelationList ? <CircularProgress />
+                    : userRelationListIsError ? <div>error</div>
+                      :
+                      <div>
+                        {
+                          userRelationList?.params.slice(pagesVisited, pagesVisited + usersPerPage).map((relation, index) => {
+                            return <DisplayUserRelationList relation={relation} key={index}></DisplayUserRelationList>
+                          })
+                        }
+                        <Grid
+                          container
+                          direction="column"
+                          alignItems="center"
+                          justifyContent="center"
+                        >
+                          <Grid>
+                            <Pagination count={pageCount} color="primary" page={pageNumber} onChange={(e, page) => setPageNumber(page)} />
+                          </Grid>
                         </Grid>
-                      </Grid>
-                    </div>
-              }
+                      </div>
+                }
+              </Box>
             </>
       }
     </Layout>
