@@ -1,3 +1,7 @@
+.List{
+  z-index: 0;
+}
+
 .ListItemEven,
 .ListItemOdd {
 padding-left: 1rem;
@@ -8,5 +12,5 @@ justify-content: space-between;
 }
 
 .ListItemEven {
-  background-color: #f8f8f0;
+  background-color: #EEF6FC;
 }

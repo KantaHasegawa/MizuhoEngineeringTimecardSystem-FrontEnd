@@ -8,11 +8,12 @@ import getAllUserIDs from '../../lib/getAllUserIDs'
 import { useSWRConfig } from 'swr'
 import useAxios from "../../hooks/useAxios";
 import Link from 'next/link'
-import useUserRelationList from '../../hooks/useUserRelationList'
+import useUserRelationList, { TypeUserRelation} from '../../hooks/useUserRelationList'
 import { Button, CircularProgress, Grid, Pagination, Box, SpeedDial, SpeedDialIcon, SpeedDialAction, Paper, Typography } from "@mui/material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserEdit, faCalendarAlt, faMapMarkedAlt, faSignInAlt, faSignOutAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { styled } from "@mui/system";
+import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 
 type TypeParams = {
   id: string
@@ -32,10 +33,6 @@ const UserShowPage = ({ user }: { user: string }) => {
   const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
   const { userRelationList, userRelationListIsError } = useUserRelationList(user);
   if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== "admin")) router.push("/")
-  const [pageNumber, setPageNumber] = useState(1);
-  const usersPerPage = 10;
-  const pagesVisited = (pageNumber - 1) * usersPerPage;
-  const pageCount = userRelationList ? Math.ceil(userRelationList.params.length / usersPerPage) : 0
 
   const onClickDeleteUser = async (user: string) => {
     try {
@@ -77,11 +74,11 @@ const UserShowPage = ({ user }: { user: string }) => {
     )
   }
 
-  const DisplayUserRelationList = ({ relation }: { relation: any }) => {
+  const Row = ({ data, index, style }: ListChildComponentProps<TypeUserRelation[]>) => {
     return (
-      <Box className="user">
-        <Item><h4>{relation.workspot}</h4></Item>
-      </Box>
+      <div className={index % 2 ? "ListItemOdd" : "ListItemEven"} style={style}>
+        <Typography sx={{ fontSize: "1rem" }}>{data[index].workspot}</Typography>
+      </div>
     )
   }
 
@@ -93,30 +90,25 @@ const UserShowPage = ({ user }: { user: string }) => {
           : currentUser.role !== "admin" ? <div>You don't have permission</div>
             :
             <>
-              <Typography sx={{ fontSize: "1.5rem", fontWeight: "bold", marginLeft: "3rem"}} >{user}</Typography>
+              <Typography sx={{ fontSize: "1.5rem", fontWeight: "bold", marginLeft: "3rem" }} >{user}</Typography>
+              <div style={{position: "relative", zIndex: 1}}>
               <SpeedDialComponent></SpeedDialComponent>
-              <Box sx={{ padding: "0 1rem", textAlign: "center" }}>
+              </div>
+              <Box sx={{ padding: "0 1rem", textAlign: "center", marginTop: "2rem" }}>
                 {
                   !userRelationList ? <CircularProgress />
                     : userRelationListIsError ? <div>error</div>
                       :
-                      <div>
-                        {
-                          userRelationList?.params.slice(pagesVisited, pagesVisited + usersPerPage).map((relation, index) => {
-                            return <DisplayUserRelationList relation={relation} key={index}></DisplayUserRelationList>
-                          })
-                        }
-                        <Grid
-                          container
-                          direction="column"
-                          alignItems="center"
-                          justifyContent="center"
-                        >
-                          <Grid>
-                            <Pagination count={pageCount} color="primary" page={pageNumber} onChange={(e, page) => setPageNumber(page)} />
-                          </Grid>
-                        </Grid>
-                      </div>
+                      <List
+                        className="List"
+                        height={650}
+                        width={"100%"}
+                        itemCount={userRelationList.params.length}
+                        itemData={userRelationList.params}
+                        itemSize={80}
+                      >
+                        {Row}
+                      </List>
                 }
               </Box>
             </>
