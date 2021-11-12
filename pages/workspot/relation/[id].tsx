@@ -9,9 +9,13 @@ import useWorkspotRelationEdit, {
   TypeWorkspotRelation,
 } from "../../../hooks/useWorkspotRelationEdit";
 import Select from "react-select";
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress, Box, Grid, Pagination, Card, Typography } from "@mui/material";
 import useAxios from "../../../hooks/useAxios";
 import { mutate } from "swr";
+import { FixedSizeList as List, ListChildComponentProps } from "react-window";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import styles from '../../../styels/workspotRelationPage.module.scss'
 
 type TypeParams = {
   id: string;
@@ -68,58 +72,60 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
     }
   };
 
-  const UserRelationList = ({ item }: { item: TypeWorkspotRelation }) => {
+  const Row = ({ data, index, style }: ListChildComponentProps<TypeWorkspotRelation[]>) => {
     return (
-      <div>
-        {item.user}
-        <Button variant="outlined" onClick={async () => onDelete(item.user)}>
-          delete
-        </Button>
+      <div className={index % 2 ? "ListItemOdd" : "ListItemEven"} style={style}>
+        <Typography sx={{ fontSize: "1rem" }}>{data[index].user}</Typography>
+        <div onClick={async () => onDelete(data[index].user)} ><FontAwesomeIcon icon={faTrashAlt} size="lg" className={styles.trashIcon} /></div>
       </div>
-    );
-  };
+    )
+  }
 
   return (
-    <Layout title="ミズホエンジニアリング | 社員詳細">
-      {currentUserIsLoading ? (
-        <CircularProgress />
-      ) : currentUserIsError ? (
-        <div>error</div>
-      ) : currentUser.role !== "admin" ? (
-        <div>You don't have permission</div>
-      ) : (
-        <>
-          <div>{workspot}</div>
-          {!workspotSelectBoxResponse ? (
-                  <CircularProgress />
-          ) : workspotSelectBoxResponseIsError ? (
-            <div>has error</div>
-          ) : (
-            <div>
-              <Select
-                defaultValue={selectedOption}
-                value={selectedOption}
-                onChange={setSelectedOption}
-                options={workspotSelectBoxResponse.selectBoxItems}
-                isClearable={true}
-              />
-              <Button variant="outlined" onClick={async () => onSubmit()}>
-                登録
-              </Button>
-              <h3>登録済みの勤務地</h3>
-              {workspotSelectBoxResponse &&
-                workspotSelectBoxResponse.relations.map((item, index) => {
-                  return (
-                    <UserRelationList
-                      item={item}
-                      key={index}
-                    ></UserRelationList>
-                  );
-                })}
-            </div>
-          )}
-        </>
-      )}
+    <Layout title="ミズホエンジニアリング | 編集">
+      <Box>
+        {currentUserIsLoading ? (
+          <CircularProgress />
+        ) : currentUserIsError ? (
+          <div>error</div>
+        ) : currentUser.role !== "admin" ? (
+          <div>You don't have permission</div>
+        ) : (
+          <>
+            <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>{workspot}</Typography>
+            {!workspotSelectBoxResponse ? (
+              <CircularProgress />
+            ) : workspotSelectBoxResponseIsError ? (
+              <div>has error</div>
+            ) : (
+              <div>
+                <Select
+                  defaultValue={selectedOption}
+                  value={selectedOption}
+                  onChange={setSelectedOption}
+                  options={workspotSelectBoxResponse.selectBoxItems}
+                  isClearable={true}
+                />
+                <Box sx={{ textAlign: "center", margin: "1rem" }}>
+                  <Button className={styles.button} variant="outlined" onClick={async () => onSubmit()}>登録</Button>
+                </Box>
+                {workspotSelectBoxResponse &&
+                  <List
+                    className="List"
+                    height={650}
+                    width={"100%"}
+                    itemCount={workspotSelectBoxResponse.relations.length}
+                    itemData={workspotSelectBoxResponse.relations}
+                    itemSize={80}
+                  >
+                    {Row}
+                  </List>
+                }
+              </div>
+            )}
+          </>
+        )}
+      </Box>
     </Layout>
   );
 };

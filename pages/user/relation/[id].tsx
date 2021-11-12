@@ -82,7 +82,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
   }
 
   return (
-    <Layout title="ミズホエンジニアリング | 社員詳細">
+    <Layout title="ミズホエンジニアリング | 編集">
       <Box>
         {currentUserIsLoading ? (
           <CircularProgress />
