@@ -1,11 +1,9 @@
-// import App from 'next/app'
-// import 'modern-css-reset/dist/reset.min.css'
-
+import { AppProps } from 'next/app'
 import { CssBaseline } from "@mui/material";
 import { RecoilRoot } from "recoil"
 import '../styels/global.scss';
 
-function MyApp({ Component, pageProps }) {
+const MyApp: React.FC<AppProps> = ({ Component, pageProps }): JSX.Element => {
   return (
     <RecoilRoot>
       <CssBaseline />
