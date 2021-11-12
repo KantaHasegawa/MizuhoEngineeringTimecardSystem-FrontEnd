@@ -7,9 +7,12 @@ import React, { useState } from "react";
 import { useSWRConfig } from "swr";
 import useAxios from "../../hooks/useAxios";
 import Link from "next/link";
-import useWorkspotRelationList from "../../hooks/useWorkspotRelationList";
-import { Button, CircularProgress, Grid, Pagination} from "@mui/material";
+import useWorkspotRelationList, { TypeWorkspotRelation } from "../../hooks/useWorkspotRelationList";
+import { Button, CircularProgress, Grid, Pagination, Box, SpeedDial, SpeedDialIcon, SpeedDialAction, Paper, Typography } from "@mui/material";
 import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUserEdit, faCalendarAlt, faUsers, faSignInAlt, faSignOutAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 
 type TypeParams = {
   id: string;
@@ -29,12 +32,6 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
     (currentUser && currentUser.role !== "admin")
   )
     router.push("/");
-  const [pageNumber, setPageNumber] = useState(1);
-  const workspotsPerPage = 10;
-  const pagesVisited = (pageNumber - 1) * workspotsPerPage;
-  const pageCount = workspotRelationList
-    ? Math.ceil(workspotRelationList.params.length / workspotsPerPage)
-    : 0;
 
   const onClickDeleteWorkspot = async (workspot: string) => {
     const params = {
@@ -50,13 +47,40 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
     }
   };
 
-  const DisplayWorkspotRelationList = ({ relation }: { relation: any }) => {
+  const SpeedDialComponent = () => {
+    const actions = [
+      {
+        icon: <Link href={`/workspot/relation/${workspot}`}><FontAwesomeIcon icon={faUsers} size="lg" /></Link>, name: '紐づけられた社員の編集'
+      },
+      { icon: <div onClick={async () => onClickDeleteWorkspot(workspot)}><FontAwesomeIcon icon={faTrashAlt} size="lg" /></div>, name: '削除' },
+    ];
     return (
-      <div className="workspot">
-        <h3>{relation.user}</h3>
+      <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
+        <SpeedDial
+          ariaLabel="SpeedDial basic example"
+          sx={{ position: 'absolute', bottom: -155, right: 30 }}
+          icon={<SpeedDialIcon />}
+          direction="down"
+        >
+          {actions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+            />
+          ))}
+        </SpeedDial>
+      </Box>
+    )
+  }
+
+  const Row = ({ data, index, style }: ListChildComponentProps<TypeWorkspotRelation[]>) => {
+    return (
+      <div className={index % 2 ? "ListItemOdd" : "ListItemEven"} style={style}>
+        <Typography sx={{ fontSize: "1rem" }}>{data[index].user}</Typography>
       </div>
-    );
-  };
+    )
+  }
 
   return (
     <Layout title="ミズホエンジニアリング | 勤務地詳細">
@@ -68,43 +92,34 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
         <div>You don't have permission</div>
       ) : (
         <>
-          <h1>{workspot}</h1>
-          <Button onClick={async () => onClickDeleteWorkspot(workspot)}>削除</Button>
-          {!workspotRelationList ? (
-            <CircularProgress />
-          ) : workspotRelationListIsError ? (
-            <div>error</div>
-          ) : (
-            <div>
-              <h3>登録済みの社員</h3>
-              <Link href={`/workspot/relation/${workspot}`}>
-                <a>紐付けられた社員の編集</a>
-              </Link>
-              {workspotRelationList?.params
-                .slice(pagesVisited, pagesVisited + workspotsPerPage)
-                .map((relation, index) => {
-                  return (
-                    <DisplayWorkspotRelationList
-                      relation={relation}
-                      key={index}
-                    ></DisplayWorkspotRelationList>
-                  );
-                })}
-              <Grid
-                container
-                direction="column"
-                alignItems="center"
-                justifyContent="center"
+          <Box sx={{width: "23rem"}}>
+            <Typography sx={{ fontSize: "1rem", fontWeight: "bold", marginLeft: "1rem" }} >{workspot}</Typography>
+          </Box>
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <SpeedDialComponent></SpeedDialComponent>
+          </div>
+          <Box sx={{ padding: "0 1rem", textAlign: "center", marginTop: "2rem" }}>
+            {!workspotRelationList ? (
+              <CircularProgress />
+            ) : workspotRelationListIsError ? (
+              <div>error</div>
+            ) : (
+              <List
+                className="List"
+                height={650}
+                width={"100%"}
+                itemCount={workspotRelationList.params.length}
+                itemData={workspotRelationList.params}
+                itemSize={45}
               >
-                <Grid>
-                  <Pagination count={pageCount} color="primary" page={pageNumber} onChange={(e, page) => setPageNumber(page)} />
-                </Grid>
-              </Grid>
-            </div>
-          )}
+                {Row}
+              </List>
+            )}
+          </Box>
         </>
-      )}
-    </Layout>
+      )
+      }
+    </Layout >
   );
 };
 

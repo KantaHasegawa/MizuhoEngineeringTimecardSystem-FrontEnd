@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, CircularProgress, TextField, Box, Paper, Grid, Pagination } from "@mui/material";
+import { Button, CircularProgress, TextField, Box, Paper, Grid, Pagination, Typography } from "@mui/material";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import Layout from "../../components/Layout";
 import { accessTokenState } from "../../components/atoms";
@@ -13,8 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faPlusSquare } from '@fortawesome/free-solid-svg-icons'
 
 const Item = styled(Paper)(({ theme }) => ({
-  height: 60,
-  lineHeight: '60px',
+  height: 80,
   margin: "1rem",
 }));
 
@@ -40,7 +39,7 @@ const WorkspotListPage = () => {
     return (
       <Box className="workspot">
         <Link href={`${workspot}`}>
-          <Item><h4>{workspot}</h4></Item>
+          <Item><Typography sx={{fontWeight: "bold", fontSize: "1rem"}}>{workspot}</Typography></Item>
         </Link>
       </Box>
     );

@@ -16,7 +16,6 @@ import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 
 const Item = styled(Paper)(({ theme }) => ({
   height: 60,
-  lineHeight: '60px',
   margin: "1rem",
 }));
 

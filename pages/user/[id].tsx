@@ -19,12 +19,6 @@ type TypeParams = {
   id: string
 }
 
-const Item = styled(Paper)(({ theme }) => ({
-  height: 60,
-  lineHeight: '60px',
-  margin: "1rem",
-}));
-
 const UserShowPage = ({ user }: { user: string }) => {
   const router = useRouter();
   const axios = useAxios();

@@ -2,12 +2,10 @@ import useSWR from "swr";
 import useAxios from "./useAxios";
 
 export type TypeWorkspotRelation = {
-  params: {
     attendance: string;
     password: string;
     role: string;
     user: string;
-  }
 };
 
 type TypeWorkspotRelationList = {
