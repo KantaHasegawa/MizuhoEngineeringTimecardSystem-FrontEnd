@@ -9,9 +9,13 @@ import useUserRelationEdit, {
   TypeUserRelation,
 } from "../../../hooks/useUserRelationEdit";
 import Select from "react-select";
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress, Box, Grid, Pagination, Card, Typography } from "@mui/material";
 import useAxios from "../../../hooks/useAxios";
 import { mutate } from "swr";
+import styles from '../../../styels/userRelationPage.module.scss'
+import { FixedSizeList as List, ListChildComponentProps } from "react-window";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 
 type TypeParams = {
   id: string;
@@ -68,54 +72,60 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
     }
   }
 
-  const UserRelationList = ({ item }: { item: TypeUserRelation }) => {
+  const Row = ({ data, index, style }: ListChildComponentProps<TypeUserRelation[]>) => {
     return (
-      <div>
-        {item.workspot}
-        <Button variant="outlined" onClick={async () => onDelete(item.workspot)}>delete</Button>
+      <div className={index % 2 ? "ListItemOdd" : "ListItemEven"} style={style}>
+        <Typography sx={{ fontSize: "1rem" }}>{data[index].workspot}</Typography>
+        <div onClick={async () => onDelete(data[index].workspot)} ><FontAwesomeIcon icon={faTrashAlt} size="lg" className={styles.trashIcon} /></div>
       </div>
     )
-  };
+  }
 
   return (
     <Layout title="ミズホエンジニアリング | 社員詳細">
-      {currentUserIsLoading ? (
-        <CircularProgress />
-      ) : currentUserIsError ? (
-        <div>error</div>
-      ) : currentUser.role !== "admin" ? (
-        <div>You don't have permission</div>
-      ) : (
-        <>
-          <div>{user}</div>
-          {!userSelectBoxResponse ? (
-            <CircularProgress />
-          ) : userSelectBoxResponseIsError ? (
-            <div>has error</div>
-          ) : (
-            <div>
-              <Select
-                defaultValue={selectedOption}
-                value={selectedOption}
-                onChange={setSelectedOption}
-                options={userSelectBoxResponse.selectBoxItems}
-                isClearable={true}
-              />
-              <Button variant="outlined" onClick={async () => onSubmit()}>登録</Button>
-              <h3>登録済みの勤務地</h3>
-              {userSelectBoxResponse &&
-                userSelectBoxResponse.relations.map((item, index) => {
-                  return (
-                    <UserRelationList
-                      item={item}
-                      key={index}
-                    ></UserRelationList>
-                  );
-                })}
-            </div>
-          )}
-        </>
-      )}
+      <Box>
+        {currentUserIsLoading ? (
+          <CircularProgress />
+        ) : currentUserIsError ? (
+          <div>error</div>
+        ) : currentUser.role !== "admin" ? (
+          <div>You don't have permission</div>
+        ) : (
+          <>
+            <Typography sx={{ fontSize: "1.2rem", fontWeight: "bold" }}>{user}</Typography>
+            {!userSelectBoxResponse ? (
+              <CircularProgress />
+            ) : userSelectBoxResponseIsError ? (
+              <div>has error</div>
+            ) : (
+              <div>
+                <Select
+                  defaultValue={selectedOption}
+                  value={selectedOption}
+                  onChange={setSelectedOption}
+                  options={userSelectBoxResponse.selectBoxItems}
+                  isClearable={true}
+                />
+                <Box sx={{ textAlign: "center", margin: "1rem" }}>
+                  <Button className={styles.button} variant="outlined" onClick={async () => onSubmit()}>登録</Button>
+                </Box>
+                {userSelectBoxResponse.relations &&
+                  <List
+                    className="List"
+                    height={650}
+                    width={"100%"}
+                    itemCount={userSelectBoxResponse.relations.length}
+                    itemData={userSelectBoxResponse.relations}
+                    itemSize={80}
+                  >
+                    {Row}
+                  </List>}
+
+              </div>
+            )}
+          </>
+        )}
+      </Box>
     </Layout>
   );
 };
