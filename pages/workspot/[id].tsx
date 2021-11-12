@@ -4,12 +4,11 @@ import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../components/atoms";
 import React, { useState } from "react";
-import ReactPaginate from "react-paginate";
 import { useSWRConfig } from "swr";
 import useAxios from "../../hooks/useAxios";
 import Link from "next/link";
 import useWorkspotRelationList from "../../hooks/useWorkspotRelationList";
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress, Grid, Pagination} from "@mui/material";
 import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs'
 
 type TypeParams = {
@@ -30,9 +29,9 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
     (currentUser && currentUser.role !== "admin")
   )
     router.push("/");
-  const [pageNumber, setPageNumber] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
   const workspotsPerPage = 10;
-  const pagesVisited = pageNumber * workspotsPerPage;
+  const pagesVisited = (pageNumber - 1) * workspotsPerPage;
   const pageCount = workspotRelationList
     ? Math.ceil(workspotRelationList.params.length / workspotsPerPage)
     : 0;
@@ -57,10 +56,6 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
         <h3>{relation.user}</h3>
       </div>
     );
-  };
-
-  const changePage = ({ selected }: { selected: any }) => {
-    setPageNumber(selected);
   };
 
   return (
@@ -95,17 +90,16 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
                     ></DisplayWorkspotRelationList>
                   );
                 })}
-              <ReactPaginate
-                previousLabel={"前"}
-                nextLabel={"次"}
-                pageCount={pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
-                onPageChange={changePage}
-                containerClassName={"pagination"}
-                pageClassName={"pages pagination"}
-                activeClassName={"active"}
-              />
+              <Grid
+                container
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Grid>
+                  <Pagination count={pageCount} color="primary" page={pageNumber} onChange={(e, page) => setPageNumber(page)} />
+                </Grid>
+              </Grid>
             </div>
           )}
         </>

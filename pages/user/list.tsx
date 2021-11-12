@@ -4,8 +4,7 @@ import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../components/atoms";
 import React, { useState } from "react";
-import ReactPaginate from "react-paginate";
-import { Button, CircularProgress, TextField, Box, Paper } from "@mui/material";
+import { Button, CircularProgress, TextField, Box, Paper, Stack, Pagination, Grid } from "@mui/material";
 import { useSWRConfig } from "swr";
 import useAxios from "../../hooks/useAxios";
 import Link from "next/link";
@@ -35,9 +34,9 @@ const UserListPage = () => {
     router.push("/");
   const { state, userListState, setUserListState } = useUserList();
   const [inputState, setInputState] = useState("");
-  const [pageNumber, setPageNumber] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
   const usersPerPage = 10;
-  const pagesVisited = pageNumber * usersPerPage;
+  const pagesVisited = (pageNumber - 1) * usersPerPage;
   const pageCount = userListState
     ? Math.ceil(userListState.length / usersPerPage)
     : 0;
@@ -50,10 +49,6 @@ const UserListPage = () => {
         </Link>
       </Box>
     );
-  };
-
-  const changePage = ({ selected }: { selected: number }) => {
-    setPageNumber(selected);
   };
 
   const onChangeHandler = (event: any) => {
@@ -114,20 +109,16 @@ const UserListPage = () => {
                     return <DisplayUsers user={item} key={index}></DisplayUsers>;
                   })}
               </Box>
-              <ReactPaginate
-                previousLabel={"前"}
-                nextLabel={"次"}
-                pageCount={pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
-                onPageChange={changePage}
-                containerClassName={"pagination"}
-                pageClassName={"pages pagination"}
-                breakClassName={"pages pagination"}
-                nextClassName={"pages pagination"}
-                previousClassName={"pages pagination"}
-                activeClassName={"active"}
-              />
+              <Grid
+                container
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Grid>
+                  <Pagination count={pageCount} color="primary" page={pageNumber} onChange={(e, page) => setPageNumber(page)} />
+                </Grid>
+              </Grid>
             </>
           )}
         </Box>

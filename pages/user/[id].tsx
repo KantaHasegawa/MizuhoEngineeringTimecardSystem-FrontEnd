@@ -4,13 +4,12 @@ import { useRouter } from 'next/router';
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from '../../components/atoms';
 import React, { useState } from 'react'
-import ReactPaginate from 'react-paginate'
 import getAllUserIDs from '../../lib/getAllUserIDs'
 import { useSWRConfig } from 'swr'
 import useAxios from "../../hooks/useAxios";
 import Link from 'next/link'
 import useUserRelationList from '../../hooks/useUserRelationList'
-import { Button, CircularProgress } from "@mui/material";
+import { Button, CircularProgress, Grid, Pagination } from "@mui/material";
 
 type TypeParams = {
   id: string
@@ -24,9 +23,9 @@ const UserShowPage = ({ user }: { user: string }) => {
   const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
   const { userRelationList, userRelationListIsError } = useUserRelationList(user);
   if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== "admin")) router.push("/")
-  const [pageNumber, setPageNumber] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
   const usersPerPage = 10;
-  const pagesVisited = pageNumber * usersPerPage;
+  const pagesVisited = (pageNumber - 1) * usersPerPage;
   const pageCount = userRelationList ? Math.ceil(userRelationList.params.length / usersPerPage) : 0
 
   const onClickDeleteUser = async (user: string) => {
@@ -46,11 +45,6 @@ const UserShowPage = ({ user }: { user: string }) => {
       </div>
     )
   }
-
-  const changePage = ({ selected }: { selected: any }) => {
-    setPageNumber(selected);
-    getAllUserIDs();
-  };
 
   return (
     <Layout title="ミズホエンジニアリング | 社員詳細">
@@ -79,16 +73,16 @@ const UserShowPage = ({ user }: { user: string }) => {
                           return <DisplayUserRelationList relation={relation} key={index}></DisplayUserRelationList>
                         })
                       }
-                      <ReactPaginate
-                        previousLabel={"前"}
-                        nextLabel={"次"}
-                        pageCount={pageCount}
-                        marginPagesDisplayed={2}
-                        pageRangeDisplayed={5}
-                        onPageChange={changePage}
-                        containerClassName={"pagination"}
-                        pageClassName={"pages pagination"}
-                        activeClassName={"active"} />
+                      <Grid
+                        container
+                        direction="column"
+                        alignItems="center"
+                        justifyContent="center"
+                      >
+                        <Grid>
+                          <Pagination count={pageCount} color="primary" page={pageNumber} onChange={(e, page) => setPageNumber(page)} />
+                        </Grid>
+                      </Grid>
                     </div>
               }
             </>

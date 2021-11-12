@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { Button, CircularProgress, TextField, Box, Paper } from "@mui/material";
+import { Button, CircularProgress, TextField, Box, Paper, Grid, Pagination } from "@mui/material";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import Layout from "../../components/Layout";
 import { accessTokenState } from "../../components/atoms";
 import { useRecoilValue } from "recoil";
 import router from "next/router";
 import useWorkspotList from "../../hooks/useWorkspotList";
-import ReactPaginate from "react-paginate";
 import Link from "next/link";
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import styles from '../../styels/workspotList.module.scss';
@@ -30,9 +29,9 @@ const WorkspotListPage = () => {
     router.push("/");
   const { state, workspotListState, setWorkspotListState } = useWorkspotList();
   const [inputState, setInputState] = useState("");
-  const [pageNumber, setPageNumber] = useState(0);
+  const [pageNumber, setPageNumber] = useState(1);
   const usersPerPage = 10;
-  const pagesVisited = pageNumber * usersPerPage;
+  const pagesVisited = (pageNumber - 1) * usersPerPage;
   const pageCount = workspotListState
     ? Math.ceil(workspotListState.length / usersPerPage)
     : 0;
@@ -45,10 +44,6 @@ const WorkspotListPage = () => {
         </Link>
       </Box>
     );
-  };
-
-  const changePage = ({ selected }: { selected: number }) => {
-    setPageNumber(selected);
   };
 
   const onChangeHandler = (event: any) => {
@@ -114,20 +109,16 @@ const WorkspotListPage = () => {
                   })}
               </Box>
 
-              <ReactPaginate
-                previousLabel={"前"}
-                nextLabel={"次"}
-                pageCount={pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
-                onPageChange={changePage}
-                containerClassName={"pagination"}
-                pageClassName={"pages pagination"}
-                breakClassName={"pages pagination"}
-                nextClassName={"pages pagination"}
-                previousClassName={"pages pagination"}
-                activeClassName={"active"}
-              />
+              <Grid
+                container
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Grid>
+                  <Pagination count={pageCount} color="primary" page={pageNumber} onChange={(e, page) => setPageNumber(page)} />
+                </Grid>
+              </Grid>
             </>
           )}
         </Box>
