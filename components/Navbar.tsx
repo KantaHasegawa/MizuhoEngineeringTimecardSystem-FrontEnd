@@ -23,7 +23,6 @@ const Navbar = () => {
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static" color="default">
           <Toolbar>
-            <Typography>
               <div className={styles.imageWrapper}>
                 <Link href="/">
                   <Image
@@ -34,7 +33,6 @@ const Navbar = () => {
                   ></Image>
                 </Link>
               </div>
-            </Typography>
             {currentUserIsLoading ? <CircularProgress />
               : currentUserIsError ? (
                 <div className={styles.navbarIcons}>
