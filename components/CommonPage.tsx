@@ -1,4 +1,3 @@
-import { Button } from "@material-ui/core";
 import useGetLatestTimecard, { TypeTimecard } from '../hooks/useGetLatestTimecard'
 import useUserRelationList from '../hooks/useUserRelationList'
 import "dayjs/locale/ja"
@@ -7,7 +6,9 @@ import useAxios from "../hooks/useAxios";
 import { mutate } from "swr";
 import { useState } from "react";
 import { TypeUserRelation } from "../hooks/useUserRelationList";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Box, Typography, Button } from "@mui/material";
+import MUILink from "@mui/material/Link";
+import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 dayjs.locale("ja")
 
 type TypeCurrentUser = {
@@ -66,47 +67,65 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
       ) : latestTimecardIsError ? (
         <div>error</div>
       ) : isTimecardStatus(latestTimecard) === "NotAttend" ? (
-        <div>
-          <div>not attend</div>
-          <Button variant="outlined" disabled={loading} onClick={async () => onClickHandler()}>出勤</Button>
-        </div>
+        <Box>
+          <Typography sx={{ fontSize: "0.8rem" }}>現在は未出勤です。現場に向かって出勤してください。</Typography>
+          <Box sx={{ textAlign: "center", margin: "3rem 0" }}>
+            <Button sx={{ width: "14rem" }} disabled={loading} variant="outlined" color="info" onClick={async () => onClickHandler()}>出勤</Button>
+          </Box>
+        </Box>
       ) : isTimecardStatus(latestTimecard) === "NotLeave" ? (
-        <div>
-          <div>not leave</div>
-          <p>出勤時刻: {`${latestTimecard.attendance.slice(4, 6)}月${latestTimecard.attendance.slice(6, 8)}日${latestTimecard.attendance.slice(8, 10)}時${latestTimecard.attendance.slice(10, 12)}分`}</p>
-          <Button variant="outlined" disabled={loading} onClick={async () => onClickHandler()}>退勤</Button>
-        </div>
+        <Box>
+          <Typography sx={{ fontSize: "0.8rem" }}>現在は出勤中です。出勤時刻は{`${latestTimecard.attendance.slice(4, 6)}月${latestTimecard.attendance.slice(6, 8)}日${latestTimecard.attendance.slice(8, 10)}時${latestTimecard.attendance.slice(10, 12)}分`}です。</Typography>
+          <Box sx={{ textAlign: "center", margin: "3rem 0" }}>
+            <Button sx={{ width: "14rem" }} disabled={loading} variant="outlined" color="warning" onClick={async () => onClickHandler()}>退勤</Button>
+          </Box>
+        </Box>
       ) : (
-        <div>
-          <div>already leave</div>
-          <p>出勤時刻: {`${latestTimecard.attendance.slice(4, 6)}月${latestTimecard.attendance.slice(6, 8)}日${latestTimecard.attendance.slice(8, 10)}時${latestTimecard.attendance.slice(10, 12)}分`}</p>
-          <p>退勤時刻: {`${latestTimecard.leave.slice(4, 6)}月${latestTimecard.leave.slice(6, 8)}日${latestTimecard.leave.slice(8, 10)}時${latestTimecard.leave.slice(10, 12)}分`}</p>
-        </div>
+        <Box sx={{ marginBottom: "2rem" }}>
+          <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>お疲れさまでした。</Typography>
+          <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>出勤時刻は{`${latestTimecard.attendance.slice(4, 6)}月${latestTimecard.attendance.slice(6, 8)}日${latestTimecard.attendance.slice(8, 10)}時${latestTimecard.attendance.slice(10, 12)}分`}、退勤時刻は{`${latestTimecard.leave.slice(4, 6)}月${latestTimecard.leave.slice(6, 8)}日${latestTimecard.leave.slice(8, 10)}時${latestTimecard.leave.slice(10, 12)}分`}です。</Typography>
+        </Box>
       )
     )
   }
 
   const WorkspotList = () => {
-    const Workspot = ({ workspot }: { workspot: TypeUserRelation }) => {
+    const Row = ({ data, index, style }: ListChildComponentProps<TypeUserRelation[]>) => {
       return (
-        <a href={`https://www.google.com/maps/search/?api=1&query=${workspot.latitude},${workspot.longitude}`}>{workspot.workspot}</a>
+        <div className={index % 2 ? "ListItemOdd" : "ListItemEven"} style={style}>
+          <MUILink underline="hover" target="_blank" rel="noopener noreferrer" href={`https://www.google.com/maps/search/?api=1&query=${data[index].latitude},${data[index].longitude}`}>{data[index].workspot}</MUILink>
+        </div>
       )
     }
+
     return (
       !userRelationList ? <CircularProgress />
         : userRelationListIsError ? <div>error</div>
-          : <div>
-            {
-              userRelationList.params.map((item, index) => {
-                return (<Workspot workspot={item} key={index}></Workspot>)
-              })
-            }
-          </div>
+          :
+          <Box>
+            <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>登録された勤務地</Typography>
+            <Typography sx={{ fontSize: "0.8rem" }}>ここに登録された場所の半径1km以内で出勤または退勤が出来ます。</Typography>
+            <Typography sx={{ fontSize: "0.8rem" }}>リンクをタップするとGoogleMapが開きます。</Typography>
+            <Box sx={{ marginTop: "1rem" }}>
+              <List
+                className="List"
+                height={350}
+                width={"100%"}
+                itemCount={userRelationList.params.length}
+                itemData={userRelationList.params}
+                itemSize={80}
+              >
+                {Row}
+              </List>
+            </Box>
+          </Box>
     )
   }
 
   return (
     <>
+      <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>{user.name}さんの勤怠管理ページ</Typography>
+      <Typography sx={{ fontSize: "0.8rem" }}>このアプリケーションは位置情報を使用しますので端末の位置情報機能が無効になっている場合は有効にしてください。</Typography> <br />
       <MainContents></MainContents>
       <WorkspotList></WorkspotList>
     </>
