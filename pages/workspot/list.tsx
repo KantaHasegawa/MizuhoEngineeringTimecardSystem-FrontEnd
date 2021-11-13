@@ -37,9 +37,9 @@ const WorkspotListPage = () => {
 
   const DisplayWorkspotList = ({ workspot }: { workspot: string }) => {
     return (
-      <Box sx={{cursor: "pointer"}}>
+      <Box sx={{ cursor: "pointer" }}>
         <Link href={`${workspot}`}>
-          <Item><Typography sx={{fontWeight: "bold", fontSize: "1rem"}}>{workspot}</Typography></Item>
+          <Item><Typography sx={{ fontWeight: "bold", fontSize: "1rem" }}>{workspot}</Typography></Item>
         </Link>
       </Box>
     );
@@ -50,7 +50,8 @@ const WorkspotListPage = () => {
     setInputState(value);
   };
 
-  const onSearchHandler = () => {
+  const onSearchHandler = (event: any) => {
+    event.preventDefault();
     const value = inputState;
     const oldWorkspotList = state.data;
     let newWorkspotList = oldWorkspotList
@@ -73,22 +74,24 @@ const WorkspotListPage = () => {
         <div>You don't have permission</div>
       ) : (
         <Box sx={{ textAlign: "center" }}>
-          <TextField
-            id="outlined-basic"
-            label="検索"
-            variant="outlined"
-            name="inputText"
-            size="small"
-            onChange={onChangeHandler}
-          />
-          <div className={styles.icon} onClick={onSearchHandler}>
-            <FontAwesomeIcon icon={faSearch} size="lg" />
-          </div>
-          <Link href="/workspot/new">
-            <div className={styles.icon} onClick={onSearchHandler}>
-              <FontAwesomeIcon icon={faPlusSquare} size="lg" />
-            </div>
-          </Link>
+          <form onSubmit={onSearchHandler}>
+            <TextField
+              id="outlined-basic"
+              label="検索"
+              variant="outlined"
+              name="inputText"
+              size="small"
+              onChange={onChangeHandler}
+            />
+            <button type="submit" className={styles.resetButton} onClick={onSearchHandler}>
+              <FontAwesomeIcon className={styles.icon} icon={faSearch} size="2x" />
+            </button>
+            <Link href="/workspot/new">
+              <button type="button" className={styles.resetButton}>
+                <FontAwesomeIcon className={styles.icon} icon={faPlusSquare} size="2x" />
+              </button>
+            </Link>
+          </form>
           {state.isLoading ? (
             <CircularProgress />
           ) : state.isError ? (

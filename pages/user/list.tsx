@@ -42,7 +42,7 @@ const UserListPage = () => {
 
   const DisplayUsers = ({ user }: { user: string }) => {
     return (
-      <Box sx={{cursor: "pointer"}}>
+      <Box sx={{ cursor: "pointer" }}>
         <Link href={`${user}`}>
           <Item><h4>{user}</h4></Item>
         </Link>
@@ -55,7 +55,8 @@ const UserListPage = () => {
     setInputState(value);
   };
 
-  const onSearchHandler = () => {
+  const onSearchHandler = (event: any) => {
+    event.preventDefault();
     const value = inputState;
     const oldUserList = state.data;
     let newUserList = oldUserList
@@ -78,23 +79,24 @@ const UserListPage = () => {
         <div>You don't have permission</div>
       ) : (
         <Box sx={{ textAlign: "center" }}>
-          <TextField
-            id="outlined-basic"
-            label="検索"
-            variant="outlined"
-            name="inputText"
-            onChange={onChangeHandler}
-            size="small"
-          />
-
-          <div className={styles.icon} onClick={onSearchHandler}>
-            <FontAwesomeIcon icon={faSearch} size="lg" />
-          </div>
-          <Link href="/auth/signup">
-            <div className={styles.icon} onClick={onSearchHandler}>
-              <FontAwesomeIcon icon={faUserPlus} size="lg" />
-            </div>
-          </Link>
+          <form onSubmit={onSearchHandler} >
+            <TextField
+              id="outlined-basic"
+              label="検索"
+              variant="outlined"
+              name="inputText"
+              onChange={onChangeHandler}
+              size="small"
+            />
+            <button type="submit" className={styles.resetButton} onClick={onSearchHandler}>
+              <FontAwesomeIcon className={styles.icon} icon={faSearch} size="2x" />
+            </button>
+            <Link href="/auth/signup">
+              <button type="button" className={styles.resetButton}>
+                <FontAwesomeIcon className={styles.icon} icon={faUserPlus} size="2x" />
+              </button>
+            </Link>
+          </form>
           {state.isLoading ? (
             <CircularProgress />
           ) : state.isError ? (
@@ -121,8 +123,9 @@ const UserListPage = () => {
             </>
           )}
         </Box>
-      )}
-    </Layout>
+      )
+      }
+    </Layout >
   );
 };
 
