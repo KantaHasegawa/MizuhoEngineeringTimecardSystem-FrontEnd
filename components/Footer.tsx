@@ -9,7 +9,7 @@ const Footer = () => {
 
   return (
     matches ? (
-      <Box sx={{ backgroundColor: "#828787", color: "white", marginTop: "2rem", padding: "2rem", textAlign: "center"}}>
+      <Box sx={{ backgroundColor: "#828787", color: "white", marginTop: "auto", padding: "2rem", textAlign: "center"}}>
         <Box sx={{ textAlign: "center" }}>
           <Image
             src={mizuhoLogo}
