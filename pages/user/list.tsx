@@ -42,7 +42,7 @@ const UserListPage = () => {
 
   const DisplayUsers = ({ user }: { user: string }) => {
     return (
-      <Box className="user">
+      <Box sx={{cursor: "pointer"}}>
         <Link href={`${user}`}>
           <Item><h4>{user}</h4></Item>
         </Link>

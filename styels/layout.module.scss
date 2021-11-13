@@ -5,6 +5,7 @@
 }
 
 .imageWrapper{
+  cursor: pointer;
   padding: 0.3rem;
 }
 
@@ -16,6 +17,7 @@
   margin: 0 0.8rem;
   color: #2484C5;
   transition: transform 450ms, color 0.7s;
+  cursor: pointer;
 }
 
 .navbarIcon:hover{

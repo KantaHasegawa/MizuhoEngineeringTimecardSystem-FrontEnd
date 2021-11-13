@@ -37,7 +37,7 @@ const WorkspotListPage = () => {
 
   const DisplayWorkspotList = ({ workspot }: { workspot: string }) => {
     return (
-      <Box className="workspot">
+      <Box sx={{cursor: "pointer"}}>
         <Link href={`${workspot}`}>
           <Item><Typography sx={{fontWeight: "bold", fontSize: "1rem"}}>{workspot}</Typography></Item>
         </Link>
