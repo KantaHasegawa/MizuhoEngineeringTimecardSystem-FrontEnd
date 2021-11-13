@@ -6,7 +6,10 @@ export default class MyDocument extends Document {
   render() {
     return (
       <Html lang="ja">
-        <body>
+        <Head>
+          {/* Not exactly required, but this is the PWA primary color */}
+        </Head>
+        <body></body>
           <Main />
           <NextScript />
         </body>
