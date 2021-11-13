@@ -9,6 +9,7 @@
   "dependencies": {
     "@date-io/dayjs": "^2.11.0",
     "@emotion/styled": "^11.3.0",
+    "@mui/icons-material": "^5.1.0",
     "@mui/lab": "^5.0.0-alpha.53",
     "@mui/material": "^5.0.6",
     "@mui/x-data-grid": "^4.0.1",
