@@ -9,11 +9,12 @@ import useAxios from "../../hooks/useAxios";
 import Link from "next/link";
 import useWorkspotRelationList, { TypeWorkspotRelation } from "../../hooks/useWorkspotRelationList";
 import { Button, CircularProgress, Grid, Pagination, Box, SpeedDial, SpeedDialIcon, SpeedDialAction, Paper, Typography } from "@mui/material";
-import {useSnackbar} from 'notistack'
+import { useSnackbar } from 'notistack'
 import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserEdit, faCalendarAlt, faUsers, faSignInAlt, faSignOutAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
+import ErrorComponent from "../../components/ErrorComponent";
 
 type TypeParams = {
   id: string;
@@ -44,7 +45,7 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
       await axios.post(`workspot/delete`, params);
       mutate("workspot/index");
       router.push("/workspot/list");
-      enqueueSnackbar("削除に成功しました", {variant: "success"})
+      enqueueSnackbar("削除に成功しました", { variant: "success" })
     } catch (err) {
       enqueueSnackbar("削除に失敗しました", { variant: "error" })
       console.log(err);
@@ -91,12 +92,12 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
       {currentUserIsLoading ? (
         <CircularProgress />
       ) : currentUserIsError ? (
-        <div>error</div>
+        <ErrorComponent></ErrorComponent>
       ) : currentUser.role !== "admin" ? (
         <div>You don't have permission</div>
       ) : (
         <>
-          <Box sx={{width: "23rem"}}>
+          <Box sx={{ width: "23rem" }}>
             <Typography sx={{ fontSize: "1rem", fontWeight: "bold", marginLeft: "1rem" }} >{workspot}</Typography>
           </Box>
           <div style={{ position: "relative", zIndex: 1 }}>
@@ -106,7 +107,7 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
             {!workspotRelationList ? (
               <CircularProgress />
             ) : workspotRelationListIsError ? (
-              <div>error</div>
+              <ErrorComponent></ErrorComponent>
             ) : (
               <List
                 className="List"

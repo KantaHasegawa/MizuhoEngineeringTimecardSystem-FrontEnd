@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserEdit, faCalendarAlt, faMapMarkedAlt, faSignInAlt, faSignOutAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { styled } from "@mui/system";
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
+import ErrorComponent from "../../components/ErrorComponent";
 
 type TypeParams = {
   id: string
@@ -84,7 +85,7 @@ const UserShowPage = ({ user }: { user: string }) => {
     <Layout title="ミズホエンジニアリング | 社員詳細">
 
       {currentUserIsLoading ? <CircularProgress />
-        : currentUserIsError ? <div>error</div>
+        : currentUserIsError ? <ErrorComponent></ErrorComponent>
           : currentUser.role !== "admin" ? <div>You don't have permission</div>
             :
             <>
@@ -95,7 +96,7 @@ const UserShowPage = ({ user }: { user: string }) => {
               <Box sx={{ padding: "0 1rem", textAlign: "center", marginTop: "2rem" }}>
                 {
                   !userRelationList ? <CircularProgress />
-                    : userRelationListIsError ? <div>error</div>
+                    : userRelationListIsError ? <ErrorComponent></ErrorComponent>
                       :
                       <List
                         className="List"

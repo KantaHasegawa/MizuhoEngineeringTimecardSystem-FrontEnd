@@ -10,6 +10,7 @@ import { CircularProgress, Box, Typography, Button } from "@mui/material";
 import MUILink from "@mui/material/Link";
 import { useSnackbar } from 'notistack'
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
+import ErrorComponent from './ErrorComponent';
 dayjs.locale("ja")
 
 type TypeCurrentUser = {
@@ -67,7 +68,7 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
       !latestTimecard ? (
         <CircularProgress />
       ) : latestTimecardIsError ? (
-        <div>error</div>
+        <ErrorComponent></ErrorComponent>
       ) : isTimecardStatus(latestTimecard) === "NotAttend" ? (
         <Box>
           <Typography sx={{ fontSize: "0.8rem" }}>現在は未出勤です。現場に向かって出勤してください。</Typography>
@@ -103,7 +104,7 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
 
     return (
       !userRelationList ? <CircularProgress />
-        : userRelationListIsError ? <div>error</div>
+        : userRelationListIsError ? <ErrorComponent></ErrorComponent>
           :
           <Box>
             <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>登録された勤務地</Typography>

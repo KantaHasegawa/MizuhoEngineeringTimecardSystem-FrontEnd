@@ -11,6 +11,7 @@ import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import styles from '../../styels/workspotList.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faPlusSquare } from '@fortawesome/free-solid-svg-icons'
+import ErrorComponent from "../../components/ErrorComponent";
 
 const Item = styled(Paper)(({ theme }) => ({
   height: 80,
@@ -69,7 +70,7 @@ const WorkspotListPage = () => {
       {currentUserIsLoading ? (
         <CircularProgress />
       ) : currentUserIsError ? (
-        <div>error</div>
+        <ErrorComponent></ErrorComponent>
       ) : currentUser.role !== "admin" ? (
         <div>You don't have permission</div>
       ) : (
@@ -95,7 +96,7 @@ const WorkspotListPage = () => {
           {state.isLoading ? (
             <CircularProgress />
           ) : state.isError ? (
-            <div>error</div>
+            <ErrorComponent></ErrorComponent>
           ) : (
             <>
               <Box sx={{ padding: "1rem" }}>

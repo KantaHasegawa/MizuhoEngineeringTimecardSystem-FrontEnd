@@ -17,6 +17,7 @@ import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import styles from '../../../styels/workspotRelationPage.module.scss'
+import ErrorComponent from "../../../components/ErrorComponent";
 
 type TypeParams = {
   id: string;
@@ -71,7 +72,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
       await axios.post("relation/delete", params);
       mutate(`relation/workspot/selectbox/${workspot}`);
       setSelectedOption(null);
-      enqueueSnackbar("削除に成功しました", {variant: "success"})
+      enqueueSnackbar("削除に成功しました", { variant: "success" })
     } catch (err) {
       enqueueSnackbar("削除に失敗しました", { variant: "error" })
       console.log(err);
@@ -93,7 +94,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
         {currentUserIsLoading ? (
           <CircularProgress />
         ) : currentUserIsError ? (
-          <div>error</div>
+          <ErrorComponent></ErrorComponent>
         ) : currentUser.role !== "admin" ? (
           <div>You don't have permission</div>
         ) : (
@@ -102,7 +103,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
             {!workspotSelectBoxResponse ? (
               <CircularProgress />
             ) : workspotSelectBoxResponseIsError ? (
-              <div>has error</div>
+              <ErrorComponent></ErrorComponent>
             ) : (
               <div>
                 <Select

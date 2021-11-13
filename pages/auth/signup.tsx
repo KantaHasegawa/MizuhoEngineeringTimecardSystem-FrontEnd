@@ -9,6 +9,7 @@ import useCurrentUser from '../../hooks/useCurrentUser'
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from '../../components/atoms';
 import styles from '../../styels/signup.module.scss'
+import ErrorComponent from '../../components/ErrorComponent';
 
 type FormData = {
   username: string;
@@ -43,7 +44,7 @@ const SignUpPage = () => {
     <Layout title="ミズホエンジニアリング | サインアップ">
       <Box sx={{ paddingTop: "2rem", width: "350px", marginLeft: "auto", marginRight: "auto" }}>
         {currentUserIsLoading ? <CircularProgress />
-          : currentUserIsError ? <div>error</div>
+          : currentUserIsError ? <ErrorComponent></ErrorComponent>
             : currentUser.role !== "admin" ? <div>You don't have permission</div>
               :
               <>

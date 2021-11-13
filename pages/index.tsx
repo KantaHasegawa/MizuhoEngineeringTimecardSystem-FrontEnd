@@ -10,6 +10,7 @@ import useCurrentUser from '../hooks/useCurrentUser'
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from '../components/atoms';
 import { CircularProgress } from '@material-ui/core';
+import ErrorComponent from '../components/ErrorComponent';
 
 
 const SignUpPage = () => {
@@ -22,7 +23,7 @@ const SignUpPage = () => {
   return (
     <Layout title="ミズホエンジニアリング | ホーム">
       {currentUserIsLoading ? <CircularProgress />
-        : currentUserIsError ? <div>error</div>
+        : currentUserIsError ? <ErrorComponent></ErrorComponent>
           : currentUser.role === "admin" ? <AdminPage></AdminPage>
             : <CommonPage user={currentUser}></CommonPage>
       }

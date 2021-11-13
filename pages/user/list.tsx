@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import styles from '../../styels/userList.module.scss'
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import ErrorComponent from "../../components/ErrorComponent";
 
 const Item = styled(Paper)(({ theme }) => ({
   height: 60,
@@ -74,7 +75,7 @@ const UserListPage = () => {
       {currentUserIsLoading ? (
         <CircularProgress />
       ) : currentUserIsError ? (
-        <div>error</div>
+        <ErrorComponent></ErrorComponent>
       ) : currentUser.role !== "admin" ? (
         <div>You don't have permission</div>
       ) : (
@@ -100,7 +101,7 @@ const UserListPage = () => {
           {state.isLoading ? (
             <CircularProgress />
           ) : state.isError ? (
-            <div>error</div>
+            <ErrorComponent></ErrorComponent>
           ) : (
             <>
               <Box sx={{ padding: "1rem" }}>

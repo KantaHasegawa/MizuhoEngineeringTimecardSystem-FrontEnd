@@ -1,6 +1,7 @@
 import { CircularProgress, Accordion, AccordionDetails, AccordionSummary, Typography, Badge, Card, Box } from "@mui/material"
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import useGetAllLatestTimecard, { TypeTimecard } from '../hooks/useGetAllLatestTimecard'
+import ErrorComponent from "./ErrorComponent";
 
 const AdminPage = () => {
   const { latestTimecards, latestTimecardsIsError } = useGetAllLatestTimecard()
@@ -36,7 +37,7 @@ const AdminPage = () => {
 
   return (
     !latestTimecards ? <CircularProgress /> :
-      latestTimecardsIsError ? <div>isError</div> : (
+      latestTimecardsIsError ? <ErrorComponent></ErrorComponent> : (
         <>
           <Box sx={{marginBottom: "2rem"}}>
             <Accordion>

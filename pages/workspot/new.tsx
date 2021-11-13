@@ -6,7 +6,7 @@ import {
   Marker,
 } from "@react-google-maps/api";
 import { Button, CircularProgress, TextField, Box } from "@mui/material";
-import {useSnackbar} from 'notistack'
+import { useSnackbar } from 'notistack'
 import { Controller, useForm } from "react-hook-form";
 import useAxios from "../../hooks/useAxios";
 import useCurrentUser from "../../hooks/useCurrentUser";
@@ -17,6 +17,7 @@ import router from "next/router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import styles from '../../styels/workspotNew.module.scss'
+import ErrorComponent from "../../components/ErrorComponent";
 
 type FormData = {
   address: string;
@@ -66,7 +67,7 @@ const WorkspotNewPage = () => {
         lng: mapRef.current?.getCenter()?.lng(),
       };
       const result = await axios.post<TypeWorkspotNewRequestResponse>("workspot/new", params);
-      enqueueSnackbar(`${result.data.workspotName}を登録しました`, {variant: "success"});
+      enqueueSnackbar(`${result.data.workspotName}を登録しました`, { variant: "success" });
     } catch (err) {
       enqueueSnackbar(`登録に失敗しました`, { variant: "error" });
       console.log(err);
@@ -101,7 +102,7 @@ const WorkspotNewPage = () => {
       {currentUserIsLoading ? (
         <CircularProgress />
       ) : currentUserIsError ? (
-        <div>error</div>
+        <ErrorComponent></ErrorComponent>
       ) : currentUser.role !== "admin" ? (
         <div>You don't have permission</div>
       ) : (
@@ -110,7 +111,7 @@ const WorkspotNewPage = () => {
             {!isLoaded ? (
               <CircularProgress />
             ) : loadError ? (
-              "error"
+              <ErrorComponent></ErrorComponent>
             ) : (
 
               <Box>

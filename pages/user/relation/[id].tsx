@@ -17,6 +17,7 @@ import styles from '../../../styels/userRelationPage.module.scss'
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
+import ErrorComponent from "../../../components/ErrorComponent";
 
 type TypeParams = {
   id: string;
@@ -93,7 +94,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
         {currentUserIsLoading ? (
           <CircularProgress />
         ) : currentUserIsError ? (
-          <div>error</div>
+          <ErrorComponent></ErrorComponent>
         ) : currentUser.role !== "admin" ? (
           <div>You don't have permission</div>
         ) : (
@@ -102,7 +103,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
             {!userSelectBoxResponse ? (
               <CircularProgress />
             ) : userSelectBoxResponseIsError ? (
-              <div>has error</div>
+              <ErrorComponent></ErrorComponent>
             ) : (
               <div>
                 <Select

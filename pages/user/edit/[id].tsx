@@ -9,6 +9,7 @@ import { TextField, Button, CircularProgress, Box, Typography, Card, CardContent
 import { useSnackbar } from 'notistack'
 import { useState } from 'react';
 import useAxios from '../../../hooks/useAxios';
+import ErrorComponent from '../../../components/ErrorComponent';
 
 type TypeParams = {
   id: string
@@ -48,7 +49,7 @@ export const UserEditPage = ({ user }: { user: string }) => {
     <Layout title="ミズホエンジニアリング | パスワード変更">
       <Box sx={{ paddingTop: "2rem", width: "350px", marginLeft: "auto", marginRight: "auto" }}>
         {currentUserIsLoading ? <CircularProgress />
-          : currentUserIsError ? <div>error</div>
+          : currentUserIsError ? <ErrorComponent></ErrorComponent>
             : currentUser.role !== "admin" ? <div>You don't have permission</div>
               :
               <>

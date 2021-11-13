@@ -22,6 +22,7 @@ import useWorkspotList from "../../hooks/useWorkspotList";
 import dayjs from "dayjs";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import "dayjs/locale/ja"
+import ErrorComponent from "../../components/ErrorComponent";
 dayjs.locale("ja");
 dayjs.extend(isSameOrBefore);
 
@@ -103,7 +104,7 @@ const TimecardNewPage = () => {
         {userState.isLoading ? (
           <CircularProgress />
         ) : userState.isError ? (
-          <div>error</div>
+            <ErrorComponent></ErrorComponent>
         ) : (
           <Select
             defaultValue={selectedUser}
@@ -126,7 +127,7 @@ const TimecardNewPage = () => {
         {workspotState.isLoading ? (
           <CircularProgress />
         ) : workspotState.isError ? (
-          <div>error</div>
+            <ErrorComponent></ErrorComponent>
         ) : (
           <Select
             defaultValue={selectedWorkspot}
@@ -148,7 +149,7 @@ const TimecardNewPage = () => {
       {currentUserIsLoading ? (
         <CircularProgress />
       ) : currentUserIsError ? (
-        <div>error</div>
+          <ErrorComponent></ErrorComponent>
       ) : currentUser.role !== "admin" ? (
         <div>You don't have permission</div>
       ) : (

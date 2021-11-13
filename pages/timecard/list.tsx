@@ -22,6 +22,7 @@ import Link from 'next/link'
 dayjs.locale("ja");
 
 import styles from '../../styels/timecardList.module.scss'
+import ErrorComponent from "../../components/ErrorComponent";
 
 
 type TypeSelectBoxItem = {
@@ -237,7 +238,7 @@ const UserListPage = () => {
       {currentUserIsLoading ? (
         <CircularProgress />
       ) : currentUserIsError ? (
-        <div>error</div>
+          <ErrorComponent></ErrorComponent>
       ) : currentUser.role !== "admin" ? (
         <div>You don't have permission</div>
       ) : (
