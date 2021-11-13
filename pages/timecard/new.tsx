@@ -4,21 +4,21 @@ import {
   TextField,
   Button,
   CircularProgress,
+  Box,
+  Typography,
+  Stack
 } from "@mui/material";
 import { useState } from "react";
 import useAxios from "../../hooks/useAxios";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../components/atoms";
-import Stack from "@mui/material/Stack";
-import DateAdapter from "@mui/lab/AdapterDayjs";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import DateTimePicker from "@mui/lab/DateTimePicker";
+import { LocalizationProvider, DateTimePicker } from "@mui/lab";
+import AdapterDayjs from '@mui/lab/AdapterDayjs'
 import Select from "react-select";
 import useUserList from "../../hooks/useUserList";
 import useWorkspotList from "../../hooks/useWorkspotList";
 import dayjs from "dayjs";
-import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import "dayjs/locale/ja"
 dayjs.locale("ja");
@@ -71,7 +71,7 @@ const TimecardNewPage = () => {
   const handleAttendanceChange = (newValue: dayjs.Dayjs | null) => {
     setAttendance(newValue);
     if (!leave) return
-    if(leave.isSameOrBefore(newValue)) setLeave(null)
+    if (leave.isSameOrBefore(newValue)) setLeave(null)
   };
 
   const handleLeaveChange = (newValue: dayjs.Dayjs | null) => {
@@ -79,7 +79,7 @@ const TimecardNewPage = () => {
   };
 
   const onClickHandler = async () => {
-    if (!attendance || !leave || !selectedUser || !selectedWorkspot ) return;
+    if (!attendance || !leave || !selectedUser || !selectedWorkspot) return;
     console.log(attendance.format("YYYYMMDDHHmmss"));
     const params = {
       user: selectedUser.value,
@@ -97,7 +97,7 @@ const TimecardNewPage = () => {
 
   const SelectBoxUsers = () => {
     return (
-      <>
+      <Box sx={{ marginBottom: "1rem" }}>
         {userState.isLoading ? (
           <CircularProgress />
         ) : userState.isError ? (
@@ -109,15 +109,18 @@ const TimecardNewPage = () => {
             onChange={setSelectedUser}
             options={selectBoxUsers || []}
             isClearable={true}
+            menuPortalTarget={document.body}
+            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+            placeholder="社員"
           />
         )}
-      </>
+      </Box>
     );
   };
 
   const SelelectBoxWorkspot = () => {
     return (
-      <>
+      <Box sx={{ marginBottom: "1rem" }}>
         {workspotState.isLoading ? (
           <CircularProgress />
         ) : workspotState.isError ? (
@@ -129,14 +132,17 @@ const TimecardNewPage = () => {
             onChange={setSelectedWorkspot}
             options={selectBoxWorkspots || []}
             isClearable={true}
+            menuPortalTarget={document.body}
+            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+            placeholder="勤務地"
           />
         )}
-      </>
+      </Box>
     );
   };
 
   return (
-    <Layout title="ミズホエンジニアリング | 勤務登録">
+    <Layout title="ミズホエンジニアリング | 勤怠登録">
       {currentUserIsLoading ? (
         <CircularProgress />
       ) : currentUserIsError ? (
@@ -145,10 +151,13 @@ const TimecardNewPage = () => {
         <div>You don't have permission</div>
       ) : (
         <>
-          <h1>勤務登録</h1>
+          <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>勤怠登録</Typography>
+          <Typography sx={{ fontSize: "0.8rem", marginBottom: "1rem" }}>必要な情報を選択してください</Typography>
           <div>
-            <LocalizationProvider dateAdapter={DateAdapter}>
-              <Stack spacing={3}>
+            <SelectBoxUsers></SelectBoxUsers>
+            <SelelectBoxWorkspot></SelelectBoxWorkspot>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Stack spacing={3} sx={{ marginBottom: "1rem" }}>
                 <DateTimePicker
                   label="出勤時刻"
                   value={attendance}
@@ -156,7 +165,7 @@ const TimecardNewPage = () => {
                   renderInput={(params) => <TextField {...params} />}
                 />
               </Stack>
-              <Stack spacing={3}>
+              <Stack spacing={3} sx={{ marginBottom: "1rem" }}>
                 <DateTimePicker
                   label="退勤時刻"
                   value={leave}
@@ -166,17 +175,18 @@ const TimecardNewPage = () => {
                 />
               </Stack>
             </LocalizationProvider>
-            <SelectBoxUsers></SelectBoxUsers>
-            <SelelectBoxWorkspot></SelelectBoxWorkspot>
-            <Button
-              variant="outlined"
-              disabled={
-                !attendance || !leave || !selectedUser || !selectedWorkspot
-              }
-              onClick={async () => onClickHandler()}
-            >
-              登録
-            </Button>
+            <Box sx={{ textAlign: "center" }}>
+              <Button
+                variant="outlined"
+                disabled={
+                  !attendance || !leave || !selectedUser || !selectedWorkspot
+                }
+                onClick={async () => onClickHandler()}
+                sx={{ width: "13rem", }}
+              >
+                登録
+              </Button>
+            </Box>
           </div>
         </>
       )}
