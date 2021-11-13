@@ -11,7 +11,7 @@ import Link from "next/link";
 import useUserList from "../../hooks/useUserList";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faUserPlus } from '@fortawesome/free-solid-svg-icons'
-import styles from '../../styels/userList.module.scss'
+import styles from '../../styels/userList.module.css'
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import ErrorComponent from "../../components/ErrorComponent";
 

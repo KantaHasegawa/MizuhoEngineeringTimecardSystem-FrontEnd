@@ -8,7 +8,7 @@ import router from "next/router";
 import useWorkspotList from "../../hooks/useWorkspotList";
 import Link from "next/link";
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-import styles from '../../styels/workspotList.module.scss';
+import styles from '../../styels/workspotList.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faPlusSquare } from '@fortawesome/free-solid-svg-icons'
 import ErrorComponent from "../../components/ErrorComponent";

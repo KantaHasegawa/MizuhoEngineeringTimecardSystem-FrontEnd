@@ -13,7 +13,7 @@ import { Button, CircularProgress, Box, Tooltip, Typography } from "@mui/materia
 import { useSnackbar } from 'notistack'
 import useAxios from "../../../hooks/useAxios";
 import { mutate } from "swr";
-import styles from '../../../styels/userRelationPage.module.scss'
+import styles from '../../../styels/userRelationPage.module.css'
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'

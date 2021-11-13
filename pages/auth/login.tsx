@@ -12,7 +12,7 @@ import useCurrentUser from '../../hooks/useCurrentUser'
 import Head from 'next/head'
 import Image from 'next/image'
 import mizuhoLogo from '../../public/mizuho-logo.png'
-import styles from '../../styels/login.module.scss'
+import styles from '../../styels/login.module.css'
 
 type FormData = {
   username: string;

@@ -7,7 +7,7 @@ import { accessTokenState } from '../components/atoms';
 import Cookies from 'js-cookie'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
-import styles from '../styels/layout.module.scss'
+import styles from '../styels/layout.module.css'
 
 const Logout = () => {
   const axios = useAxios();

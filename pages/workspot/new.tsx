@@ -16,7 +16,7 @@ import { useRecoilValue } from "recoil";
 import router from "next/router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faUserPlus } from '@fortawesome/free-solid-svg-icons'
-import styles from '../../styels/workspotNew.module.scss'
+import styles from '../../styels/workspotNew.module.css'
 import ErrorComponent from "../../components/ErrorComponent";
 
 type FormData = {

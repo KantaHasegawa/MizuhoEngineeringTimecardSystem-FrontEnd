@@ -8,7 +8,7 @@ import useAxios from '../../hooks/useAxios';
 import useCurrentUser from '../../hooks/useCurrentUser'
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from '../../components/atoms';
-import styles from '../../styels/signup.module.scss'
+import styles from '../../styels/signup.module.css'
 import ErrorComponent from '../../components/ErrorComponent';
 
 type FormData = {

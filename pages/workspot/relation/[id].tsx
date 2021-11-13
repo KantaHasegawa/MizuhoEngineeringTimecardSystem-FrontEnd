@@ -16,7 +16,7 @@ import { mutate } from "swr";
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
-import styles from '../../../styels/workspotRelationPage.module.scss'
+import styles from '../../../styels/workspotRelationPage.module.css'
 import ErrorComponent from "../../../components/ErrorComponent";
 
 type TypeParams = {

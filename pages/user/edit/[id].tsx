@@ -49,7 +49,8 @@ export const UserEditPage = ({ user }: { user: string }) => {
     <Layout title="ミズホエンジニアリング | パスワード変更">
       <Box sx={{ paddingTop: "2rem", width: "350px", marginLeft: "auto", marginRight: "auto" }}>
         {currentUserIsLoading ? <CircularProgress />
-          : currentUserIsError ? <ErrorComponent></ErrorComponent>
+          : currentUserIsError ? <ErrorComponent
+          ></ErrorComponent>
             : currentUser.role !== "admin" ? <div>You don't have permission</div>
               :
               <>

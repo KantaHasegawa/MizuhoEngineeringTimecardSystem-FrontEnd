@@ -21,7 +21,7 @@ import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import Link from 'next/link'
 dayjs.locale("ja");
 
-import styles from '../../styels/timecardList.module.scss'
+import styles from '../../styels/timecardList.module.css'
 import ErrorComponent from "../../components/ErrorComponent";
 
 
