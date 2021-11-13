@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, CircularProgress, TextField, Box, Paper, Grid, Pagination, Typography } from "@mui/material";
+import { Tooltip, CircularProgress, TextField, Box, Paper, Grid, Pagination, Typography } from "@mui/material";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import Layout from "../../components/Layout";
 import { accessTokenState } from "../../components/atoms";
@@ -84,13 +84,17 @@ const WorkspotListPage = () => {
               size="small"
               onChange={onChangeHandler}
             />
-            <button type="submit" className={styles.resetButton} onClick={onSearchHandler}>
-              <FontAwesomeIcon className={styles.icon} icon={faSearch} size="2x" />
-            </button>
-            <Link href="/workspot/new">
-              <button type="button" className={styles.resetButton}>
-                <FontAwesomeIcon className={styles.icon} icon={faPlusSquare} size="2x" />
+            <Tooltip title="検索">
+              <button type="submit" className={styles.resetButton} onClick={onSearchHandler}>
+                <FontAwesomeIcon className={styles.icon} icon={faSearch} size="2x" />
               </button>
+            </Tooltip>
+            <Link href="/workspot/new">
+              <Tooltip title="勤務地を追加">
+                <button type="button" className={styles.resetButton}>
+                  <FontAwesomeIcon className={styles.icon} icon={faPlusSquare} size="2x" />
+                </button>
+              </Tooltip>
             </Link>
           </form>
           {state.isLoading ? (
@@ -126,8 +130,9 @@ const WorkspotListPage = () => {
             </>
           )}
         </Box>
-      )}
-    </Layout>
+      )
+      }
+    </Layout >
   );
 };
 

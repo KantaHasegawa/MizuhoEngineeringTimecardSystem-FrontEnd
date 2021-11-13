@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../components/atoms";
 import React, { useState } from "react";
-import { Button, CircularProgress, TextField, Box, Paper, Stack, Pagination, Grid } from "@mui/material";
+import { Tooltip, CircularProgress, TextField, Box, Paper, Stack, Pagination, Grid } from "@mui/material";
 import { useSWRConfig } from "swr";
 import useAxios from "../../hooks/useAxios";
 import Link from "next/link";
@@ -89,15 +89,19 @@ const UserListPage = () => {
               onChange={onChangeHandler}
               size="small"
             />
-            <button type="submit" className={styles.resetButton} onClick={onSearchHandler}>
-              <FontAwesomeIcon className={styles.icon} icon={faSearch} size="2x" />
-            </button>
-            <Link href="/auth/signup">
-              <button type="button" className={styles.resetButton}>
-                <FontAwesomeIcon className={styles.icon} icon={faUserPlus} size="2x" />
+            <Tooltip title="検索">
+              <button type="submit" className={styles.resetButton} onClick={onSearchHandler}>
+                <FontAwesomeIcon className={styles.icon} icon={faSearch} size="2x" />
               </button>
+            </Tooltip>
+            <Link href="/auth/signup">
+              <Tooltip title="社員を追加">
+                <button type="button" className={styles.resetButton}>
+                  <FontAwesomeIcon className={styles.icon} icon={faUserPlus} size="2x" />
+                </button>
+              </Tooltip>
             </Link>
-          </form>
+        </form>
           {state.isLoading ? (
             <CircularProgress />
           ) : state.isError ? (

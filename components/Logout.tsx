@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router'
+import { Tooltip} from '@mui/material'
 import { useSnackbar } from 'notistack'
 import useAxios from '../hooks/useAxios';
 import { useSetRecoilState } from "recoil";
@@ -26,9 +27,11 @@ const Logout = () => {
     }
   }
   return (
-    <div onClick={async () => onClickHandler()} style={{ display: "inline" }} >
-      <FontAwesomeIcon icon={faSignOutAlt} size="2x" className={styles.navbarIcon} />
-    </div>
+    <Tooltip title="ログアウト">
+      <div onClick={async () => onClickHandler()} style={{ display: "inline" }} >
+        <FontAwesomeIcon icon={faSignOutAlt} size="2x" className={styles.navbarIcon} />
+      </div>
+    </Tooltip>
   )
 }
 

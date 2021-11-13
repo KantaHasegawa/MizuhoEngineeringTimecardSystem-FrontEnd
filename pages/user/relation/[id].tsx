@@ -9,7 +9,7 @@ import useUserRelationEdit, {
   TypeUserRelation,
 } from "../../../hooks/useUserRelationEdit";
 import Select from "react-select";
-import { Button, CircularProgress, Box, Grid, Pagination, Card, Typography } from "@mui/material";
+import { Button, CircularProgress, Box, Tooltip, Typography } from "@mui/material";
 import { useSnackbar } from 'notistack'
 import useAxios from "../../../hooks/useAxios";
 import { mutate } from "swr";
@@ -83,7 +83,11 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
     return (
       <div className={index % 2 ? "ListItemOdd" : "ListItemEven"} style={style}>
         <Typography sx={{ fontSize: "1rem" }}>{data[index].workspot}</Typography>
-        <div onClick={async () => onDelete(data[index].workspot)} ><FontAwesomeIcon icon={faTrashAlt} size="lg" className={styles.trashIcon} /></div>
+        <Tooltip title="削除" placement="left-start">
+          <div onClick={async () => onDelete(data[index].workspot)} >
+            <FontAwesomeIcon icon={faTrashAlt} size="lg" className={styles.trashIcon} />
+          </div>
+        </Tooltip>
       </div>
     )
   }

@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../components/atoms";
 import React, { useState } from "react";
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Container } from "@mui/material";
-import {useSnackbar} from 'notistack'
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Container, Tooltip } from "@mui/material";
+import { useSnackbar } from 'notistack'
 import useAxios from "../../hooks/useAxios";
 import useUserList from "../../hooks/useUserList";
 import { Controller, useForm } from "react-hook-form";
@@ -220,7 +220,7 @@ const UserListPage = () => {
       }
       mutate(`timecard/common/${user}`)
       onSubmit(data)
-      enqueueSnackbar("削除に成功しました",{variant: "success"})
+      enqueueSnackbar("削除に成功しました", { variant: "success" })
     } catch (err) {
       enqueueSnackbar("削除に失敗しました", { variant: "error" })
       console.log(err)
@@ -238,7 +238,7 @@ const UserListPage = () => {
       {currentUserIsLoading ? (
         <CircularProgress />
       ) : currentUserIsError ? (
-          <ErrorComponent></ErrorComponent>
+        <ErrorComponent></ErrorComponent>
       ) : currentUser.role !== "admin" ? (
         <div>You don't have permission</div>
       ) : (
@@ -290,7 +290,7 @@ const UserListPage = () => {
             </Box>
           </Container>
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 1300 }} aria-label="simple table">
+            <Table sx={{ minWidth: 1300, marginBottom: "2rem" }} aria-label="simple table">
               <TableHead>
                 <TableRow>
                   <TableCell align="center"><h3>日</h3></TableCell>
@@ -338,7 +338,13 @@ const UserListPage = () => {
                       <TableCell align="center">{row.regularWorkTime !== null && `${Math.floor(row.regularWorkTime / 60)}時間${row.regularWorkTime % 60}分`}</TableCell>
                       <TableCell align="center">{row.irregularWorkTime !== null && `${Math.floor(row.irregularWorkTime / 60)}時間${row.irregularWorkTime % 60}分`}</TableCell>
                       <TableCell align="center">{row.rest !== null && `${Math.floor(row.rest / 60)}時間${row.rest % 60}分`}</TableCell>
-                      <TableCell align="center">{row.attendance && <div onClick={async () => onDeleteHandler(row.user, row.attendance)}><FontAwesomeIcon icon={faTrashAlt} size="lg" className={styles.trashIcon} /></div>}</TableCell>
+                      <TableCell align="center">{row.attendance && (
+                        <Tooltip title="削除">
+                          <div onClick={async () => onDeleteHandler(row.user, row.attendance)}>
+                            <FontAwesomeIcon icon={faTrashAlt} size="lg" className={styles.trashIcon} />
+                          </div>
+                        </Tooltip>
+                      )}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

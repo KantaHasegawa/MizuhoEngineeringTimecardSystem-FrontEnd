@@ -9,7 +9,7 @@ import useWorkspotRelationEdit, {
   TypeWorkspotRelation,
 } from "../../../hooks/useWorkspotRelationEdit";
 import Select from "react-select";
-import { Button, CircularProgress, Box, Grid, Pagination, Card, Typography } from "@mui/material";
+import { Button, CircularProgress, Box, Tooltip, Typography } from "@mui/material";
 import { useSnackbar } from 'notistack'
 import useAxios from "../../../hooks/useAxios";
 import { mutate } from "swr";
@@ -83,7 +83,11 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
     return (
       <div className={index % 2 ? "ListItemOdd" : "ListItemEven"} style={style}>
         <Typography sx={{ fontSize: "1rem" }}>{data[index].user}</Typography>
-        <div onClick={async () => onDelete(data[index].user)} ><FontAwesomeIcon icon={faTrashAlt} size="lg" className={styles.trashIcon} /></div>
+        <Tooltip title="削除" placement="left-start">
+          <div onClick={async () => onDelete(data[index].user)} >
+            <FontAwesomeIcon icon={faTrashAlt} size="lg" className={styles.trashIcon} />
+          </div>
+        </Tooltip>
       </div>
     )
   }

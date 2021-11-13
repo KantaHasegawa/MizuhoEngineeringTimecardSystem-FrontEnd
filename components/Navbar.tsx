@@ -1,11 +1,8 @@
-
-
 import React, { ReactNode } from 'react'
 import Link from 'next/link'
-import Head from 'next/head'
 import Logout from './Logout'
 import styles from '../styels/layout.module.scss'
-import { AppBar, Box, Button, IconButton, Toolbar, Typography, Container } from '@material-ui/core'
+import { AppBar, Box, Toolbar, Tooltip, CircularProgress } from '@mui/material'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMapMarkedAlt, faCalendarAlt, faUsers, faSignInAlt, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import Image from 'next/image'
@@ -13,7 +10,6 @@ import mizuhoLogo from '../public/mizuho-logo.png'
 import useCurrentUser from '../hooks/useCurrentUser'
 import { accessTokenState } from './atoms'
 import { useRecoilValue } from 'recoil'
-import { CircularProgress } from '@material-ui/core'
 
 const Navbar = () => {
   const accessToken = useRecoilValue(accessTokenState)
@@ -23,6 +19,7 @@ const Navbar = () => {
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position="static" color="default">
           <Toolbar>
+            <Tooltip title="ホーム">
               <div className={styles.imageWrapper}>
                 <Link href="/">
                   <Image
@@ -33,23 +30,38 @@ const Navbar = () => {
                   ></Image>
                 </Link>
               </div>
+            </Tooltip>
             {currentUserIsLoading ? <CircularProgress />
               : currentUserIsError ? (
-                <div className={styles.navbarIcons}>
-                  <FontAwesomeIcon icon={faSignInAlt} size="2x" className={styles.navbarIcon} />
-                </div>
+                <Tooltip title="ログイン">
+                  <div className={styles.navbarIcons}>
+                    <FontAwesomeIcon icon={faSignInAlt} size="2x" className={styles.navbarIcon} />
+                  </div>
+                </Tooltip>
               )
                 : currentUser.role === "admin" ? (
                   <div className={styles.navbarIcons}>
-                    <Link href="/user/list">
-                      <FontAwesomeIcon icon={faUsers} size="2x" className={styles.navbarIcon} />
-                    </Link>
-                    <Link href="/timecard/list">
-                      <FontAwesomeIcon icon={faCalendarAlt} size="2x" className={styles.navbarIcon} />
-                    </Link>
-                    <Link href="/workspot/list">
-                      <FontAwesomeIcon icon={faMapMarkedAlt} size="2x" className={styles.navbarIcon} />
-                    </Link>
+                    <Tooltip title="社員リスト">
+                      <div style={{ display: "inline" }}>
+                        <Link href="/user/list">
+                          <FontAwesomeIcon icon={faUsers} size="2x" className={styles.navbarIcon} />
+                        </Link>
+                      </div>
+                    </Tooltip>
+                    <Tooltip title="勤務地リスト">
+                      <div style={{ display: "inline" }}>
+                        <Link href="/workspot/list">
+                          <FontAwesomeIcon icon={faMapMarkedAlt} size="2x" className={styles.navbarIcon} />
+                        </Link>
+                      </div>
+                    </Tooltip>
+                    <Tooltip title="勤怠管理表">
+                      <div style={{ display: "inline" }}>
+                        <Link href="/timecard/list">
+                          <FontAwesomeIcon icon={faCalendarAlt} size="2x" className={styles.navbarIcon} />
+                        </Link>
+                      </div>
+                    </Tooltip>
                     <Logout></Logout>
                   </div>
                 )

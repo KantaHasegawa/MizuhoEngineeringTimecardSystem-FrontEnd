@@ -5,7 +5,7 @@ import {
   Circle,
   Marker,
 } from "@react-google-maps/api";
-import { Button, CircularProgress, TextField, Box } from "@mui/material";
+import { Button, CircularProgress, TextField, Box, Tooltip } from "@mui/material";
 import { useSnackbar } from 'notistack'
 import { Controller, useForm } from "react-hook-form";
 import useAxios from "../../hooks/useAxios";
@@ -125,7 +125,11 @@ const WorkspotNewPage = () => {
                         <TextField sx={{ display: "inline-block", width: "20rem" }} fullWidth size="small" label="住所" {...field} />
                       )}
                     />
-                    <button className={styles.resetButton} type="submit"><FontAwesomeIcon className={styles.icon} icon={faSearch} size="2x" /></button>
+                    <Tooltip title="検索">
+                      <button className={styles.resetButton} type="submit">
+                        <FontAwesomeIcon className={styles.icon} icon={faSearch} size="2x" />
+                      </button>
+                    </Tooltip>
                   </div>
                 </form>
 
