@@ -5,7 +5,7 @@ import {
   Circle,
   Marker,
 } from "@react-google-maps/api";
-import { Button, CircularProgress, TextField } from "@mui/material";
+import { Button, CircularProgress, TextField, Box } from "@mui/material";
 import { Controller, useForm } from "react-hook-form";
 import useAxios from "../../hooks/useAxios";
 import useCurrentUser from "../../hooks/useCurrentUser";
@@ -13,10 +13,18 @@ import Layout from "../../components/Layout";
 import { accessTokenState } from "../../components/atoms";
 import { useRecoilValue } from "recoil";
 import router from "next/router";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch, faUserPlus } from '@fortawesome/free-solid-svg-icons'
+import styles from '../../styels/workspotNew.module.scss'
 
 type FormData = {
   address: string;
 };
+
+type TypeWorkspotNewRequestResponse = {
+  message: string,
+  workspotName: string
+}
 
 const mapContainerStyle = {
   height: "60vh",
@@ -55,8 +63,8 @@ const WorkspotNewPage = () => {
         lat: mapRef.current?.getCenter()?.lat(),
         lng: mapRef.current?.getCenter()?.lng(),
       };
-      await axios.post("workspot/new", params);
-      alert("insert Success");
+      const result = await axios.post<TypeWorkspotNewRequestResponse>("workspot/new", params);
+      alert(`${result.data.workspotName}を登録しました`);
     } catch (err) {
       console.log(err);
     }
@@ -86,7 +94,7 @@ const WorkspotNewPage = () => {
   };
 
   return (
-    <Layout title="ミズホエンジニアリング | サインアップ">
+    <Layout title="ミズホエンジニアリング | 勤務地登録">
       {currentUserIsLoading ? (
         <CircularProgress />
       ) : currentUserIsError ? (
@@ -95,33 +103,14 @@ const WorkspotNewPage = () => {
         <div>You don't have permission</div>
       ) : (
         <>
-          <div>勤務地登録</div>
-          {!isLoaded ? (
-            <CircularProgress />
-          ) : loadError ? (
-            "error"
-          ) : (
-            <div>
-              <GoogleMap
-                id="map"
-                mapContainerStyle={mapContainerStyle}
-                zoom={14}
-                center={center}
-                options={options}
-                onLoad={onMapLoad}
-                onDragEnd={onDragEnd}
-              >
-                <Circle
-                  // optional
-                  center={center}
-                  radius={1000}
-                />
-                <Marker position={center} />
-              </GoogleMap>
-              <div>
-                <Button variant="outlined" onClick={async () => onSubmit()}>
-                  登録
-                </Button>
+          <Box>
+            {!isLoaded ? (
+              <CircularProgress />
+            ) : loadError ? (
+              "error"
+            ) : (
+
+              <Box>
                 <form onSubmit={handleSubmit(onSearch)}>
                   <div className="form">
                     <Controller
@@ -129,20 +118,43 @@ const WorkspotNewPage = () => {
                       control={control}
                       defaultValue=""
                       render={({ field }) => (
-                        <TextField label="address" {...field} />
+                        <TextField sx={{ display: "inline-block", width: "20rem" }} fullWidth size="small" label="住所" {...field} />
                       )}
                     />
+                    <button className={styles.resetButton} type="submit"><FontAwesomeIcon className={styles.icon} icon={faSearch} size="2x" /></button>
                   </div>
-                  <Button type="submit" variant="outlined">
-                    Search
-                  </Button>
                 </form>
-              </div>
-            </div>
-          )}
+
+
+                <Box sx={{ margin: "1.5rem 0" }}>
+                  <GoogleMap
+                    id="map"
+                    mapContainerStyle={mapContainerStyle}
+                    zoom={14}
+                    center={center}
+                    options={options}
+                    onLoad={onMapLoad}
+                    onDragEnd={onDragEnd}
+                  >
+                    <Circle
+                      center={center}
+                      radius={1000}
+                    />
+                    <Marker position={center} />
+                  </GoogleMap>
+                </Box>
+                <Box sx={{ textAlign: "center" }}>
+                  <Button sx={{ width: "13rem" }} variant="outlined" onClick={async () => onSubmit()}>
+                    登録
+                  </Button>
+                </Box>
+              </Box>
+            )}
+          </Box>
         </>
-      )}
-    </Layout>
+      )
+      }
+    </Layout >
   );
 };
 
