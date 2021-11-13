@@ -115,6 +115,7 @@ const UserListPage = () => {
                 direction="column"
                 alignItems="center"
                 justifyContent="center"
+                sx={{ marginBottom: "2rem" }}
               >
                 <Grid>
                   <Pagination count={pageCount} color="primary" page={pageNumber} onChange={(e, page) => setPageNumber(page)} />

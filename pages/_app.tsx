@@ -1,13 +1,17 @@
 import { AppProps } from 'next/app'
-import { CssBaseline } from "@mui/material";
+import { CssBaseline, Box } from "@mui/material";
 import { RecoilRoot } from "recoil"
 import '../styels/global.scss';
+import Footer from '../components/Footer';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }): JSX.Element => {
   return (
     <RecoilRoot>
       <CssBaseline />
+      <Box sx={{display: "flex", flexDirection: "column", minHeight:"100vh"}}>
       <Component {...pageProps} />
+      <Footer/>
+      </Box>
     </RecoilRoot>
   )
 }
