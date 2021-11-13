@@ -9,6 +9,7 @@ import useAxios from "../../hooks/useAxios";
 import Link from "next/link";
 import useWorkspotRelationList, { TypeWorkspotRelation } from "../../hooks/useWorkspotRelationList";
 import { Button, CircularProgress, Grid, Pagination, Box, SpeedDial, SpeedDialIcon, SpeedDialAction, Paper, Typography } from "@mui/material";
+import {useSnackbar} from 'notistack'
 import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserEdit, faCalendarAlt, faUsers, faSignInAlt, faSignOutAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
@@ -23,6 +24,7 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
   const axios = useAxios();
   const { mutate } = useSWRConfig();
   const accessToken = useRecoilValue(accessTokenState);
+  const { enqueueSnackbar } = useSnackbar();
   const { currentUser, currentUserIsLoading, currentUserIsError } =
     useCurrentUser(accessToken);
   const { workspotRelationList, workspotRelationListIsError } =
@@ -42,7 +44,9 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
       await axios.post(`workspot/delete`, params);
       mutate("workspot/index");
       router.push("/workspot/list");
+      enqueueSnackbar("削除に成功しました", {variant: "success"})
     } catch (err) {
+      enqueueSnackbar("削除に失敗しました", { variant: "error" })
       console.log(err);
     }
   };

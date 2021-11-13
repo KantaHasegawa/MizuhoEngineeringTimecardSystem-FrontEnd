@@ -8,6 +8,7 @@ import {
   Typography,
   Stack
 } from "@mui/material";
+import { useSnackbar } from 'notistack';
 import { useState } from "react";
 import useAxios from "../../hooks/useAxios";
 import useCurrentUser from "../../hooks/useCurrentUser";
@@ -33,6 +34,7 @@ const TimecardNewPage = () => {
   const axios = useAxios();
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState);
+  const { enqueueSnackbar } = useSnackbar();
   const { currentUser, currentUserIsLoading, currentUserIsError } =
     useCurrentUser(accessToken);
   if (
@@ -80,7 +82,6 @@ const TimecardNewPage = () => {
 
   const onClickHandler = async () => {
     if (!attendance || !leave || !selectedUser || !selectedWorkspot) return;
-    console.log(attendance.format("YYYYMMDDHHmmss"));
     const params = {
       user: selectedUser.value,
       workspot: selectedWorkspot.value,
@@ -89,8 +90,9 @@ const TimecardNewPage = () => {
     };
     try {
       await axios.post("timecard/admin/new", params);
-      alert("Insert Success");
+      enqueueSnackbar('登録に成功しました', {variant: "success"});
     } catch (err) {
+      enqueueSnackbar('登録に失敗しました', { variant: "error" });
       console.log(err);
     }
   };

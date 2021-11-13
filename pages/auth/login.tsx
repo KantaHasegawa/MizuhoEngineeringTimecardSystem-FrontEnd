@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Layout from '../../components/Layout';
 import { Controller, useForm } from 'react-hook-form'
 import { TextField, Button, Box, Container, Card, CardContent, Typography, CircularProgress } from "@mui/material";
+import {useSnackbar} from 'notistack'
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { accessTokenState, userState } from '../../components/atoms'
 import { useState } from 'react';
@@ -21,6 +22,7 @@ type FormData = {
 const LoginPage = () => {
   const axios = useAxios();
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
   const [serverSideError, setServerSideError] = useState<string>("")
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
@@ -33,7 +35,9 @@ const LoginPage = () => {
       setAccessToken(result.data.accessToken)
       setUser(data.username)
       router.push("/")
+      enqueueSnackbar("ログインしました", {variant: "success"})
     } catch (err: any) {
+      enqueueSnackbar("ログインに失敗しました", { variant: "error" })
       setServerSideError(err.response.data.message)
     }
   }

@@ -10,6 +10,7 @@ import useUserRelationEdit, {
 } from "../../../hooks/useUserRelationEdit";
 import Select from "react-select";
 import { Button, CircularProgress, Box, Grid, Pagination, Card, Typography } from "@mui/material";
+import { useSnackbar } from 'notistack'
 import useAxios from "../../../hooks/useAxios";
 import { mutate } from "swr";
 import styles from '../../../styels/userRelationPage.module.scss'
@@ -30,6 +31,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
   const router = useRouter();
   const axios = useAxios();
   const accessToken = useRecoilValue(accessTokenState);
+  const { enqueueSnackbar } = useSnackbar();
   const [selectedOption, setSelectedOption] =
     useState<TypeSelectedOption>(null);
   const { currentUser, currentUserIsLoading, currentUserIsError } =
@@ -53,7 +55,9 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
       await axios.post("relation/new", params);
       mutate(`relation/user/selectbox/${user}`);
       setSelectedOption(null)
+      enqueueSnackbar("登録に成功しました", { variant: "success" })
     } catch (err) {
+      enqueueSnackbar("登録に失敗しました", { variant: "error" })
       console.log(err)
     }
   };
@@ -67,7 +71,9 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
       await axios.post("relation/delete", params)
       mutate(`relation/user/selectbox/${user}`)
       setSelectedOption(null)
+      enqueueSnackbar("削除に成功しました", { variant: "success" })
     } catch (err) {
+      enqueueSnackbar("削除に失敗しました", { variant: "error" })
       console.log(err)
     }
   }

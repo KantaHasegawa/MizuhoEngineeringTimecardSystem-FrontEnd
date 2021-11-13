@@ -8,8 +8,9 @@ import getAllUserIDs from '../../lib/getAllUserIDs'
 import { useSWRConfig } from 'swr'
 import useAxios from "../../hooks/useAxios";
 import Link from 'next/link'
-import useUserRelationList, { TypeUserRelation} from '../../hooks/useUserRelationList'
+import useUserRelationList, { TypeUserRelation } from '../../hooks/useUserRelationList'
 import { Button, CircularProgress, Grid, Pagination, Box, SpeedDial, SpeedDialIcon, SpeedDialAction, Paper, Typography } from "@mui/material";
+import { useSnackbar } from 'notistack'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserEdit, faCalendarAlt, faMapMarkedAlt, faSignInAlt, faSignOutAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { styled } from "@mui/system";
@@ -22,7 +23,8 @@ type TypeParams = {
 const UserShowPage = ({ user }: { user: string }) => {
   const router = useRouter();
   const axios = useAxios();
-  const { mutate } = useSWRConfig()
+  const { mutate } = useSWRConfig();
+  const { enqueueSnackbar } = useSnackbar();
   const accessToken = useRecoilValue(accessTokenState)
   const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
   const { userRelationList, userRelationListIsError } = useUserRelationList(user);
@@ -33,7 +35,9 @@ const UserShowPage = ({ user }: { user: string }) => {
       await axios.delete(`user/delete/${user}`)
       mutate('user/index')
       router.push("/user/list")
+      enqueueSnackbar("削除に成功しました", { variant: "success" })
     } catch (err) {
+      enqueueSnackbar("削除に失敗しました", { variant: "error" })
       console.log(err)
     }
   }
@@ -85,8 +89,8 @@ const UserShowPage = ({ user }: { user: string }) => {
             :
             <>
               <Typography sx={{ fontSize: "1.5rem", fontWeight: "bold", marginLeft: "3rem" }} >{user}</Typography>
-              <div style={{position: "relative", zIndex: 1}}>
-              <SpeedDialComponent></SpeedDialComponent>
+              <div style={{ position: "relative", zIndex: 1 }}>
+                <SpeedDialComponent></SpeedDialComponent>
               </div>
               <Box sx={{ padding: "0 1rem", textAlign: "center", marginTop: "2rem" }}>
                 {

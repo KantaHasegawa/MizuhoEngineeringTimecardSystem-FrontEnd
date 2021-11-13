@@ -8,6 +8,7 @@ import { useState } from "react";
 import { TypeUserRelation } from "../hooks/useUserRelationList";
 import { CircularProgress, Box, Typography, Button } from "@mui/material";
 import MUILink from "@mui/material/Link";
+import { useSnackbar } from 'notistack'
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 dayjs.locale("ja")
 
@@ -29,6 +30,7 @@ const isTimecardStatus = (timecard: TypeTimecard): TypeTimecardStatus => {
 
 const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
   const axios = useAxios()
+  const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false)
   const { latestTimecard, latestTimecardIsError } = useGetLatestTimecard(user.name)
   const { userRelationList, userRelationListIsError } = useUserRelationList(user.name)
@@ -51,10 +53,10 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
       await axios.post("timecard/common", params)
       mutate(`timecard/latest/${user.name}`)
       mutate(`timecard/latestall`)
-      alert("success")
+      enqueueSnackbar("成功しました", { variant: "success" })
     } catch (err) {
+      enqueueSnackbar("失敗しました", { variant: "error" })
       console.log(err)
-      alert("failed")
     } finally {
       setLoading(false)
     }
@@ -83,6 +85,7 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
       ) : (
         <Box sx={{ marginBottom: "2rem" }}>
           <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>お疲れさまでした。</Typography>
+          <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>車の鍵を返してから退社してください。</Typography>
           <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>出勤時刻は{`${latestTimecard.attendance.slice(4, 6)}月${latestTimecard.attendance.slice(6, 8)}日${latestTimecard.attendance.slice(8, 10)}時${latestTimecard.attendance.slice(10, 12)}分`}、退勤時刻は{`${latestTimecard.leave.slice(4, 6)}月${latestTimecard.leave.slice(6, 8)}日${latestTimecard.leave.slice(8, 10)}時${latestTimecard.leave.slice(10, 12)}分`}です。</Typography>
         </Box>
       )

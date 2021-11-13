@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { Button } from "@mui/material";
+import { useSnackbar } from 'notistack'
 import useAxios from '../hooks/useAxios';
 import { useSetRecoilState } from "recoil";
 import { accessTokenState } from '../components/atoms';
@@ -11,6 +11,7 @@ import styles from '../styels/layout.module.scss'
 const Logout = () => {
   const axios = useAxios();
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
   const setAccessToken = useSetRecoilState(accessTokenState);
   const refreshToken = Cookies.get("refreshToken")
   const onClickHandler = async () => {
@@ -18,14 +19,16 @@ const Logout = () => {
       await axios.post("auth/logout", { refreshToken: refreshToken })
       setAccessToken("")
       router.push("/auth/login")
+      enqueueSnackbar("ログアウトしました", { variant: "success" })
     } catch (err: any) {
-      console.log(err.response.data)
+      enqueueSnackbar("ログアウトに失敗しました", { variant: "error" })
+      console.log(err)
     }
   }
   return (
-      <div onClick={async () => onClickHandler()} style={{display: "inline"}} >
-      <FontAwesomeIcon icon={faSignOutAlt} size="2x" className={styles.navbarIcon}/>
-      </div>
+    <div onClick={async () => onClickHandler()} style={{ display: "inline" }} >
+      <FontAwesomeIcon icon={faSignOutAlt} size="2x" className={styles.navbarIcon} />
+    </div>
   )
 }
 

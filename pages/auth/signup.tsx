@@ -2,6 +2,7 @@ import { useRouter } from 'next/router'
 import Layout from '../../components/Layout';
 import { Controller, useForm } from 'react-hook-form'
 import { TextField, Button, CircularProgress, Box, Card, CardContent, Typography } from "@mui/material";
+import { useSnackbar } from 'notistack'
 import { useState } from 'react';
 import useAxios from '../../hooks/useAxios';
 import useCurrentUser from '../../hooks/useCurrentUser'
@@ -17,8 +18,9 @@ type FormData = {
 const SignUpPage = () => {
   const axios = useAxios();
   const router = useRouter();
-  const [serverSideError, setServerSideError] = useState<string>("")
   const accessToken = useRecoilValue(accessTokenState)
+  const { enqueueSnackbar } = useSnackbar();
+  const [serverSideError, setServerSideError] = useState<string>("")
   const { control, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
   const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
   if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== "admin")) router.push("/")
@@ -29,7 +31,9 @@ const SignUpPage = () => {
         username: "",
         password: ""
       });
+      enqueueSnackbar("登録に成功しました", {variant: "success"})
     } catch (err: any) {
+      enqueueSnackbar("登録に失敗しました", { variant: "error" })
       console.log(err.response)
       setServerSideError(err.response?.data?.errors[0].msg)
     }

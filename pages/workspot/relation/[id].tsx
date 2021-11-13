@@ -10,6 +10,7 @@ import useWorkspotRelationEdit, {
 } from "../../../hooks/useWorkspotRelationEdit";
 import Select from "react-select";
 import { Button, CircularProgress, Box, Grid, Pagination, Card, Typography } from "@mui/material";
+import { useSnackbar } from 'notistack'
 import useAxios from "../../../hooks/useAxios";
 import { mutate } from "swr";
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
@@ -30,6 +31,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
   const router = useRouter();
   const axios = useAxios();
   const accessToken = useRecoilValue(accessTokenState);
+  const { enqueueSnackbar } = useSnackbar();
   const [selectedOption, setSelectedOption] =
     useState<TypeSelectedOption>(null);
   const { currentUser, currentUserIsLoading, currentUserIsError } =
@@ -53,7 +55,9 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
       await axios.post("relation/new", params);
       mutate(`relation/workspot/selectbox/${workspot}`);
       setSelectedOption(null);
+      enqueueSnackbar("登録に成功しました", { variant: "success" })
     } catch (err) {
+      enqueueSnackbar("登録に失敗しました", { variant: "error" })
       console.log(err);
     }
   };
@@ -67,7 +71,9 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
       await axios.post("relation/delete", params);
       mutate(`relation/workspot/selectbox/${workspot}`);
       setSelectedOption(null);
+      enqueueSnackbar("削除に成功しました", {variant: "success"})
     } catch (err) {
+      enqueueSnackbar("削除に失敗しました", { variant: "error" })
       console.log(err);
     }
   };

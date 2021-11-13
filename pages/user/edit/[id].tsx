@@ -6,6 +6,7 @@ import useCurrentUser from '../../../hooks/useCurrentUser';
 import getAllUserIDs from '../../../lib/getAllUserIDs'
 import { Controller, useForm } from 'react-hook-form'
 import { TextField, Button, CircularProgress, Box, Typography, Card, CardContent } from "@mui/material";
+import { useSnackbar } from 'notistack'
 import { useState } from 'react';
 import useAxios from '../../../hooks/useAxios';
 
@@ -20,9 +21,10 @@ type FormData = {
 export const UserEditPage = ({ user }: { user: string }) => {
   const axios = useAxios();
   const router = useRouter();
+  const accessToken = useRecoilValue(accessTokenState)
+  const { enqueueSnackbar } = useSnackbar();
   const { control, handleSubmit, reset, formState: { errors } } = useForm<FormData>();
   const [serverSideError, setServerSideError] = useState<string>("")
-  const accessToken = useRecoilValue(accessTokenState)
   const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
   if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== "admin")) router.push("/")
   const onSubmit = async (data: FormData) => {
@@ -35,7 +37,9 @@ export const UserEditPage = ({ user }: { user: string }) => {
       reset({
         password: ""
       });
+      enqueueSnackbar("パスワードの変更に成功しました", {variant: "success"})
     } catch (err: any) {
+      enqueueSnackbar("パスワードの変更に失敗しました", { variant: "error" })
       console.log(err.response)
       setServerSideError(err.response?.data?.message)
     }
@@ -50,7 +54,7 @@ export const UserEditPage = ({ user }: { user: string }) => {
               <>
                 <Card variant="outlined">
                   <CardContent>
-                    <Typography  sx={{ marginBottom: "12px !important", fontWeight: "bold !important", fontSize: "1.1rem" }}>
+                    <Typography sx={{ marginBottom: "12px !important", fontWeight: "bold !important", fontSize: "1.1rem" }}>
                       {`${user} パスワード変更`}
                     </Typography>
                     <Typography sx={{ marginBottom: "12px !important", fontSize: "0.8rem !important" }} color="text.secondary" >

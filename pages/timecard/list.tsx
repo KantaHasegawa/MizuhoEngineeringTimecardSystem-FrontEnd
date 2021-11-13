@@ -5,6 +5,7 @@ import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../components/atoms";
 import React, { useState } from "react";
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Container } from "@mui/material";
+import {useSnackbar} from 'notistack'
 import useAxios from "../../hooks/useAxios";
 import useUserList from "../../hooks/useUserList";
 import { Controller, useForm } from "react-hook-form";
@@ -69,6 +70,7 @@ const UserListPage = () => {
   const router = useRouter();
   const axios = useAxios();
   const accessToken = useRecoilValue(accessTokenState);
+  const { enqueueSnackbar } = useSnackbar();
   const { currentUser, currentUserIsLoading, currentUserIsError } =
     useCurrentUser(accessToken);
   if (
@@ -217,7 +219,9 @@ const UserListPage = () => {
       }
       mutate(`timecard/common/${user}`)
       onSubmit(data)
+      enqueueSnackbar("削除に成功しました",{variant: "success"})
     } catch (err) {
+      enqueueSnackbar("削除に失敗しました", { variant: "error" })
       console.log(err)
     }
   }

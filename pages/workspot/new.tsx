@@ -6,6 +6,7 @@ import {
   Marker,
 } from "@react-google-maps/api";
 import { Button, CircularProgress, TextField, Box } from "@mui/material";
+import {useSnackbar} from 'notistack'
 import { Controller, useForm } from "react-hook-form";
 import useAxios from "../../hooks/useAxios";
 import useCurrentUser from "../../hooks/useCurrentUser";
@@ -39,6 +40,7 @@ const options = {
 const WorkspotNewPage = () => {
   const axios = useAxios();
   const accessToken = useRecoilValue(accessTokenState);
+  const { enqueueSnackbar } = useSnackbar();
   const [center, setCenter] = useState({ lat: 35.1346609, lng: 136.9381131 });
   const { control, handleSubmit, reset } = useForm<FormData>();
   const { currentUser, currentUserIsLoading, currentUserIsError } =
@@ -64,8 +66,9 @@ const WorkspotNewPage = () => {
         lng: mapRef.current?.getCenter()?.lng(),
       };
       const result = await axios.post<TypeWorkspotNewRequestResponse>("workspot/new", params);
-      alert(`${result.data.workspotName}を登録しました`);
+      enqueueSnackbar(`${result.data.workspotName}を登録しました`, {variant: "success"});
     } catch (err) {
+      enqueueSnackbar(`登録に失敗しました`, { variant: "error" });
       console.log(err);
     }
   };
@@ -143,7 +146,7 @@ const WorkspotNewPage = () => {
                     <Marker position={center} />
                   </GoogleMap>
                 </Box>
-                <Box sx={{ textAlign: "center" }}>
+                <Box sx={{ textAlign: "center", marginBottom: "2rem" }}>
                   <Button sx={{ width: "13rem" }} variant="outlined" onClick={async () => onSubmit()}>
                     登録
                   </Button>
