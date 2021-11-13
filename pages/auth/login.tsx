@@ -52,7 +52,12 @@ const LoginPage = () => {
         <Box sx={{ paddingTop: "2rem", width: "350px", marginLeft: "auto", marginRight: "auto" }}>
           {
             currentUserIsLoading ? <CircularProgress /> :
-              currentUser ? <div>Logined</div> :
+              currentUser ? (
+                <Box color="white" sx={{ textAlign: "center", backgroundColor: "#9DDDFB", padding: "2rem", borderRadius: "50px"}}>
+                  <Typography>既にログイン済みです</Typography>
+                  <Typography>数秒後にページが切り替わります</Typography>
+                </Box>
+              ) :
                 <>
                   <div className={styles.imageWrapper}>
                     <Image
