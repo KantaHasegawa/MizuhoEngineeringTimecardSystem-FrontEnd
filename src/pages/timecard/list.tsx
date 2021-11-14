@@ -25,7 +25,6 @@ import Select from 'react-select';
 import { useRecoilValue } from 'recoil';
 import { mutate } from 'swr';
 dayjs.locale('ja');
-import styles from '../../../styels/timecardList.module.css';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
@@ -276,39 +275,42 @@ const UserListPage = () => {
                   name='user'
                   control={control}
                   render={({ field }) => (
-                    <Select
-                      {...field}
-                      className={styles.selectBox}
-                      options={userSelectBoxItems || []}
-                      isClearable={true}
-                      placeholder='社員'
-                    />
+                    <Box sx={{ marginBottom: "1rem" }}>
+                      <Select
+                        {...field}
+                        options={userSelectBoxItems || []}
+                        isClearable={true}
+                        placeholder='社員'
+                      />
+                    </Box>
                   )}
                 />
                 <Controller
                   name='year'
                   control={control}
                   render={({ field }) => (
-                    <Select
-                      {...field}
-                      className={styles.selectBox}
-                      options={yearSelectBoxItems}
-                      isClearable={true}
-                      placeholder='年'
-                    />
+                    <Box sx={{ marginBottom: "1rem" }}>
+                      <Select
+                        {...field}
+                        options={yearSelectBoxItems}
+                        isClearable={true}
+                        placeholder='年'
+                      />
+                    </Box>
                   )}
                 />
                 <Controller
                   name='month'
                   control={control}
                   render={({ field }) => (
-                    <Select
-                      {...field}
-                      className={styles.selectBox}
-                      options={monthSelectBoxItems}
-                      isClearable={true}
-                      placeholder='月'
-                    />
+                    <Box sx={{ marginBottom: "1rem" }}>
+                      <Select
+                        {...field}
+                        options={monthSelectBoxItems}
+                        isClearable={true}
+                        placeholder='月'
+                      />
+                    </Box>
                   )}
                 />
                 <Box sx={{ textAlign: "center" }}>
@@ -438,7 +440,7 @@ const UserListPage = () => {
                               <FontAwesomeIcon
                                 icon={faTrashAlt}
                                 size='lg'
-                                className={styles.trashIcon}
+                                className="trashIcon"
                               />
                             </div>
                           </Tooltip>

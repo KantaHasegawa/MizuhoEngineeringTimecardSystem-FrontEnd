@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
-import styles from '../../styels/layout.module.css';
 import useAxios from '../hooks/useAxios';
 import AlertDialog from './AlertDialog';
 import { accessTokenState } from './atoms';
@@ -48,7 +47,7 @@ const Logout = () => {
       />
       <Tooltip title='ログアウト'>
         <div onClick={() => setDialog(true)} style={{ display: 'inline' }}>
-          <FontAwesomeIcon icon={faSignOutAlt} size='2x' className={styles.navbarIcon} />
+          <FontAwesomeIcon icon={faSignOutAlt} size='2x' className="navbarIcon" />
         </div>
       </Tooltip>
     </>

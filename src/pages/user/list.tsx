@@ -6,17 +6,15 @@ import {
   TextField,
   Box,
   Paper,
-  Stack,
   Pagination,
   Grid,
 } from '@mui/material';
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useSWRConfig } from 'swr';
-import styles from '../../../styels/userList.module.css';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
@@ -96,14 +94,14 @@ const UserListPage = () => {
               size='small'
             />
             <Tooltip title='検索'>
-              <button type='submit' className={styles.resetButton} onClick={onSearchHandler}>
-                <FontAwesomeIcon className={styles.icon} icon={faSearch} size='2x' />
+              <button type='submit' className="resetButton" onClick={onSearchHandler}>
+                <FontAwesomeIcon className="icon" icon={faSearch} size='2x' />
               </button>
             </Tooltip>
             <Link href='/auth/signup' passHref>
               <Tooltip title='社員を追加'>
-                <button type='button' className={styles.resetButton}>
-                  <FontAwesomeIcon className={styles.icon} icon={faUserPlus} size='2x' />
+                      <button type='button' className="resetButton">
+                  <FontAwesomeIcon className="icon" icon={faUserPlus} size='2x' />
                 </button>
               </Tooltip>
             </Link>

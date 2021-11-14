@@ -1,4 +1,4 @@
-import { AppBar, Box, Button, IconButton, Toolbar, Typography, Container } from '@material-ui/core';
+import { Box, Container } from '@mui/material';
 import Head from 'next/head';
 import React, { ReactNode } from 'react';
 import Navbar from './Navbar';

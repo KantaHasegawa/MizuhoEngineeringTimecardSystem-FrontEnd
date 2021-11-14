@@ -7,7 +7,6 @@ import { useSnackbar } from 'notistack';
 import React, { useCallback, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
-import styles from '../../../styels/workspotNew.module.css';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
@@ -134,8 +133,8 @@ const WorkspotNewPage = () => {
                         )}
                       />
                       <Tooltip title='検索'>
-                        <button className={styles.resetButton} type='submit'>
-                          <FontAwesomeIcon className={styles.icon} icon={faSearch} size='2x' />
+                        <button className="resetButton" type='submit'>
+                          <FontAwesomeIcon className="icon" icon={faSearch} size='2x' />
                         </button>
                       </Tooltip>
                     </div>

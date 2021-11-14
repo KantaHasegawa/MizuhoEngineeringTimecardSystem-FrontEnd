@@ -13,7 +13,6 @@ import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
-import styles from '../../../styels/signup.module.css';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
@@ -99,7 +98,7 @@ const SignUpPage = () => {
                   </Typography>
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className='form'>
-                      <div className={styles.textField}>
+                      <Box sx={{marginBottom: "1rem"}}>
                         <Controller
                           name='username'
                           control={control}
@@ -118,11 +117,11 @@ const SignUpPage = () => {
                         <Typography sx={{ fontSize: '0.8rem !important' }} color='#f44336'>
                           {errors.username?.type === 'pattern' && '氏名は日本語で入力してください'}
                         </Typography>
-                      </div>
+                      </Box>
                     </div>
 
                     <div className='form'>
-                      <div className={styles.textField}>
+                      <Box sx={{marginBottom: "1rem"}}>
                         <Controller
                           name='password'
                           control={control}
@@ -152,7 +151,7 @@ const SignUpPage = () => {
                           {errors.password?.type === 'pattern' &&
                             'パスワードは半角英数字で入力してください'}
                         </Typography>
-                      </div>
+                      </Box>
                     </div>
                     <Button fullWidth variant='outlined' type='submit'>
                       登録

@@ -9,7 +9,6 @@ import Select from 'react-select';
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
 import { useRecoilValue } from 'recoil';
 import { mutate } from 'swr';
-import styles from '../../../../styels/userRelationPage.module.css';
 import ErrorComponent from '../../../components/ErrorComponent';
 import Layout from '../../../components/Layout';
 import PermissionErrorComponent from '../../../components/PermissionErrorComponent';
@@ -86,7 +85,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
         <Typography sx={{ fontSize: '1rem' }}>{data[index].workspot}</Typography>
         <Tooltip title='削除' placement='left-start'>
           <div onClick={async () => onDelete(data[index].workspot)}>
-            <FontAwesomeIcon icon={faTrashAlt} size='lg' className={styles.trashIcon} />
+            <FontAwesomeIcon icon={faTrashAlt} size='lg' className="trashIcon" />
           </div>
         </Tooltip>
       </div>
@@ -124,7 +123,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
                   />
                   <Box sx={{ textAlign: 'center', margin: '1rem' }}>
                     <Button
-                      className={styles.button}
+                      sx={{ width: "6rem" }}
                       variant='outlined'
                       onClick={async () => onSubmit()}
                     >

@@ -17,7 +17,6 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import mizuhoLogo from '../../../public/mizuho-logo.png';
-import styles from '../../../styels/login.module.css';
 import { accessTokenState, userState } from '../../components/atoms';
 import useAxios from '../../hooks/useAxios';
 import useCurrentUser from '../../hooks/useCurrentUser';
@@ -89,9 +88,8 @@ const LoginPage = () => {
             </Box>
           ) : (
             <>
-              <div className={styles.imageWrapper}>
+              <div style={{ marginBottom: "1rem", textAlign: "center" }}>
                 <Image
-                  className={styles.logo}
                   src={mizuhoLogo}
                   alt='ミズホエンジニアリング'
                   width={100}
@@ -113,7 +111,7 @@ const LoginPage = () => {
 
                     <form onSubmit={handleSubmit(onSubmit)}>
                       <div className='form'>
-                        <div className={styles.textField}>
+                        <Box sx={{marginBottom: "1rem"}}>
                           <Controller
                             name='username'
                             control={control}
@@ -133,10 +131,10 @@ const LoginPage = () => {
                             {errors.username?.type === 'pattern' &&
                               '氏名は日本語で入力してください'}
                           </Typography>
-                        </div>
+                        </Box>
                       </div>
                       <div className='form'>
-                        <div className={styles.textField}>
+                        <Box sx={{marginBottom: "1rem"}}>
                           <Controller
                             name='password'
                             control={control}
@@ -156,7 +154,7 @@ const LoginPage = () => {
                             {errors.password?.type === 'pattern' &&
                               'パスワードは半角英数字で入力してください'}
                           </Typography>
-                        </div>
+                        </Box>
                       </div>
                       <Button fullWidth variant='outlined' type='submit'>
                         進む

@@ -15,7 +15,6 @@ import Link from 'next/link';
 import router from 'next/router';
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import styles from '../../../styels/workspotList.module.css';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
@@ -91,14 +90,14 @@ const WorkspotListPage = () => {
               onChange={onChangeHandler}
             />
             <Tooltip title='検索'>
-              <button type='submit' className={styles.resetButton} onClick={onSearchHandler}>
-                <FontAwesomeIcon className={styles.icon} icon={faSearch} size='2x' />
+              <button type='submit' className="resetButton" onClick={onSearchHandler}>
+                <FontAwesomeIcon className="icon" icon={faSearch} size='2x' />
               </button>
             </Tooltip>
             <Link href='/workspot/new' passHref>
               <Tooltip title='勤務地を追加'>
-                <button type='button' className={styles.resetButton}>
-                  <FontAwesomeIcon className={styles.icon} icon={faPlusSquare} size='2x' />
+                <button type='button' className="resetButton">
+                  <FontAwesomeIcon className="icon" icon={faPlusSquare} size='2x' />
                 </button>
               </Tooltip>
             </Link>
