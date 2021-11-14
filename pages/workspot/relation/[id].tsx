@@ -9,7 +9,7 @@ import useWorkspotRelationEdit, {
   TypeWorkspotRelation,
 } from "../../../hooks/useWorkspotRelationEdit";
 import Select from "react-select";
-import { Button, CircularProgress, Box, Tooltip, Typography } from "@mui/material";
+import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop } from "@mui/material";
 import { useSnackbar } from 'notistack'
 import useAxios from "../../../hooks/useAxios";
 import { mutate } from "swr";
@@ -33,6 +33,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
   const axios = useAxios();
   const accessToken = useRecoilValue(accessTokenState);
   const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false)
   const [selectedOption, setSelectedOption] =
     useState<TypeSelectedOption>(null);
   const { currentUser, currentUserIsLoading, currentUserIsError } =
@@ -48,6 +49,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
 
   const onSubmit = async () => {
     if (!selectedOption?.value) return;
+    setLoading(true)
     try {
       const params = {
         user: selectedOption.value,
@@ -60,10 +62,13 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
     } catch (err) {
       enqueueSnackbar("登録に失敗しました", { variant: "error" })
       console.log(err);
+    } finally {
+      setLoading(false)
     }
   };
 
   const onDelete = async (user: string) => {
+    setLoading(true)
     try {
       const params = {
         user: user,
@@ -76,6 +81,8 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
     } catch (err) {
       enqueueSnackbar("削除に失敗しました", { variant: "error" })
       console.log(err);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -93,51 +100,59 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
   }
 
   return (
-    <Layout title="ミズホエンジニアリング | 編集">
-      <Box>
-        {currentUserIsLoading ? (
-          <CircularProgress />
-        ) : currentUserIsError ? (
-          <ErrorComponent></ErrorComponent>
-        ) : currentUser.role !== "admin" ? (
-          <div>You don't have permission</div>
-        ) : (
-          <>
-            <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>{workspot}</Typography>
-            {!workspotSelectBoxResponse ? (
-              <CircularProgress />
-            ) : workspotSelectBoxResponseIsError ? (
-              <ErrorComponent></ErrorComponent>
-            ) : (
-              <div>
-                <Select
-                  defaultValue={selectedOption}
-                  value={selectedOption}
-                  onChange={setSelectedOption}
-                  options={workspotSelectBoxResponse.selectBoxItems}
-                  isClearable={true}
-                />
-                <Box sx={{ textAlign: "center", margin: "1rem" }}>
-                  <Button className={styles.button} variant="outlined" onClick={async () => onSubmit()}>登録</Button>
-                </Box>
-                {workspotSelectBoxResponse &&
-                  <List
-                    className="List"
-                    height={650}
-                    width={"100%"}
-                    itemCount={workspotSelectBoxResponse.relations.length}
-                    itemData={workspotSelectBoxResponse.relations}
-                    itemSize={80}
-                  >
-                    {Row}
-                  </List>
-                }
-              </div>
-            )}
-          </>
-        )}
-      </Box>
-    </Layout>
+    <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Layout title="ミズホエンジニアリング | 編集">
+        <Box>
+          {currentUserIsLoading ? (
+            <CircularProgress />
+          ) : currentUserIsError ? (
+            <ErrorComponent></ErrorComponent>
+          ) : currentUser.role !== "admin" ? (
+            <div>You don't have permission</div>
+          ) : (
+            <>
+              <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>{workspot}</Typography>
+              {!workspotSelectBoxResponse ? (
+                <CircularProgress />
+              ) : workspotSelectBoxResponseIsError ? (
+                <ErrorComponent></ErrorComponent>
+              ) : (
+                <div>
+                  <Select
+                    defaultValue={selectedOption}
+                    value={selectedOption}
+                    onChange={setSelectedOption}
+                    options={workspotSelectBoxResponse.selectBoxItems}
+                    isClearable={true}
+                  />
+                  <Box sx={{ textAlign: "center", margin: "1rem" }}>
+                    <Button className={styles.button} variant="outlined" onClick={async () => onSubmit()}>登録</Button>
+                  </Box>
+                  {workspotSelectBoxResponse &&
+                    <List
+                      className="List"
+                      height={650}
+                      width={"100%"}
+                      itemCount={workspotSelectBoxResponse.relations.length}
+                      itemData={workspotSelectBoxResponse.relations}
+                      itemSize={80}
+                    >
+                      {Row}
+                    </List>
+                  }
+                </div>
+              )}
+            </>
+          )}
+        </Box>
+      </Layout>
+    </>
   );
 };
 

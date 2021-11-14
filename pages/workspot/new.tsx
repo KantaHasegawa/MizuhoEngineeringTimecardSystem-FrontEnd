@@ -5,7 +5,7 @@ import {
   Circle,
   Marker,
 } from "@react-google-maps/api";
-import { Button, CircularProgress, TextField, Box, Tooltip } from "@mui/material";
+import { Button, CircularProgress, TextField, Box, Tooltip, Backdrop } from "@mui/material";
 import { useSnackbar } from 'notistack'
 import { Controller, useForm } from "react-hook-form";
 import useAxios from "../../hooks/useAxios";
@@ -42,6 +42,7 @@ const WorkspotNewPage = () => {
   const axios = useAxios();
   const accessToken = useRecoilValue(accessTokenState);
   const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false)
   const [center, setCenter] = useState({ lat: 35.1346609, lng: 136.9381131 });
   const { control, handleSubmit, reset } = useForm<FormData>();
   const { currentUser, currentUserIsLoading, currentUserIsError } =
@@ -61,6 +62,7 @@ const WorkspotNewPage = () => {
   }, []);
 
   const onSubmit = async () => {
+    setLoading(true)
     try {
       const params = {
         lat: mapRef.current?.getCenter()?.lat(),
@@ -71,6 +73,8 @@ const WorkspotNewPage = () => {
     } catch (err) {
       enqueueSnackbar(`登録に失敗しました`, { variant: "error" });
       console.log(err);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -83,6 +87,7 @@ const WorkspotNewPage = () => {
   };
 
   const onSearch = async (data: FormData) => {
+    setLoading(true)
     try {
       const geocoder = new google.maps.Geocoder();
       const result = await geocoder.geocode({ address: data.address });
@@ -94,75 +99,82 @@ const WorkspotNewPage = () => {
       reset({ address: "" });
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false)
     }
   };
 
   return (
-    <Layout title="ミズホエンジニアリング | 勤務地登録">
-      {currentUserIsLoading ? (
-        <CircularProgress />
-      ) : currentUserIsError ? (
-        <ErrorComponent></ErrorComponent>
-      ) : currentUser.role !== "admin" ? (
-        <div>You don't have permission</div>
-      ) : (
-        <>
-          <Box>
-            {!isLoaded ? (
-              <CircularProgress />
-            ) : loadError ? (
-              <ErrorComponent></ErrorComponent>
-            ) : (
-
-              <Box>
-                <form onSubmit={handleSubmit(onSearch)}>
-                  <div className="form">
-                    <Controller
-                      name="address"
-                      control={control}
-                      defaultValue=""
-                      render={({ field }) => (
-                        <TextField sx={{ display: "inline-block", width: "20rem" }} fullWidth size="small" label="住所" {...field} />
-                      )}
-                    />
-                    <Tooltip title="検索">
-                      <button className={styles.resetButton} type="submit">
-                        <FontAwesomeIcon className={styles.icon} icon={faSearch} size="2x" />
-                      </button>
-                    </Tooltip>
-                  </div>
-                </form>
-
-
-                <Box sx={{ margin: "1.5rem 0" }}>
-                  <GoogleMap
-                    id="map"
-                    mapContainerStyle={mapContainerStyle}
-                    zoom={14}
-                    center={center}
-                    options={options}
-                    onLoad={onMapLoad}
-                    onDragEnd={onDragEnd}
-                  >
-                    <Circle
+    <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Layout title="ミズホエンジニアリング | 勤務地登録">
+        {currentUserIsLoading ? (
+          <CircularProgress />
+        ) : currentUserIsError ? (
+          <ErrorComponent></ErrorComponent>
+        ) : currentUser.role !== "admin" ? (
+          <div>You don't have permission</div>
+        ) : (
+          <>
+            <Box>
+              {!isLoaded ? (
+                <CircularProgress />
+              ) : loadError ? (
+                <ErrorComponent></ErrorComponent>
+              ) : (
+                <Box>
+                  <form onSubmit={handleSubmit(onSearch)}>
+                    <div className="form">
+                      <Controller
+                        name="address"
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                          <TextField sx={{ display: "inline-block", width: "20rem" }} fullWidth size="small" label="住所" {...field} />
+                        )}
+                      />
+                      <Tooltip title="検索">
+                        <button className={styles.resetButton} type="submit">
+                          <FontAwesomeIcon className={styles.icon} icon={faSearch} size="2x" />
+                        </button>
+                      </Tooltip>
+                    </div>
+                  </form>
+                  <Box sx={{ margin: "1.5rem 0" }}>
+                    <GoogleMap
+                      id="map"
+                      mapContainerStyle={mapContainerStyle}
+                      zoom={14}
                       center={center}
-                      radius={1000}
-                    />
-                    <Marker position={center} />
-                  </GoogleMap>
+                      options={options}
+                      onLoad={onMapLoad}
+                      onDragEnd={onDragEnd}
+                    >
+                      <Circle
+                        center={center}
+                        radius={1000}
+                      />
+                      <Marker position={center} />
+                    </GoogleMap>
+                  </Box>
+                  <Box sx={{ textAlign: "center", marginBottom: "2rem" }}>
+                    <Button sx={{ width: "13rem" }} variant="outlined" onClick={async () => onSubmit()}>
+                      登録
+                    </Button>
+                  </Box>
                 </Box>
-                <Box sx={{ textAlign: "center", marginBottom: "2rem" }}>
-                  <Button sx={{ width: "13rem" }} variant="outlined" onClick={async () => onSubmit()}>
-                    登録
-                  </Button>
-                </Box>
-              </Box>
-            )}
-          </Box>
-        </>
-      )
-      }
-    </Layout >
+              )}
+            </Box>
+          </>
+        )
+        }
+      </Layout >
+    </>
   );
 };
 

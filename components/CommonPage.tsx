@@ -6,7 +6,7 @@ import useAxios from "../hooks/useAxios";
 import { mutate } from "swr";
 import { useState } from "react";
 import { TypeUserRelation } from "../hooks/useUserRelationList";
-import { CircularProgress, Box, Typography, Button } from "@mui/material";
+import { CircularProgress, Box, Typography, Button, Backdrop } from "@mui/material";
 import MUILink from "@mui/material/Link";
 import { useSnackbar } from 'notistack'
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
@@ -128,6 +128,12 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
 
   return (
     <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>{user.name}さんの勤怠管理ページ</Typography>
       <Typography sx={{ fontSize: "0.8rem" }}>このアプリケーションは位置情報を使用しますので端末の位置情報機能が無効になっている場合は有効にしてください。</Typography> <br />
       <MainContents></MainContents>

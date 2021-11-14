@@ -9,7 +9,7 @@ import { useSWRConfig } from 'swr'
 import useAxios from "../../hooks/useAxios";
 import Link from 'next/link'
 import useUserRelationList, { TypeUserRelation } from '../../hooks/useUserRelationList'
-import { Button, CircularProgress, Grid, Pagination, Box, SpeedDial, SpeedDialIcon, SpeedDialAction, Paper, Typography } from "@mui/material";
+import { CircularProgress, Backdrop, Box, SpeedDial, SpeedDialIcon, SpeedDialAction, Paper, Typography } from "@mui/material";
 import { useSnackbar } from 'notistack'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserEdit, faCalendarAlt, faMapMarkedAlt, faSignInAlt, faSignOutAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
@@ -27,11 +27,13 @@ const UserShowPage = ({ user }: { user: string }) => {
   const { mutate } = useSWRConfig();
   const { enqueueSnackbar } = useSnackbar();
   const accessToken = useRecoilValue(accessTokenState)
+  const [loading, setLoading] = useState(false)
   const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
   const { userRelationList, userRelationListIsError } = useUserRelationList(user);
   if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== "admin")) router.push("/")
 
   const onClickDeleteUser = async (user: string) => {
+    setLoading(true)
     try {
       await axios.delete(`user/delete/${user}`)
       mutate('user/index')
@@ -40,6 +42,8 @@ const UserShowPage = ({ user }: { user: string }) => {
     } catch (err) {
       enqueueSnackbar("削除に失敗しました", { variant: "error" })
       console.log(err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -82,37 +86,44 @@ const UserShowPage = ({ user }: { user: string }) => {
   }
 
   return (
-    <Layout title="ミズホエンジニアリング | 社員詳細">
-
-      {currentUserIsLoading ? <CircularProgress />
-        : currentUserIsError ? <ErrorComponent></ErrorComponent>
-          : currentUser.role !== "admin" ? <div>You don't have permission</div>
-            :
-            <>
-              <Typography sx={{ fontSize: "1.5rem", fontWeight: "bold", marginLeft: "3rem" }} >{user}</Typography>
-              <div style={{ position: "relative", zIndex: 1 }}>
-                <SpeedDialComponent></SpeedDialComponent>
-              </div>
-              <Box sx={{ padding: "0 1rem", textAlign: "center", marginTop: "2rem" }}>
-                {
-                  !userRelationList ? <CircularProgress />
-                    : userRelationListIsError ? <ErrorComponent></ErrorComponent>
-                      :
-                      <List
-                        className="List"
-                        height={650}
-                        width={"100%"}
-                        itemCount={userRelationList.params.length}
-                        itemData={userRelationList.params}
-                        itemSize={80}
-                      >
-                        {Row}
-                      </List>
-                }
-              </Box>
-            </>
-      }
-    </Layout>
+    <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Layout title="ミズホエンジニアリング | 社員詳細">
+        {currentUserIsLoading ? <CircularProgress />
+          : currentUserIsError ? <ErrorComponent></ErrorComponent>
+            : currentUser.role !== "admin" ? <div>You don't have permission</div>
+              :
+              <>
+                <Typography sx={{ fontSize: "1.5rem", fontWeight: "bold", marginLeft: "3rem" }} >{user}</Typography>
+                <div style={{ position: "relative", zIndex: 1 }}>
+                  <SpeedDialComponent></SpeedDialComponent>
+                </div>
+                <Box sx={{ padding: "0 1rem", textAlign: "center", marginTop: "2rem" }}>
+                  {
+                    !userRelationList ? <CircularProgress />
+                      : userRelationListIsError ? <ErrorComponent></ErrorComponent>
+                        :
+                        <List
+                          className="List"
+                          height={650}
+                          width={"100%"}
+                          itemCount={userRelationList.params.length}
+                          itemData={userRelationList.params}
+                          itemSize={80}
+                        >
+                          {Row}
+                        </List>
+                  }
+                </Box>
+              </>
+        }
+      </Layout>
+    </>
   )
 }
 

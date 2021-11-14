@@ -1,8 +1,6 @@
 import { useRouter } from 'next/router'
-import Link from 'next/link'
-import Layout from '../../components/Layout';
 import { Controller, useForm } from 'react-hook-form'
-import { TextField, Button, Box, Container, Card, CardContent, Typography, CircularProgress } from "@mui/material";
+import { TextField, Button, Box, Container, Card, CardContent, Typography, CircularProgress, Backdrop } from "@mui/material";
 import {useSnackbar} from 'notistack'
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { accessTokenState, userState } from '../../components/atoms'
@@ -23,6 +21,7 @@ const LoginPage = () => {
   const axios = useAxios();
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false)
   const [serverSideError, setServerSideError] = useState<string>("")
   const { control, handleSubmit, formState: { errors } } = useForm<FormData>();
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
@@ -30,6 +29,7 @@ const LoginPage = () => {
   const { currentUser, currentUserIsLoading } = useCurrentUser(accessToken)
   if (currentUser) router.push("/")
   const onSubmit = async (data: FormData) => {
+    setLoading(true)
     try {
       const result: any = await axios.post(`auth/login`, data)
       setAccessToken(result.data.accessToken)
@@ -39,10 +39,18 @@ const LoginPage = () => {
     } catch (err: any) {
       enqueueSnackbar("ログインに失敗しました", { variant: "error" })
       setServerSideError(err.response.data.message)
+    } finally {
+      setLoading(false)
     }
   }
   return (
-    <div>
+    <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Head>
         <title>ミズホエンジニアリング | ログイン</title>
         <meta charSet="utf-8" />
@@ -121,7 +129,7 @@ const LoginPage = () => {
           }
         </Box>
       </Container>
-    </div >
+    </ >
   )
 }
 

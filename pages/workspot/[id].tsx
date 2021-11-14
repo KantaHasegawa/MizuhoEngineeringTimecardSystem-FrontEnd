@@ -8,7 +8,7 @@ import { useSWRConfig } from "swr";
 import useAxios from "../../hooks/useAxios";
 import Link from "next/link";
 import useWorkspotRelationList, { TypeWorkspotRelation } from "../../hooks/useWorkspotRelationList";
-import { Button, CircularProgress, Grid, Pagination, Box, SpeedDial, SpeedDialIcon, SpeedDialAction, Paper, Typography } from "@mui/material";
+import { CircularProgress, Box, SpeedDial, SpeedDialIcon, SpeedDialAction, Backdrop, Typography } from "@mui/material";
 import { useSnackbar } from 'notistack'
 import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -26,6 +26,7 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
   const { mutate } = useSWRConfig();
   const accessToken = useRecoilValue(accessTokenState);
   const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState(false)
   const { currentUser, currentUserIsLoading, currentUserIsError } =
     useCurrentUser(accessToken);
   const { workspotRelationList, workspotRelationListIsError } =
@@ -37,6 +38,7 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
     router.push("/");
 
   const onClickDeleteWorkspot = async (workspot: string) => {
+    setLoading(true)
     const params = {
       workspot: workspot,
       attendance: `workspot ${workspot}`
@@ -49,6 +51,8 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
     } catch (err) {
       enqueueSnackbar("削除に失敗しました", { variant: "error" })
       console.log(err);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -88,43 +92,51 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
   }
 
   return (
-    <Layout title="ミズホエンジニアリング | 勤務地詳細">
-      {currentUserIsLoading ? (
-        <CircularProgress />
-      ) : currentUserIsError ? (
-        <ErrorComponent></ErrorComponent>
-      ) : currentUser.role !== "admin" ? (
-        <div>You don't have permission</div>
-      ) : (
-        <>
-          <Box sx={{ width: "23rem" }}>
-            <Typography sx={{ fontSize: "1rem", fontWeight: "bold", marginLeft: "1rem" }} >{workspot}</Typography>
-          </Box>
-          <div style={{ position: "relative", zIndex: 1 }}>
-            <SpeedDialComponent></SpeedDialComponent>
-          </div>
-          <Box sx={{ padding: "0 1rem", textAlign: "center", marginTop: "2rem" }}>
-            {!workspotRelationList ? (
-              <CircularProgress />
-            ) : workspotRelationListIsError ? (
-              <ErrorComponent></ErrorComponent>
-            ) : (
-              <List
-                className="List"
-                height={650}
-                width={"100%"}
-                itemCount={workspotRelationList.params.length}
-                itemData={workspotRelationList.params}
-                itemSize={45}
-              >
-                {Row}
-              </List>
-            )}
-          </Box>
-        </>
-      )
-      }
-    </Layout >
+    <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Layout title="ミズホエンジニアリング | 勤務地詳細">
+        {currentUserIsLoading ? (
+          <CircularProgress />
+        ) : currentUserIsError ? (
+          <ErrorComponent></ErrorComponent>
+        ) : currentUser.role !== "admin" ? (
+          <div>You don't have permission</div>
+        ) : (
+          <>
+            <Box sx={{ width: "23rem" }}>
+              <Typography sx={{ fontSize: "1rem", fontWeight: "bold", marginLeft: "1rem" }} >{workspot}</Typography>
+            </Box>
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <SpeedDialComponent></SpeedDialComponent>
+            </div>
+            <Box sx={{ padding: "0 1rem", textAlign: "center", marginTop: "2rem" }}>
+              {!workspotRelationList ? (
+                <CircularProgress />
+              ) : workspotRelationListIsError ? (
+                <ErrorComponent></ErrorComponent>
+              ) : (
+                <List
+                  className="List"
+                  height={650}
+                  width={"100%"}
+                  itemCount={workspotRelationList.params.length}
+                  itemData={workspotRelationList.params}
+                  itemSize={45}
+                >
+                  {Row}
+                </List>
+              )}
+            </Box>
+          </>
+        )
+        }
+      </Layout >
+    </>
   );
 };
 

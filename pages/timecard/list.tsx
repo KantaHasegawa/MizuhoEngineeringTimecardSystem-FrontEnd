@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useRecoilValue } from "recoil";
 import { accessTokenState } from "../../components/atoms";
 import React, { useState } from "react";
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Container, Tooltip } from "@mui/material";
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Backdrop, Tooltip } from "@mui/material";
 import { useSnackbar } from 'notistack'
 import useAxios from "../../hooks/useAxios";
 import useUserList from "../../hooks/useUserList";
@@ -13,8 +13,6 @@ import Select from 'react-select';
 import dayjs from "dayjs";
 import 'dayjs/locale/ja';
 import { mutate } from "swr";
-import Navbar from "../../components/Navbar";
-import Head from 'next/head'
 import { Box } from "@material-ui/core";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons'
@@ -72,6 +70,8 @@ const UserListPage = () => {
   const axios = useAxios();
   const accessToken = useRecoilValue(accessTokenState);
   const { enqueueSnackbar } = useSnackbar();
+  const [timecard, setTimecard] = useState<TypeTimecard[] | null>(null)
+  const [loading, setLoading] = useState(false)
   const { currentUser, currentUserIsLoading, currentUserIsError } =
     useCurrentUser(accessToken);
   if (
@@ -80,7 +80,6 @@ const UserListPage = () => {
   )
     router.push("/");
   const { handleSubmit, control, watch, getValues } = useForm<FormData>();
-  const [timecard, setTimecard] = useState<TypeTimecard[] | null>(null)
   const { state: userState } = useUserList();
   const userSelectBoxItems =
     !userState.isLoading &&
@@ -119,6 +118,7 @@ const UserListPage = () => {
   }
 
   const onSubmit = async (data: FormData) => {
+    setLoading(true)
     try {
       const result = await axios.get<TypeAxiosResponse[]>(`timecard/index/${data.user.value}/${data.year.value}/${data.month.value}`)
       const daysInMonth = dayjs(`${data.year.value}-${data.month.value}`).daysInMonth()
@@ -168,10 +168,13 @@ const UserListPage = () => {
       setTimecard(newArray)
     } catch (err) {
       console.log(err)
+    } finally {
+      setLoading(false)
     }
   }
 
   const onExcelHandler = async () => {
+    setLoading(true)
     const values = getValues();
     try {
       const result = await axios.get<Blob>(`timecard/excel/${values.user.value}/${values.year.value}/${values.month.value}`,
@@ -193,11 +196,14 @@ const UserListPage = () => {
       }
     } catch (err) {
       console.log(err)
+    } finally {
+      setLoading(false)
     }
   }
 
   const onDeleteHandler = async (user: string, attendance: string | null) => {
     if (!attendance) return
+    setLoading(true)
     const params = {
       user: user,
       attendance: attendance
@@ -224,26 +230,32 @@ const UserListPage = () => {
     } catch (err) {
       enqueueSnackbar("削除に失敗しました", { variant: "error" })
       console.log(err)
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <div>
-      <Head>
-        <title>ミズホエンジニアリング | 勤怠管理表</title>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-      </Head>
-      <Navbar></Navbar>
+    <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       {currentUserIsLoading ? (
-        <CircularProgress />
+        <Layout title="ミズホエンジニアリング | 勤怠管理表">
+          <CircularProgress />
+        </Layout>
       ) : currentUserIsError ? (
-        <ErrorComponent></ErrorComponent>
+        <Layout title="ミズホエンジニアリング | 勤怠管理表">
+          <ErrorComponent></ErrorComponent>
+        </Layout>
       ) : currentUser.role !== "admin" ? (
         <div>You don't have permission</div>
       ) : (
-        <div>
-          <Container maxWidth="sm">
+        <Box>
+          <Layout title="ミズホエンジニアリング | 勤怠管理表">
             <Box sx={{ paddingTop: "2rem" }}>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Controller
@@ -288,7 +300,8 @@ const UserListPage = () => {
                 </div>
               </form>
             </Box>
-          </Container>
+          </Layout>
+
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 1300, marginBottom: "2rem" }} aria-label="simple table">
               <TableHead>
@@ -351,9 +364,10 @@ const UserListPage = () => {
               )}
             </Table>
           </TableContainer>
-        </div>
-      )}
-    </div>
+        </Box>
+      )
+      }
+    </ >
   );
 };
 

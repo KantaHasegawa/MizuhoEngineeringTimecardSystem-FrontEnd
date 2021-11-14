@@ -6,7 +6,8 @@ import {
   CircularProgress,
   Box,
   Typography,
-  Stack
+  Stack,
+  Backdrop
 } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { useState } from "react";
@@ -65,6 +66,7 @@ const TimecardNewPage = () => {
         value: item,
       };
     });
+    const [loading, setLoading] = useState(false)
   const [attendance, setAttendance] = useState<dayjs.Dayjs | null>(dayjs());
   const [leave, setLeave] = useState<dayjs.Dayjs | null>(null);
   const [selectedUser, setSelectedUser] = useState<TypeSelectedOption>(null);
@@ -83,6 +85,7 @@ const TimecardNewPage = () => {
 
   const onClickHandler = async () => {
     if (!attendance || !leave || !selectedUser || !selectedWorkspot) return;
+    setLoading(true)
     const params = {
       user: selectedUser.value,
       workspot: selectedWorkspot.value,
@@ -91,10 +94,16 @@ const TimecardNewPage = () => {
     };
     try {
       await axios.post("timecard/admin/new", params);
+      setSelectedUser(null)
+      setSelectedWorkspot(null)
+      setAttendance(null)
+      setLeave(null)
       enqueueSnackbar('登録に成功しました', {variant: "success"});
     } catch (err) {
       enqueueSnackbar('登録に失敗しました', { variant: "error" });
       console.log(err);
+    } finally {
+      setLoading(false)
     }
   };
 
