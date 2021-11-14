@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import styles from '../styels/layout.module.css'
 import { useState } from 'react';
+import AlertDialog from './AlertDialog'
 
 const Logout = () => {
   const axios = useAxios();
@@ -16,6 +17,7 @@ const Logout = () => {
   const { enqueueSnackbar } = useSnackbar();
   const setAccessToken = useSetRecoilState(accessTokenState);
   const [loading, setLoading] = useState(false)
+  const [dialog, setDialog] = useState(false)
   const refreshToken = Cookies.get("refreshToken")
   const onClickHandler = async () => {
     setLoading(true)
@@ -39,8 +41,14 @@ const Logout = () => {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      <AlertDialog
+        msg={"本当にログアウトしますか？"}
+        isOpen={dialog}
+        doYes={async () => onClickHandler()}
+        doNo={() => { setDialog(false) }}
+      />
       <Tooltip title="ログアウト">
-        <div onClick={async () => onClickHandler()} style={{ display: "inline" }} >
+        <div onClick={() => setDialog(true)} style={{ display: "inline" }} >
           <FontAwesomeIcon icon={faSignOutAlt} size="2x" className={styles.navbarIcon} />
         </div>
       </Tooltip>

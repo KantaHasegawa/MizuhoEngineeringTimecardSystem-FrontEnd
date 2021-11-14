@@ -9,6 +9,7 @@ import useAxios from "../../hooks/useAxios";
 import Link from "next/link";
 import useWorkspotRelationList, { TypeWorkspotRelation } from "../../hooks/useWorkspotRelationList";
 import { CircularProgress, Box, SpeedDial, SpeedDialIcon, SpeedDialAction, Backdrop, Typography } from "@mui/material";
+import AlertDialog from '../../components/AlertDialog'
 import { useSnackbar } from 'notistack'
 import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -27,6 +28,7 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
   const accessToken = useRecoilValue(accessTokenState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false)
+  const [dialog, setDialog] = useState(false)
   const { currentUser, currentUserIsLoading, currentUserIsError } =
     useCurrentUser(accessToken);
   const { workspotRelationList, workspotRelationListIsError } =
@@ -61,7 +63,7 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
       {
         icon: <Link href={`/workspot/relation/${workspot}`}><FontAwesomeIcon icon={faUsers} size="lg" /></Link>, name: '紐づけられた社員の編集'
       },
-      { icon: <div onClick={async () => onClickDeleteWorkspot(workspot)}><FontAwesomeIcon icon={faTrashAlt} size="lg" /></div>, name: '削除' },
+      { icon: <div onClick={() => setDialog(true)}><FontAwesomeIcon icon={faTrashAlt} size="lg" /></div>, name: '削除' },
     ];
     return (
       <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
@@ -99,6 +101,12 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      <AlertDialog
+        msg={"本当に削除してよろしいですか？"}
+        isOpen={dialog}
+        doYes={async () => onClickDeleteWorkspot(workspot)}
+        doNo={() => { setDialog(false) }}
+      />
       <Layout title="ミズホエンジニアリング | 勤務地詳細">
         {currentUserIsLoading ? (
           <CircularProgress />

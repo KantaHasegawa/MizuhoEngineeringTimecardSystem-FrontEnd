@@ -11,6 +11,7 @@ import MUILink from "@mui/material/Link";
 import { useSnackbar } from 'notistack'
 import { FixedSizeList as List, ListChildComponentProps } from "react-window";
 import ErrorComponent from './ErrorComponent';
+import AlertDialog from './AlertDialog'
 dayjs.locale("ja")
 
 type TypeCurrentUser = {
@@ -33,6 +34,7 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
   const axios = useAxios()
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false)
+  const [dialog, setDialog] = useState(false)
   const { latestTimecard, latestTimecardIsError } = useGetLatestTimecard(user.name)
   const { userRelationList, userRelationListIsError } = useUserRelationList(user.name)
 
@@ -71,22 +73,33 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
         <ErrorComponent></ErrorComponent>
       ) : isTimecardStatus(latestTimecard) === "NotAttend" ? (
         <Box>
+          <AlertDialog
+            msg={"出勤してよろしいですか？"}
+            isOpen={dialog}
+            doYes={async () => onClickHandler()}
+            doNo={() => { setDialog(false) }}
+          />
           <Typography sx={{ fontSize: "0.8rem" }}>現在は未出勤です。現場に向かって出勤してください。</Typography>
           <Box sx={{ textAlign: "center", margin: "3rem 0" }}>
-            <Button sx={{ width: "14rem" }} disabled={loading} variant="outlined" color="info" onClick={async () => onClickHandler()}>出勤</Button>
+            <Button sx={{ width: "14rem" }} disabled={loading} variant="outlined" color="info" onClick={() => setDialog(true)}>出勤</Button>
           </Box>
         </Box>
       ) : isTimecardStatus(latestTimecard) === "NotLeave" ? (
         <Box>
+          <AlertDialog
+            msg={"退勤してよろしいですか？車の鍵を返していない場合は退勤する前に返してください。"}
+            isOpen={dialog}
+            doYes={async () => onClickHandler()}
+            doNo={() => { setDialog(false) }}
+          />
           <Typography sx={{ fontSize: "0.8rem" }}>現在は出勤中です。出勤時刻は{`${latestTimecard.attendance.slice(4, 6)}月${latestTimecard.attendance.slice(6, 8)}日${latestTimecard.attendance.slice(8, 10)}時${latestTimecard.attendance.slice(10, 12)}分`}です。</Typography>
           <Box sx={{ textAlign: "center", margin: "3rem 0" }}>
-            <Button sx={{ width: "14rem" }} disabled={loading} variant="outlined" color="warning" onClick={async () => onClickHandler()}>退勤</Button>
+            <Button sx={{ width: "14rem" }} disabled={loading} variant="outlined" color="warning" onClick={() => setDialog(true)}>退勤</Button>
           </Box>
         </Box>
       ) : (
         <Box sx={{ marginBottom: "2rem" }}>
           <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>お疲れさまでした。</Typography>
-          <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>車の鍵を返してから退社してください。</Typography>
           <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>出勤時刻は{`${latestTimecard.attendance.slice(4, 6)}月${latestTimecard.attendance.slice(6, 8)}日${latestTimecard.attendance.slice(8, 10)}時${latestTimecard.attendance.slice(10, 12)}分`}、退勤時刻は{`${latestTimecard.leave.slice(4, 6)}月${latestTimecard.leave.slice(6, 8)}日${latestTimecard.leave.slice(8, 10)}時${latestTimecard.leave.slice(10, 12)}分`}です。</Typography>
         </Box>
       )
