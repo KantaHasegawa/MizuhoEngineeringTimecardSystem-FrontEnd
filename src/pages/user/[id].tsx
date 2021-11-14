@@ -1,9 +1,6 @@
 import {
   faUserEdit,
-  faCalendarAlt,
   faMapMarkedAlt,
-  faSignInAlt,
-  faSignOutAlt,
   faTrashAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

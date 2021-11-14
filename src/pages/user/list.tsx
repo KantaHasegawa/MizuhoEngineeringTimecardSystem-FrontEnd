@@ -14,12 +14,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useSWRConfig } from 'swr';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
 import { accessTokenState } from '../../components/atoms';
-import useAxios from '../../hooks/useAxios';
 import useCurrentUser from '../../hooks/useCurrentUser';
 import useUserList from '../../hooks/useUserList';
 
@@ -30,8 +28,6 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const UserListPage = () => {
   const router = useRouter();
-  const axios = useAxios();
-  const { mutate } = useSWRConfig();
   const accessToken = useRecoilValue(accessTokenState);
   const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
   if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))

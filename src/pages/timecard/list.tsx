@@ -68,14 +68,7 @@ type TypeTimecard = {
   rest: number | null;
 };
 
-type ExcelResponse = {
-  Blob: {
-    size: number;
-    type: string;
-  };
-};
-
-const UserListPage = () => {
+const TimecardListPage = () => {
   const router = useRouter();
   const axios = useAxios();
   const accessToken = useRecoilValue(accessTokenState);
@@ -458,4 +451,4 @@ const UserListPage = () => {
   );
 };
 
-export default UserListPage;
+export default TimecardListPage;

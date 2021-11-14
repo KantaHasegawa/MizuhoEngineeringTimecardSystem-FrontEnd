@@ -129,6 +129,9 @@ const TimecardNewPage = () => {
   const SelelectBoxWorkspot = () => {
     return (
       <Box sx={{ marginBottom: '1rem' }}>
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+          <CircularProgress color='inherit' />
+        </Backdrop>
         {workspotState.isLoading ? (
           <CircularProgress />
         ) : workspotState.isError ? (

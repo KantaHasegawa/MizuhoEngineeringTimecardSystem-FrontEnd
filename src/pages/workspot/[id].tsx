@@ -1,9 +1,5 @@
 import {
-  faUserEdit,
-  faCalendarAlt,
   faUsers,
-  faSignInAlt,
-  faSignOutAlt,
   faTrashAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -31,7 +27,6 @@ import PermissionErrorComponent from '../../components/PermissionErrorComponent'
 import { accessTokenState } from '../../components/atoms';
 import useAxios from '../../hooks/useAxios';
 import useCurrentUser from '../../hooks/useCurrentUser';
-
 import useWorkspotRelationList, { TypeWorkspotRelation } from '../../hooks/useWorkspotRelationList';
 import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs';
 
