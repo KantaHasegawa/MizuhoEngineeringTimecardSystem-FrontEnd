@@ -38,11 +38,12 @@ const LoginPage = () => {
       enqueueSnackbar("ログインしました", {variant: "success"})
     } catch (err: any) {
       enqueueSnackbar("ログインに失敗しました", { variant: "error" })
-      setServerSideError(err.response.data.message)
+      if (err?.response?.data?.messege) { setServerSideError(err.response.data.message)}
     } finally {
       setLoading(false)
     }
   }
+  
   return (
     <>
       <Backdrop

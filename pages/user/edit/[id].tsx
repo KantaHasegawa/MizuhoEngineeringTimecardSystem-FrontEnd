@@ -40,11 +40,11 @@ export const UserEditPage = ({ user }: { user: string }) => {
       reset({
         password: ""
       });
-      enqueueSnackbar("パスワードの変更に成功しました", {variant: "success"})
+      enqueueSnackbar("パスワードの変更に成功しました", { variant: "success" })
     } catch (err: any) {
       enqueueSnackbar("パスワードの変更に失敗しました", { variant: "error" })
       console.log(err.response)
-      setServerSideError(err.response?.data?.message)
+      if (err?.response?.data?.message) { setServerSideError(err.response?.data?.message) }
     } finally {
       setLoading(false)
     }
@@ -57,51 +57,51 @@ export const UserEditPage = ({ user }: { user: string }) => {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
-    <Layout title="ミズホエンジニアリング | パスワード変更">
-      <Box sx={{ paddingTop: "2rem", width: "350px", marginLeft: "auto", marginRight: "auto" }}>
-        {currentUserIsLoading ? <CircularProgress />
-          : currentUserIsError ? <ErrorComponent
-          ></ErrorComponent>
-            : currentUser.role !== "admin" ? <div>You don't have permission</div>
-              :
-              <>
-                <Card variant="outlined">
-                  <CardContent>
-                    <Typography sx={{ marginBottom: "12px !important", fontWeight: "bold !important", fontSize: "1.1rem" }}>
-                      {`${user} パスワード変更`}
-                    </Typography>
-                    <Typography sx={{ marginBottom: "12px !important", fontSize: "0.8rem !important" }} color="text.secondary" >
-                      英数字4文字以上のパスワードを入力してください
-                    </Typography>
-                    <Typography sx={{ marginBottom: "12px !important", fontSize: "0.8rem !important" }} color="#f44336">
-                      {serverSideError}
-                    </Typography>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                      <div className="form">
-                        <Box sx={{ marginBottom: "1rem" }}>
-                          <Controller
-                            name="password"
-                            control={control}
-                            defaultValue=""
-                            rules={{ required: true, minLength: 4, maxLength: 15, pattern: { value: /^[0-9a-zA-Z]+$/, message: "" } }}
-                            render={({ field }) => <TextField size="small" fullWidth label="パスワード" {...field} />}
-                          />
-                          <Typography sx={{ fontSize: "0.8rem !important" }} color="#f44336">{errors.password?.type === 'required' && "パスワードは必須です"}</Typography>
-                          <Typography sx={{ fontSize: "0.8rem !important" }} color="#f44336">{errors.password?.type === 'minLength' && "パスワードは4文字以上で入力してください"}</Typography>
-                          <Typography sx={{ fontSize: "0.8rem !important" }} color="#f44336">{errors.password?.type === 'maxLength' && "パスワードは15文字以下で入力してください"}</Typography>
-                          <Typography sx={{ fontSize: "0.8rem !important" }} color="#f44336">{errors.password?.type === 'pattern' && "パスワードは半角英数字で入力してください"}</Typography>
-                        </Box>
-                      </div>
-                      <Button fullWidth variant="outlined" type="submit">
-                        更新
-                      </Button>
-                    </form>
-                  </CardContent>
-                </Card>
-              </>
-        }
-      </Box>
-    </Layout>
+      <Layout title="ミズホエンジニアリング | パスワード変更">
+        <Box sx={{ paddingTop: "2rem", width: "350px", marginLeft: "auto", marginRight: "auto" }}>
+          {currentUserIsLoading ? <CircularProgress />
+            : currentUserIsError ? <ErrorComponent
+            ></ErrorComponent>
+              : currentUser.role !== "admin" ? <div>You don't have permission</div>
+                :
+                <>
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Typography sx={{ marginBottom: "12px !important", fontWeight: "bold !important", fontSize: "1.1rem" }}>
+                        {`${user} パスワード変更`}
+                      </Typography>
+                      <Typography sx={{ marginBottom: "12px !important", fontSize: "0.8rem !important" }} color="text.secondary" >
+                        英数字4文字以上のパスワードを入力してください
+                      </Typography>
+                      <Typography sx={{ marginBottom: "12px !important", fontSize: "0.8rem !important" }} color="#f44336">
+                        {serverSideError}
+                      </Typography>
+                      <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className="form">
+                          <Box sx={{ marginBottom: "1rem" }}>
+                            <Controller
+                              name="password"
+                              control={control}
+                              defaultValue=""
+                              rules={{ required: true, minLength: 4, maxLength: 15, pattern: { value: /^[0-9a-zA-Z]+$/, message: "" } }}
+                              render={({ field }) => <TextField size="small" fullWidth label="パスワード" {...field} />}
+                            />
+                            <Typography sx={{ fontSize: "0.8rem !important" }} color="#f44336">{errors.password?.type === 'required' && "パスワードは必須です"}</Typography>
+                            <Typography sx={{ fontSize: "0.8rem !important" }} color="#f44336">{errors.password?.type === 'minLength' && "パスワードは4文字以上で入力してください"}</Typography>
+                            <Typography sx={{ fontSize: "0.8rem !important" }} color="#f44336">{errors.password?.type === 'maxLength' && "パスワードは15文字以下で入力してください"}</Typography>
+                            <Typography sx={{ fontSize: "0.8rem !important" }} color="#f44336">{errors.password?.type === 'pattern' && "パスワードは半角英数字で入力してください"}</Typography>
+                          </Box>
+                        </div>
+                        <Button fullWidth variant="outlined" type="submit">
+                          更新
+                        </Button>
+                      </form>
+                    </CardContent>
+                  </Card>
+                </>
+          }
+        </Box>
+      </Layout>
     </>
   )
 }

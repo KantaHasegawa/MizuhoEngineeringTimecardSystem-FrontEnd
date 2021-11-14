@@ -38,7 +38,7 @@ const SignUpPage = () => {
     } catch (err: any) {
       enqueueSnackbar("登録に失敗しました", { variant: "error" })
       console.log(err.response)
-      setServerSideError(err.response?.data?.errors[0].msg)
+      if (err?.response?.data?.errors[0]?.msg) { setServerSideError(err.response?.data?.errors[0].msg)}
     } finally{
       setLoading(false)
     }
