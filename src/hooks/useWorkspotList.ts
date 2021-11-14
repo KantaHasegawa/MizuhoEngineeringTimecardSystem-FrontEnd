@@ -1,5 +1,5 @@
-import { useState, useEffect, useReducer } from "react";
-import useAxios from "./useAxios";
+import { useState, useEffect, useReducer } from 'react';
+import useAxios from './useAxios';
 
 type TypeWorkspot = {
   params: {
@@ -18,39 +18,36 @@ type TypeState = {
 };
 
 type TypeFetchInitAction = {
-  type: "FETCH_INIT";
+  type: 'FETCH_INIT';
 };
 
 type TypeFetchSuccessAction = {
-  type: "FETCH_SUCCESS";
+  type: 'FETCH_SUCCESS';
   payload: string[];
 };
 
 type TypeFetchFailureAction = {
-  type: "FETCH_FAILURE";
+  type: 'FETCH_FAILURE';
 };
 
-type TypeAction =
-  | TypeFetchInitAction
-  | TypeFetchSuccessAction
-  | TypeFetchFailureAction;
+type TypeAction = TypeFetchInitAction | TypeFetchSuccessAction | TypeFetchFailureAction;
 
 const dataFetchReducer = (state: TypeState, action: TypeAction) => {
   switch (action.type) {
-    case "FETCH_INIT":
+    case 'FETCH_INIT':
       return {
         ...state,
         isLoading: true,
         isError: false,
       };
-    case "FETCH_SUCCESS":
+    case 'FETCH_SUCCESS':
       return {
         ...state,
         isLoading: false,
         isError: false,
         data: action.payload,
       };
-    case "FETCH_FAILURE":
+    case 'FETCH_FAILURE':
       return {
         ...state,
         isLoading: false,
@@ -73,20 +70,20 @@ const useWorkspotList = () => {
     let didCancel = false;
 
     const fetchData = async () => {
-      dispatch({ type: "FETCH_INIT" });
+      dispatch({ type: 'FETCH_INIT' });
 
       try {
-        const result = await axios.get<TypeWorkspot>("workspot/index");
+        const result = await axios.get<TypeWorkspot>('workspot/index');
         const workspotArray = result.data.params.map((item) => {
           return item.workspot;
         });
         if (!didCancel) {
-          dispatch({ type: "FETCH_SUCCESS", payload: workspotArray });
+          dispatch({ type: 'FETCH_SUCCESS', payload: workspotArray });
           setWorkspotListState(workspotArray);
         }
       } catch (error) {
         if (!didCancel) {
-          dispatch({ type: "FETCH_FAILURE" });
+          dispatch({ type: 'FETCH_FAILURE' });
         }
       }
     };

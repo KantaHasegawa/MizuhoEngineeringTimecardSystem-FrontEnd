@@ -4,23 +4,23 @@
   margin: 3rem auto 6rem;
 }
 
-.imageWrapper{
+.imageWrapper {
   cursor: pointer;
   padding: 0.3rem;
 }
 
-.navbarIcons{
+.navbarIcons {
   margin-left: auto;
 }
 
-.navbarIcon{
+.navbarIcon {
   margin: 0 0.8rem;
-  color: #2484C5;
+  color: #2484c5;
   transition: transform 450ms, color 0.7s;
   cursor: pointer;
 }
 
-.navbarIcon:hover{
-  color: #073C8C;
+.navbarIcon:hover {
+  color: #073c8c;
   transform: scale(1.08);
 }

@@ -1,23 +1,23 @@
-.selectBox{
+.selectBox {
   margin-bottom: 1rem;
 }
 
-.buttonGroupe{
+.buttonGroupe {
   text-align: center;
 }
 
-.button{
+.button {
   margin: 1rem;
-  width: 6rem
+  width: 6rem;
 }
 
-.trashIcon{
+.trashIcon {
   cursor: pointer;
-  color: #2484C5;
+  color: #2484c5;
   transition: transform 450ms, color 0.7s;
 }
 
-.trashIcon:hover{
+.trashIcon:hover {
   color: #f44336;
   transform: scale(1.08);
 }

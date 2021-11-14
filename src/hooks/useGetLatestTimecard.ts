@@ -1,16 +1,16 @@
-import useSWR from "swr";
-import useAxios from "./useAxios";
+import useSWR from 'swr';
+import useAxios from './useAxios';
 
 export type TypeTimecard = {
-  user: string,
-  workspot: string,
-  attendance: string,
-  leave: string,
-  workTime: number,
-  regularWorkTime: number,
-  irregularWorkTime: number,
-  rest: number
-}
+  user: string;
+  workspot: string;
+  attendance: string;
+  leave: string;
+  workTime: number;
+  regularWorkTime: number;
+  irregularWorkTime: number;
+  rest: number;
+};
 
 const useGetLatestTimecard = (user: string) => {
   const axios = useAxios();
@@ -20,10 +20,7 @@ const useGetLatestTimecard = (user: string) => {
     return res.data;
   };
 
-  const { data, error } = useSWR<TypeTimecard>(
-    `timecard/latest/${user}`,
-    fetcher
-  );
+  const { data, error } = useSWR<TypeTimecard>(`timecard/latest/${user}`, fetcher);
 
   return {
     latestTimecard: data,

@@ -2,22 +2,22 @@ import useSWR from 'swr';
 import useAxios from './useAxios';
 
 export type TypeUserRelation = {
-  workspot: string,
-  user: string,
-  attendance: string,
-  latitude: number,
-  longitude: number
-}
+  workspot: string;
+  user: string;
+  attendance: string;
+  latitude: number;
+  longitude: number;
+};
 
 export type TypeSelectBoxItme = {
-  value: string,
-  label: string
-}
+  value: string;
+  label: string;
+};
 
 type TypeUserSelectBoxResponse = {
-  selectBoxItems: TypeSelectBoxItme[],
-  relations: TypeUserRelation[]
-}
+  selectBoxItems: TypeSelectBoxItme[];
+  relations: TypeUserRelation[];
+};
 
 const useUserRelationEdit = (user: string) => {
   const axios = useAxios(); //カスタマイズした設定のaxiosインスタンスを取得
@@ -27,10 +27,13 @@ const useUserRelationEdit = (user: string) => {
     return res.data;
   };
 
-  const { data, error } = useSWR<TypeUserSelectBoxResponse>(`relation/user/selectbox/${user}`, fetcher);
+  const { data, error } = useSWR<TypeUserSelectBoxResponse>(
+    `relation/user/selectbox/${user}`,
+    fetcher,
+  );
   return {
     userSelectBoxResponse: data,
-    userSelectBoxResponseIsError: error
+    userSelectBoxResponseIsError: error,
   };
 };
 

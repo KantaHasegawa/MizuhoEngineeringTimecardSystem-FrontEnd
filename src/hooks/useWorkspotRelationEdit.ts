@@ -1,5 +1,5 @@
-import useSWR from "swr";
-import useAxios from "./useAxios";
+import useSWR from 'swr';
+import useAxios from './useAxios';
 
 export type TypeWorkspotRelation = {
   attendance: string;
@@ -28,7 +28,7 @@ const useWorkspotRelationEdit = (workspot: string) => {
 
   const { data, error } = useSWR<TypeWorkspotSelectBoxResponse>(
     `relation/workspot/selectbox/${workspot}`,
-    fetcher
+    fetcher,
   );
   return {
     workspotSelectBoxResponse: data,

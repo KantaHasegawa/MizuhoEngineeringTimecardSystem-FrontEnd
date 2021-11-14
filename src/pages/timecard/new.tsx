@@ -1,5 +1,5 @@
-import { useRouter } from "next/router";
-import Layout from "../../components/Layout";
+import { useRouter } from 'next/router';
+import Layout from '../../components/Layout';
 import {
   TextField,
   Button,
@@ -7,24 +7,24 @@ import {
   Box,
   Typography,
   Stack,
-  Backdrop
-} from "@mui/material";
+  Backdrop,
+} from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { useState } from "react";
-import useAxios from "../../hooks/useAxios";
-import useCurrentUser from "../../hooks/useCurrentUser";
-import { useRecoilValue } from "recoil";
-import { accessTokenState } from "../../components/atoms";
-import { LocalizationProvider, DateTimePicker } from "@mui/lab";
+import { useState } from 'react';
+import useAxios from '../../hooks/useAxios';
+import useCurrentUser from '../../hooks/useCurrentUser';
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '../../components/atoms';
+import { LocalizationProvider, DateTimePicker } from '@mui/lab';
 import AdapterDayjs from '@mui/lab/AdapterDayjs';
-import Select from "react-select";
-import useUserList from "../../hooks/useUserList";
-import useWorkspotList from "../../hooks/useWorkspotList";
-import dayjs from "dayjs";
-import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
-import "dayjs/locale/ja";
-import ErrorComponent from "../../components/ErrorComponent";
-dayjs.locale("ja");
+import Select from 'react-select';
+import useUserList from '../../hooks/useUserList';
+import useWorkspotList from '../../hooks/useWorkspotList';
+import dayjs from 'dayjs';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import 'dayjs/locale/ja';
+import ErrorComponent from '../../components/ErrorComponent';
+dayjs.locale('ja');
 dayjs.extend(isSameOrBefore);
 
 type TypeSelectedOption = {
@@ -37,13 +37,9 @@ const TimecardNewPage = () => {
   const router = useRouter();
   const accessToken = useRecoilValue(accessTokenState);
   const { enqueueSnackbar } = useSnackbar();
-  const { currentUser, currentUserIsLoading, currentUserIsError } =
-    useCurrentUser(accessToken);
-  if (
-    (!currentUserIsLoading && !currentUser) ||
-    (currentUser && currentUser.role !== "admin")
-  )
-    router.push("/");
+  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
+  if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))
+    router.push('/');
 
   const { state: userState } = useUserList();
   const selectBoxUsers =
@@ -66,12 +62,11 @@ const TimecardNewPage = () => {
         value: item,
       };
     });
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [attendance, setAttendance] = useState<dayjs.Dayjs | null>(dayjs());
   const [leave, setLeave] = useState<dayjs.Dayjs | null>(null);
   const [selectedUser, setSelectedUser] = useState<TypeSelectedOption>(null);
-  const [selectedWorkspot, setSelectedWorkspot] =
-    useState<TypeSelectedOption>(null);
+  const [selectedWorkspot, setSelectedWorkspot] = useState<TypeSelectedOption>(null);
 
   const handleAttendanceChange = (newValue: dayjs.Dayjs | null) => {
     setAttendance(newValue);
@@ -89,18 +84,18 @@ const TimecardNewPage = () => {
     const params = {
       user: selectedUser.value,
       workspot: selectedWorkspot.value,
-      attendance: attendance.format("YYYYMMDDHHmmss"),
-      leave: leave.format("YYYYMMDDHHmmss"),
+      attendance: attendance.format('YYYYMMDDHHmmss'),
+      leave: leave.format('YYYYMMDDHHmmss'),
     };
     try {
-      await axios.post("timecard/admin/new", params);
+      await axios.post('timecard/admin/new', params);
       setSelectedUser(null);
       setSelectedWorkspot(null);
       setAttendance(null);
       setLeave(null);
-      enqueueSnackbar('登録に成功しました', {variant: "success"});
+      enqueueSnackbar('登録に成功しました', { variant: 'success' });
     } catch (err) {
-      enqueueSnackbar('登録に失敗しました', { variant: "error" });
+      enqueueSnackbar('登録に失敗しました', { variant: 'error' });
       console.log(err);
     } finally {
       setLoading(false);
@@ -109,11 +104,11 @@ const TimecardNewPage = () => {
 
   const SelectBoxUsers = () => {
     return (
-      <Box sx={{ marginBottom: "1rem" }}>
+      <Box sx={{ marginBottom: '1rem' }}>
         {userState.isLoading ? (
           <CircularProgress />
         ) : userState.isError ? (
-            <ErrorComponent></ErrorComponent>
+          <ErrorComponent></ErrorComponent>
         ) : (
           <Select
             defaultValue={selectedUser}
@@ -122,8 +117,8 @@ const TimecardNewPage = () => {
             options={selectBoxUsers || []}
             isClearable={true}
             menuPortalTarget={document.body}
-            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-            placeholder="社員"
+            styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+            placeholder='社員'
           />
         )}
       </Box>
@@ -132,11 +127,11 @@ const TimecardNewPage = () => {
 
   const SelelectBoxWorkspot = () => {
     return (
-      <Box sx={{ marginBottom: "1rem" }}>
+      <Box sx={{ marginBottom: '1rem' }}>
         {workspotState.isLoading ? (
           <CircularProgress />
         ) : workspotState.isError ? (
-            <ErrorComponent></ErrorComponent>
+          <ErrorComponent></ErrorComponent>
         ) : (
           <Select
             defaultValue={selectedWorkspot}
@@ -145,8 +140,8 @@ const TimecardNewPage = () => {
             options={selectBoxWorkspots || []}
             isClearable={true}
             menuPortalTarget={document.body}
-            styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
-            placeholder="勤務地"
+            styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
+            placeholder='勤務地'
           />
         )}
       </Box>
@@ -154,32 +149,34 @@ const TimecardNewPage = () => {
   };
 
   return (
-    <Layout title="ミズホエンジニアリング | 勤怠登録">
+    <Layout title='ミズホエンジニアリング | 勤怠登録'>
       {currentUserIsLoading ? (
         <CircularProgress />
       ) : currentUserIsError ? (
-          <ErrorComponent></ErrorComponent>
-      ) : currentUser.role !== "admin" ? (
+        <ErrorComponent></ErrorComponent>
+      ) : currentUser.role !== 'admin' ? (
         <div>You don't have permission</div>
       ) : (
         <>
-          <Typography sx={{ fontSize: "1rem", fontWeight: "bold" }}>勤怠登録</Typography>
-          <Typography sx={{ fontSize: "0.8rem", marginBottom: "1rem" }}>必要な情報を選択してください</Typography>
+          <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>勤怠登録</Typography>
+          <Typography sx={{ fontSize: '0.8rem', marginBottom: '1rem' }}>
+            必要な情報を選択してください
+          </Typography>
           <div>
             <SelectBoxUsers></SelectBoxUsers>
             <SelelectBoxWorkspot></SelelectBoxWorkspot>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <Stack spacing={3} sx={{ marginBottom: "1rem" }}>
+              <Stack spacing={3} sx={{ marginBottom: '1rem' }}>
                 <DateTimePicker
-                  label="出勤時刻"
+                  label='出勤時刻'
                   value={attendance}
                   onChange={handleAttendanceChange}
                   renderInput={(params) => <TextField {...params} />}
                 />
               </Stack>
-              <Stack spacing={3} sx={{ marginBottom: "1rem" }}>
+              <Stack spacing={3} sx={{ marginBottom: '1rem' }}>
                 <DateTimePicker
-                  label="退勤時刻"
+                  label='退勤時刻'
                   value={leave}
                   onChange={handleLeaveChange}
                   renderInput={(params) => <TextField {...params} />}
@@ -187,14 +184,12 @@ const TimecardNewPage = () => {
                 />
               </Stack>
             </LocalizationProvider>
-            <Box sx={{ textAlign: "center" }}>
+            <Box sx={{ textAlign: 'center' }}>
               <Button
-                variant="outlined"
-                disabled={
-                  !attendance || !leave || !selectedUser || !selectedWorkspot
-                }
+                variant='outlined'
+                disabled={!attendance || !leave || !selectedUser || !selectedWorkspot}
                 onClick={async () => onClickHandler()}
-                sx={{ width: "13rem", }}
+                sx={{ width: '13rem' }}
               >
                 登録
               </Button>

@@ -2,9 +2,9 @@ import useSWR from 'swr';
 import useAxios from './useAxios';
 
 type TypeCurrentUser = {
-  name: string,
-  role: string
-}
+  name: string;
+  role: string;
+};
 
 const useCurrentUser = (accessToken: string) => {
   const axios = useAxios(); //カスタマイズした設定のaxiosインスタンスを取得
@@ -14,11 +14,11 @@ const useCurrentUser = (accessToken: string) => {
     return res.data;
   };
 
-  const { data, error } = useSWR(["auth/currentuser", accessToken], fetcher);
+  const { data, error } = useSWR(['auth/currentuser', accessToken], fetcher);
   return {
     currentUser: data,
     currentUserIsLoading: !error && !data,
-    currentUserIsError: error
+    currentUserIsError: error,
   };
 };
 

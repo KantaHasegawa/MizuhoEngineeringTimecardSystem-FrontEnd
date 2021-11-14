@@ -1,69 +1,80 @@
-import Layout from "../../components/Layout";
-import useCurrentUser from "../../hooks/useCurrentUser";
-import { useRouter } from "next/router";
-import { useRecoilValue } from "recoil";
-import { accessTokenState } from "../../components/atoms";
-import React, { useState } from "react";
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, Backdrop, Tooltip } from "@mui/material";
+import Layout from '../../components/Layout';
+import useCurrentUser from '../../hooks/useCurrentUser';
+import { useRouter } from 'next/router';
+import { useRecoilValue } from 'recoil';
+import { accessTokenState } from '../../components/atoms';
+import React, { useState } from 'react';
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  CircularProgress,
+  Backdrop,
+  Tooltip,
+} from '@mui/material';
 import { useSnackbar } from 'notistack';
-import useAxios from "../../hooks/useAxios";
-import useUserList from "../../hooks/useUserList";
-import { Controller, useForm } from "react-hook-form";
+import useAxios from '../../hooks/useAxios';
+import useUserList from '../../hooks/useUserList';
+import { Controller, useForm } from 'react-hook-form';
 import Select from 'react-select';
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
-import { mutate } from "swr";
-import { Box } from "@material-ui/core";
+import { mutate } from 'swr';
+import { Box } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
-dayjs.locale("ja");
+dayjs.locale('ja');
 
 import styles from '../../../styels/timecardList.module.css';
-import ErrorComponent from "../../components/ErrorComponent";
-
+import ErrorComponent from '../../components/ErrorComponent';
 
 type TypeSelectBoxItem = {
-  value: string,
-  label: string
-}
+  value: string;
+  label: string;
+};
 
 type FormData = {
-  user: TypeSelectBoxItem
-  year: TypeSelectBoxItem
-  month: TypeSelectBoxItem
-}
+  user: TypeSelectBoxItem;
+  year: TypeSelectBoxItem;
+  month: TypeSelectBoxItem;
+};
 
 type TypeAxiosResponse = {
-  user: string
-  workspot: string
-  attendance: string
-  leave: string
-  workTime: number
-  regularWorkTime: number
-  irregularWorkTime: number
-  rest: number
-}
+  user: string;
+  workspot: string;
+  attendance: string;
+  leave: string;
+  workTime: number;
+  regularWorkTime: number;
+  irregularWorkTime: number;
+  rest: number;
+};
 
 type TypeTimecard = {
   user: string;
   date: number;
   dayOfWeek: string;
-  workspot: string | null
-  attendance: string | null
-  leave: string | null
-  workTime: number | null
-  regularWorkTime: number | null
-  irregularWorkTime: number | null
-  rest: number | null
-}
+  workspot: string | null;
+  attendance: string | null;
+  leave: string | null;
+  workTime: number | null;
+  regularWorkTime: number | null;
+  irregularWorkTime: number | null;
+  rest: number | null;
+};
 
 type ExcelResponse = {
   Blob: {
-    size: number,
-    type: string
-  }
-}
+    size: number;
+    type: string;
+  };
+};
 
 const UserListPage = () => {
   const router = useRouter();
@@ -72,13 +83,9 @@ const UserListPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [timecard, setTimecard] = useState<TypeTimecard[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const { currentUser, currentUserIsLoading, currentUserIsError } =
-    useCurrentUser(accessToken);
-  if (
-    (!currentUserIsLoading && !currentUser) ||
-    (currentUser && currentUser.role !== "admin")
-  )
-    router.push("/");
+  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
+  if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))
+    router.push('/');
   const { handleSubmit, control, watch, getValues } = useForm<FormData>();
   const { state: userState } = useUserList();
   const userSelectBoxItems =
@@ -96,7 +103,7 @@ const UserListPage = () => {
   for (let i = 2021; i <= 2100; i++) {
     let params = {
       label: `${i}年`,
-      value: `${i}`
+      value: `${i}`,
     };
     yearSelectBoxItems.push(params);
   }
@@ -105,13 +112,13 @@ const UserListPage = () => {
     if (i < 10) {
       let params = {
         label: `${i}月`,
-        value: `0${i}`
+        value: `0${i}`,
       };
       monthSelectBoxItems.push(params);
     } else {
       let params = {
         label: `${i}月`,
-        value: `${i}`
+        value: `${i}`,
       };
       monthSelectBoxItems.push(params);
     }
@@ -120,7 +127,9 @@ const UserListPage = () => {
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
-      const result = await axios.get<TypeAxiosResponse[]>(`timecard/index/${data.user.value}/${data.year.value}/${data.month.value}`);
+      const result = await axios.get<TypeAxiosResponse[]>(
+        `timecard/index/${data.user.value}/${data.year.value}/${data.month.value}`,
+      );
       const daysInMonth = dayjs(`${data.year.value}-${data.month.value}`).daysInMonth();
       const newArray: TypeTimecard[] = [];
       let flag = false;
@@ -177,17 +186,25 @@ const UserListPage = () => {
     setLoading(true);
     const values = getValues();
     try {
-      const result = await axios.get<Blob>(`timecard/excel/${values.user.value}/${values.year.value}/${values.month.value}`,
-        { responseType: 'blob' });
+      const result = await axios.get<Blob>(
+        `timecard/excel/${values.user.value}/${values.year.value}/${values.month.value}`,
+        { responseType: 'blob' },
+      );
       if (window.navigator.msSaveOrOpenBlob) {
         // for IE,Edge
-        window.navigator.msSaveOrOpenBlob(result.data, `${values.year.value}年${values.month.value}月${values.user.value}.xlsx`);
+        window.navigator.msSaveOrOpenBlob(
+          result.data,
+          `${values.year.value}年${values.month.value}月${values.user.value}.xlsx`,
+        );
       } else {
         // for chrome, firefox
         const url = URL.createObjectURL(new Blob([result.data], { type: 'text/csv' }));
         const linkEl = document.createElement('a');
         linkEl.href = url;
-        linkEl.setAttribute('download', `${values.year.value}年${values.month.value}月${values.user.value}.xlsx`);
+        linkEl.setAttribute(
+          'download',
+          `${values.year.value}年${values.month.value}月${values.user.value}.xlsx`,
+        );
         document.body.appendChild(linkEl);
         linkEl.click();
 
@@ -206,10 +223,10 @@ const UserListPage = () => {
     setLoading(true);
     const params = {
       user: user,
-      attendance: attendance
+      attendance: attendance,
     };
     try {
-      await axios.post("timecard/admin/delete", params);
+      await axios.post('timecard/admin/delete', params);
       const data = {
         user: {
           label: user,
@@ -217,18 +234,18 @@ const UserListPage = () => {
         },
         year: {
           label: attendance.slice(0, 4),
-          value: attendance.slice(0, 4)
+          value: attendance.slice(0, 4),
         },
         month: {
           label: attendance.slice(4, 6),
           value: attendance.slice(4, 6),
-        }
+        },
       };
       mutate(`timecard/common/${user}`);
       onSubmit(data);
-      enqueueSnackbar("削除に成功しました", { variant: "success" });
+      enqueueSnackbar('削除に成功しました', { variant: 'success' });
     } catch (err) {
-      enqueueSnackbar("削除に失敗しました", { variant: "error" });
+      enqueueSnackbar('削除に失敗しました', { variant: 'error' });
       console.log(err);
     } finally {
       setLoading(false);
@@ -237,65 +254,85 @@ const UserListPage = () => {
 
   return (
     <>
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={loading}
-      >
-        <CircularProgress color="inherit" />
+      <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+        <CircularProgress color='inherit' />
       </Backdrop>
       {currentUserIsLoading ? (
-        <Layout title="ミズホエンジニアリング | 勤怠管理表">
+        <Layout title='ミズホエンジニアリング | 勤怠管理表'>
           <CircularProgress />
         </Layout>
       ) : currentUserIsError ? (
-        <Layout title="ミズホエンジニアリング | 勤怠管理表">
+        <Layout title='ミズホエンジニアリング | 勤怠管理表'>
           <ErrorComponent></ErrorComponent>
         </Layout>
-      ) : currentUser.role !== "admin" ? (
+      ) : currentUser.role !== 'admin' ? (
         <div>You don't have permission</div>
       ) : (
         <Box>
-          <Layout title="ミズホエンジニアリング | 勤怠管理表">
-            <Box sx={{ paddingTop: "2rem" }}>
+          <Layout title='ミズホエンジニアリング | 勤怠管理表'>
+            <Box sx={{ paddingTop: '2rem' }}>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Controller
-                  name="user"
+                  name='user'
                   control={control}
-                  render={({ field }) => <Select
-                    {...field}
-                    className={styles.selectBox}
-                    options={userSelectBoxItems || []}
-                    isClearable={true}
-                    placeholder="社員"
-                  />}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      className={styles.selectBox}
+                      options={userSelectBoxItems || []}
+                      isClearable={true}
+                      placeholder='社員'
+                    />
+                  )}
                 />
                 <Controller
-                  name="year"
+                  name='year'
                   control={control}
-                  render={({ field }) => <Select
-                    {...field}
-                    className={styles.selectBox}
-                    options={yearSelectBoxItems}
-                    isClearable={true}
-                    placeholder="年"
-                  />}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      className={styles.selectBox}
+                      options={yearSelectBoxItems}
+                      isClearable={true}
+                      placeholder='年'
+                    />
+                  )}
                 />
                 <Controller
-                  name="month"
+                  name='month'
                   control={control}
-                  render={({ field }) => <Select
-                    {...field}
-                    className={styles.selectBox}
-                    options={monthSelectBoxItems}
-                    isClearable={true}
-                    placeholder="月"
-                  />}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      className={styles.selectBox}
+                      options={monthSelectBoxItems}
+                      isClearable={true}
+                      placeholder='月'
+                    />
+                  )}
                 />
                 <div className={styles.buttonGroupe}>
-                  <Button className={styles.button} variant="outlined" type="submit" disabled={!watch("user") || !watch("year") || !watch("month")}>確定</Button>
-                  <Button className={styles.button} variant="outlined" color="success" onClick={async () => onExcelHandler()} disabled={!watch("user") || !watch("year") || !watch("month")}>Excel</Button>
-                  <Link href="/timecard/new">
-                    <Button className={styles.button} variant="outlined" color="info" >新規作成</Button>
+                  <Button
+                    className={styles.button}
+                    variant='outlined'
+                    type='submit'
+                    disabled={!watch('user') || !watch('year') || !watch('month')}
+                  >
+                    確定
+                  </Button>
+                  <Button
+                    className={styles.button}
+                    variant='outlined'
+                    color='success'
+                    onClick={async () => onExcelHandler()}
+                    disabled={!watch('user') || !watch('year') || !watch('month')}
+                  >
+                    Excel
+                  </Button>
+                  <Link href='/timecard/new'>
+                    <Button className={styles.button} variant='outlined' color='info'>
+                      新規作成
+                    </Button>
                   </Link>
                 </div>
               </form>
@@ -303,36 +340,52 @@ const UserListPage = () => {
           </Layout>
 
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 1300, marginBottom: "2rem" }} aria-label="simple table">
+            <Table sx={{ minWidth: 1300, marginBottom: '2rem' }} aria-label='simple table'>
               <TableHead>
                 <TableRow>
-                  <TableCell align="center"><h3>日</h3></TableCell>
-                  <TableCell align="center"><h3>曜日</h3></TableCell>
-                  <TableCell align="center"><h3>出勤地</h3></TableCell>
-                  <TableCell align="center"><h3>出勤時刻</h3></TableCell>
-                  <TableCell align="center"><h3>退勤時刻</h3></TableCell>
-                  <TableCell align="center"><h3>勤務時間</h3></TableCell>
-                  <TableCell align="center"><h3>基本労働</h3></TableCell>
-                  <TableCell align="center"><h3>時間外労働</h3></TableCell>
-                  <TableCell align="center"><h3>休憩時間</h3></TableCell>
-                  <TableCell align="center"></TableCell>
+                  <TableCell align='center'>
+                    <h3>日</h3>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <h3>曜日</h3>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <h3>出勤地</h3>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <h3>出勤時刻</h3>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <h3>退勤時刻</h3>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <h3>勤務時間</h3>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <h3>基本労働</h3>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <h3>時間外労働</h3>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <h3>休憩時間</h3>
+                  </TableCell>
+                  <TableCell align='center'></TableCell>
                 </TableRow>
               </TableHead>
               {!timecard ? (
                 <TableBody>
-                  <TableRow
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell align="center"></TableCell>
-                    <TableCell align="center"></TableCell>
-                    <TableCell align="center"></TableCell>
-                    <TableCell align="center"></TableCell>
-                    <TableCell align="center"></TableCell>
-                    <TableCell align="center"></TableCell>
-                    <TableCell align="center"></TableCell>
-                    <TableCell align="center"></TableCell>
-                    <TableCell align="center"></TableCell>
-                    <TableCell align="center"></TableCell>
+                  <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableCell align='center'></TableCell>
+                    <TableCell align='center'></TableCell>
+                    <TableCell align='center'></TableCell>
+                    <TableCell align='center'></TableCell>
+                    <TableCell align='center'></TableCell>
+                    <TableCell align='center'></TableCell>
+                    <TableCell align='center'></TableCell>
+                    <TableCell align='center'></TableCell>
+                    <TableCell align='center'></TableCell>
+                    <TableCell align='center'></TableCell>
                   </TableRow>
                 </TableBody>
               ) : (
@@ -342,22 +395,48 @@ const UserListPage = () => {
                       key={index}
                       sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                     >
-                      <TableCell align="center">{row.date}</TableCell>
-                      <TableCell align="center">{row.dayOfWeek}</TableCell>
-                      <TableCell align="center">{row.workspot}</TableCell>
-                      <TableCell align="center">{row.attendance && `${row.attendance.slice(8, 10)}:${row.attendance.slice(10, 12)}`}</TableCell>
-                      <TableCell align="center">{row.leave && `${row.leave.slice(8, 10)}:${row.leave.slice(10, 12)}`}</TableCell>
-                      <TableCell align="center">{row.workTime !== null && `${Math.floor(row.workTime / 60)}時間${row.workTime % 60}分`}</TableCell>
-                      <TableCell align="center">{row.regularWorkTime !== null && `${Math.floor(row.regularWorkTime / 60)}時間${row.regularWorkTime % 60}分`}</TableCell>
-                      <TableCell align="center">{row.irregularWorkTime !== null && `${Math.floor(row.irregularWorkTime / 60)}時間${row.irregularWorkTime % 60}分`}</TableCell>
-                      <TableCell align="center">{row.rest !== null && `${Math.floor(row.rest / 60)}時間${row.rest % 60}分`}</TableCell>
-                      <TableCell align="center">{row.attendance && (
-                        <Tooltip title="削除">
-                          <div onClick={async () => onDeleteHandler(row.user, row.attendance)}>
-                            <FontAwesomeIcon icon={faTrashAlt} size="lg" className={styles.trashIcon} />
-                          </div>
-                        </Tooltip>
-                      )}</TableCell>
+                      <TableCell align='center'>{row.date}</TableCell>
+                      <TableCell align='center'>{row.dayOfWeek}</TableCell>
+                      <TableCell align='center'>{row.workspot}</TableCell>
+                      <TableCell align='center'>
+                        {row.attendance &&
+                          `${row.attendance.slice(8, 10)}:${row.attendance.slice(10, 12)}`}
+                      </TableCell>
+                      <TableCell align='center'>
+                        {row.leave && `${row.leave.slice(8, 10)}:${row.leave.slice(10, 12)}`}
+                      </TableCell>
+                      <TableCell align='center'>
+                        {row.workTime !== null &&
+                          `${Math.floor(row.workTime / 60)}時間${row.workTime % 60}分`}
+                      </TableCell>
+                      <TableCell align='center'>
+                        {row.regularWorkTime !== null &&
+                          `${Math.floor(row.regularWorkTime / 60)}時間${
+                            row.regularWorkTime % 60
+                          }分`}
+                      </TableCell>
+                      <TableCell align='center'>
+                        {row.irregularWorkTime !== null &&
+                          `${Math.floor(row.irregularWorkTime / 60)}時間${
+                            row.irregularWorkTime % 60
+                          }分`}
+                      </TableCell>
+                      <TableCell align='center'>
+                        {row.rest !== null && `${Math.floor(row.rest / 60)}時間${row.rest % 60}分`}
+                      </TableCell>
+                      <TableCell align='center'>
+                        {row.attendance && (
+                          <Tooltip title='削除'>
+                            <div onClick={async () => onDeleteHandler(row.user, row.attendance)}>
+                              <FontAwesomeIcon
+                                icon={faTrashAlt}
+                                size='lg'
+                                className={styles.trashIcon}
+                              />
+                            </div>
+                          </Tooltip>
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -365,9 +444,8 @@ const UserListPage = () => {
             </Table>
           </TableContainer>
         </Box>
-      )
-      }
-    </ >
+      )}
+    </>
   );
 };
 

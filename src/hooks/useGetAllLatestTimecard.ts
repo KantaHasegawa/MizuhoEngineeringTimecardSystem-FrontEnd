@@ -1,23 +1,22 @@
-import useSWR from "swr";
-import useAxios from "./useAxios";
+import useSWR from 'swr';
+import useAxios from './useAxios';
 
 export type TypeTimecard = {
-  user: string,
-  workspot?: string,
-  attendance: string,
-  leave?: string,
-  workTime?: number,
-  regularWorkTime?: number,
-  irregularWorkTime?: number,
-  rest?: number
-}
+  user: string;
+  workspot?: string;
+  attendance: string;
+  leave?: string;
+  workTime?: number;
+  regularWorkTime?: number;
+  irregularWorkTime?: number;
+  rest?: number;
+};
 
 export type TypeAllLatestTimecard = {
-  alreadyLeaveTimecards: TypeTimecard[]
-  notAttendTimecards: TypeTimecard[]
-  notLeaveTimecards: TypeTimecard[]
-}
-
+  alreadyLeaveTimecards: TypeTimecard[];
+  notAttendTimecards: TypeTimecard[];
+  notLeaveTimecards: TypeTimecard[];
+};
 
 const useGetAllLatestTimecard = () => {
   const axios = useAxios();
@@ -27,10 +26,7 @@ const useGetAllLatestTimecard = () => {
     return res.data;
   };
 
-  const { data, error } = useSWR<TypeAllLatestTimecard>(
-    `timecard/latestall`,
-    fetcher
-  );
+  const { data, error } = useSWR<TypeAllLatestTimecard>(`timecard/latestall`, fetcher);
 
   return {
     latestTimecards: data,

@@ -1,16 +1,16 @@
-.List{
+.List {
   z-index: 0;
 }
 
 .ListItemEven,
 .ListItemOdd {
-padding-left: 1rem;
-padding-right: 1rem;
-padding-top: 0.5rem;
-display: flex;
-justify-content: space-between;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
 }
 
 .ListItemEven {
-  background-color: #EEF6FC;
+  background-color: #eef6fc;
 }

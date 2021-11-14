@@ -1,5 +1,5 @@
-import  { useState, useEffect, useReducer } from "react";
-import useAxios from "./useAxios";
+import { useState, useEffect, useReducer } from 'react';
+import useAxios from './useAxios';
 
 type TypeUser = {
   params: {
@@ -7,7 +7,7 @@ type TypeUser = {
     password: string;
     role: string;
     user: string;
-  }[]
+  }[];
 };
 
 type TypeState = {
@@ -17,36 +17,36 @@ type TypeState = {
 };
 
 type TypeFetchInitAction = {
-  type: "FETCH_INIT",
-}
+  type: 'FETCH_INIT';
+};
 
 type TypeFetchSuccessAction = {
-  type: "FETCH_SUCCESS";
-  payload: string[]
+  type: 'FETCH_SUCCESS';
+  payload: string[];
 };
 
 type TypeFetchFailureAction = {
-  type: "FETCH_FAILURE";
+  type: 'FETCH_FAILURE';
 };
 
-type TypeAction = TypeFetchInitAction | TypeFetchSuccessAction | TypeFetchFailureAction
+type TypeAction = TypeFetchInitAction | TypeFetchSuccessAction | TypeFetchFailureAction;
 
 const dataFetchReducer = (state: TypeState, action: TypeAction) => {
   switch (action.type) {
-    case "FETCH_INIT":
+    case 'FETCH_INIT':
       return {
         ...state,
         isLoading: true,
         isError: false,
       };
-    case "FETCH_SUCCESS":
+    case 'FETCH_SUCCESS':
       return {
         ...state,
         isLoading: false,
         isError: false,
         data: action.payload,
       };
-    case "FETCH_FAILURE":
+    case 'FETCH_FAILURE':
       return {
         ...state,
         isLoading: false,
@@ -59,32 +59,30 @@ const dataFetchReducer = (state: TypeState, action: TypeAction) => {
 
 const useUserList = () => {
   const axios = useAxios();
-  const [userListState, setUserListState] = useState<string[]>(
-    []
-  );
+  const [userListState, setUserListState] = useState<string[]>([]);
   const [state, dispatch] = useReducer(dataFetchReducer, {
     isLoading: false,
     isError: false,
-    data: []
+    data: [],
   });
   useEffect(() => {
     let didCancel = false;
 
     const fetchData = async () => {
-      dispatch({ type: "FETCH_INIT" });
+      dispatch({ type: 'FETCH_INIT' });
 
       try {
-        const result = await axios.get<TypeUser>("user/index");
+        const result = await axios.get<TypeUser>('user/index');
         const userArray = result.data.params.map((item) => {
-          return (item.user);
+          return item.user;
         });
         if (!didCancel) {
-          dispatch({ type: "FETCH_SUCCESS", payload: userArray });
+          dispatch({ type: 'FETCH_SUCCESS', payload: userArray });
           setUserListState(userArray);
         }
       } catch (error) {
         if (!didCancel) {
-          dispatch({ type: "FETCH_FAILURE" });
+          dispatch({ type: 'FETCH_FAILURE' });
         }
       }
     };
@@ -96,7 +94,7 @@ const useUserList = () => {
     };
   }, []);
 
-  return {state, userListState, setUserListState};
+  return { state, userListState, setUserListState };
 };
 
 export default useUserList;

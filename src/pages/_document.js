@@ -5,10 +5,8 @@ import { ServerStyleSheets } from '@material-ui/styles'; // works with @material
 export default class MyDocument extends Document {
   render() {
     return (
-      <Html lang="ja">
-        <Head>
-          {/* Not exactly required, but this is the PWA primary color */}
-        </Head>
+      <Html lang='ja'>
+        <Head>{/* Not exactly required, but this is the PWA primary color */}</Head>
         <body>
           <Main />
           <NextScript />

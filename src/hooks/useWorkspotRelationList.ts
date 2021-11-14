@@ -1,11 +1,11 @@
-import useSWR from "swr";
-import useAxios from "./useAxios";
+import useSWR from 'swr';
+import useAxios from './useAxios';
 
 export type TypeWorkspotRelation = {
-    attendance: string;
-    password: string;
-    role: string;
-    user: string;
+  attendance: string;
+  password: string;
+  role: string;
+  user: string;
 };
 
 type TypeWorkspotRelationList = {
@@ -22,7 +22,7 @@ const useWorkspotRelationList = (workspot: string) => {
 
   const { data, error } = useSWR<TypeWorkspotRelationList>(
     `relation/workspot/${workspot}`,
-    fetcher
+    fetcher,
   );
   return {
     workspotRelationList: data,

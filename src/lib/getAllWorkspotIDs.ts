@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 type TypeWorkspotID = {
   params: {
@@ -7,9 +7,7 @@ type TypeWorkspotID = {
 };
 
 const getWorkspotAllIDs = async () => {
-  const result = await axios.get<TypeWorkspotID>(
-    `${process.env.NEXT_PUBLIC_API_HOST}workspot/ids`
-  );
+  const result = await axios.get<TypeWorkspotID>(`${process.env.NEXT_PUBLIC_API_HOST}workspot/ids`);
   return result.data;
 };
 
