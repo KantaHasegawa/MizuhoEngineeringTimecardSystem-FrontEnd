@@ -1,6 +1,6 @@
-import React, { ReactNode } from 'react';
-import Head from 'next/head';
 import { AppBar, Box, Button, IconButton, Toolbar, Typography, Container } from '@material-ui/core';
+import Head from 'next/head';
+import React, { ReactNode } from 'react';
 import Navbar from './Navbar';
 
 type Props = {

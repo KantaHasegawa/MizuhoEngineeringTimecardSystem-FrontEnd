@@ -1,18 +1,19 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { GoogleMap, useLoadScript, Circle, Marker } from '@react-google-maps/api';
-import { Button, CircularProgress, TextField, Box, Tooltip, Backdrop } from '@mui/material';
-import { useSnackbar } from 'notistack';
-import { Controller, useForm } from 'react-hook-form';
-import useAxios from '../../hooks/useAxios';
-import useCurrentUser from '../../hooks/useCurrentUser';
-import Layout from '../../components/Layout';
-import { accessTokenState } from '../../components/atoms';
-import { useRecoilValue } from 'recoil';
-import router from 'next/router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, CircularProgress, TextField, Box, Tooltip, Backdrop } from '@mui/material';
+import { GoogleMap, useLoadScript, Circle, Marker } from '@react-google-maps/api';
+import router from 'next/router';
+import { useSnackbar } from 'notistack';
+import React, { useCallback, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useRecoilValue } from 'recoil';
 import styles from '../../../styels/workspotNew.module.css';
 import ErrorComponent from '../../components/ErrorComponent';
+import Layout from '../../components/Layout';
+import PermissionErrorComponent from '../../components/PermissionErrorComponent';
+import { accessTokenState } from '../../components/atoms';
+import useAxios from '../../hooks/useAxios';
+import useCurrentUser from '../../hooks/useCurrentUser';
 
 type FormData = {
   address: string;
@@ -106,7 +107,7 @@ const WorkspotNewPage = () => {
         ) : currentUserIsError ? (
           <ErrorComponent></ErrorComponent>
         ) : currentUser.role !== 'admin' ? (
-          <div>You don't have permission</div>
+          <PermissionErrorComponent></PermissionErrorComponent>
         ) : (
           <>
             <Box>

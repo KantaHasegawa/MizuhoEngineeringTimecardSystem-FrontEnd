@@ -1,17 +1,18 @@
-import useGetLatestTimecard, { TypeTimecard } from '../hooks/useGetLatestTimecard';
-import useUserRelationList from '../hooks/useUserRelationList';
 import 'dayjs/locale/ja';
-import dayjs from 'dayjs';
-import useAxios from '../hooks/useAxios';
-import { mutate } from 'swr';
-import { useState } from 'react';
-import { TypeUserRelation } from '../hooks/useUserRelationList';
 import { CircularProgress, Box, Typography, Button, Backdrop } from '@mui/material';
 import MUILink from '@mui/material/Link';
+import dayjs from 'dayjs';
 import { useSnackbar } from 'notistack';
+import { useState } from 'react';
+// eslint-disable-next-line import/named
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
-import ErrorComponent from './ErrorComponent';
+import { mutate } from 'swr';
+import useAxios from '../hooks/useAxios';
+import useGetLatestTimecard, { TypeTimecard } from '../hooks/useGetLatestTimecard';
+import useUserRelationList, { TypeUserRelation } from '../hooks/useUserRelationList';
+
 import AlertDialog from './AlertDialog';
+import ErrorComponent from './ErrorComponent';
 dayjs.locale('ja');
 
 type TypeCurrentUser = {
@@ -41,6 +42,7 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
   const { userRelationList, userRelationListIsError } = useUserRelationList(user.name);
 
   const onClickHandler = async () => {
+    setDialog(false);
     setLoading(true);
     if (!navigator.geolocation) {
       alert('お使いのブラウザは対応しておりません');

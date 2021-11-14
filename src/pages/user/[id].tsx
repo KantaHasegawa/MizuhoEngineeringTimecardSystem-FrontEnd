@@ -1,14 +1,12 @@
-import Layout from '../../components/Layout';
-import useCurrentUser from '../../hooks/useCurrentUser';
-import { useRouter } from 'next/router';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '../../components/atoms';
-import React, { useState } from 'react';
-import getAllUserIDs from '../../lib/getAllUserIDs';
-import { useSWRConfig } from 'swr';
-import useAxios from '../../hooks/useAxios';
-import Link from 'next/link';
-import useUserRelationList, { TypeUserRelation } from '../../hooks/useUserRelationList';
+import {
+  faUserEdit,
+  faCalendarAlt,
+  faMapMarkedAlt,
+  faSignInAlt,
+  faSignOutAlt,
+  faTrashAlt,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   CircularProgress,
   Backdrop,
@@ -18,19 +16,23 @@ import {
   SpeedDialAction,
   Typography,
 } from '@mui/material';
-import AlertDialog from '../../components/AlertDialog';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faUserEdit,
-  faCalendarAlt,
-  faMapMarkedAlt,
-  faSignInAlt,
-  faSignOutAlt,
-  faTrashAlt,
-} from '@fortawesome/free-solid-svg-icons';
+import React, { useState } from 'react';
+// eslint-disable-next-line import/named
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
+import { useRecoilValue } from 'recoil';
+import { useSWRConfig } from 'swr';
+import AlertDialog from '../../components/AlertDialog';
 import ErrorComponent from '../../components/ErrorComponent';
+import Layout from '../../components/Layout';
+import PermissionErrorComponent from '../../components/PermissionErrorComponent';
+import { accessTokenState } from '../../components/atoms';
+import useAxios from '../../hooks/useAxios';
+import useCurrentUser from '../../hooks/useCurrentUser';
+import useUserRelationList, { TypeUserRelation } from '../../hooks/useUserRelationList';
+import getAllUserIDs from '../../lib/getAllUserIDs';
 
 type TypeParams = {
   id: string;
@@ -68,7 +70,7 @@ const UserShowPage = ({ user }: { user: string }) => {
     const actions = [
       {
         icon: (
-          <Link href={`/user/edit/${user}`}>
+          <Link href={`/user/edit/${user}`} passHref>
             <FontAwesomeIcon icon={faUserEdit} size='lg' />
           </Link>
         ),
@@ -76,7 +78,7 @@ const UserShowPage = ({ user }: { user: string }) => {
       },
       {
         icon: (
-          <Link href={`/user/relation/${user}`}>
+          <Link href={`/user/relation/${user}`} passHref>
             <FontAwesomeIcon icon={faMapMarkedAlt} size='lg' />
           </Link>
         ),
@@ -134,7 +136,7 @@ const UserShowPage = ({ user }: { user: string }) => {
         ) : currentUserIsError ? (
           <ErrorComponent></ErrorComponent>
         ) : currentUser.role !== 'admin' ? (
-          <div>You don't have permission</div>
+          <PermissionErrorComponent></PermissionErrorComponent>
         ) : (
           <>
             <Typography sx={{ fontSize: '1.5rem', fontWeight: 'bold', marginLeft: '3rem' }}>

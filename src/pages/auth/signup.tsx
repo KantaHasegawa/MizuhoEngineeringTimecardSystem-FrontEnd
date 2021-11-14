@@ -1,6 +1,3 @@
-import { useRouter } from 'next/router';
-import Layout from '../../components/Layout';
-import { Controller, useForm } from 'react-hook-form';
 import {
   TextField,
   Button,
@@ -11,14 +8,18 @@ import {
   Typography,
   Backdrop,
 } from '@mui/material';
+import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
-import useAxios from '../../hooks/useAxios';
-import useCurrentUser from '../../hooks/useCurrentUser';
+import { Controller, useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '../../components/atoms';
 import styles from '../../../styels/signup.module.css';
 import ErrorComponent from '../../components/ErrorComponent';
+import Layout from '../../components/Layout';
+import PermissionErrorComponent from '../../components/PermissionErrorComponent';
+import { accessTokenState } from '../../components/atoms';
+import useAxios from '../../hooks/useAxios';
+import useCurrentUser from '../../hooks/useCurrentUser';
 
 type FormData = {
   username: string;
@@ -73,7 +74,7 @@ const SignUpPage = () => {
           ) : currentUserIsError ? (
             <ErrorComponent></ErrorComponent>
           ) : currentUser.role !== 'admin' ? (
-            <div>You don't have permission</div>
+            <PermissionErrorComponent></PermissionErrorComponent>
           ) : (
             <>
               <Card variant='outlined'>

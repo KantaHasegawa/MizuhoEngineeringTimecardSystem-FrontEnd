@@ -1,9 +1,5 @@
-import Layout from '../../components/Layout';
-import useCurrentUser from '../../hooks/useCurrentUser';
-import { useRouter } from 'next/router';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '../../components/atoms';
-import React, { useState } from 'react';
+import { faSearch, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Tooltip,
   CircularProgress,
@@ -14,15 +10,20 @@ import {
   Pagination,
   Grid,
 } from '@mui/material';
-import { useSWRConfig } from 'swr';
-import useAxios from '../../hooks/useAxios';
-import Link from 'next/link';
-import useUserList from '../../hooks/useUserList';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import styles from '../../../styels/userList.module.css';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { useSWRConfig } from 'swr';
+import styles from '../../../styels/userList.module.css';
 import ErrorComponent from '../../components/ErrorComponent';
+import Layout from '../../components/Layout';
+import PermissionErrorComponent from '../../components/PermissionErrorComponent';
+import { accessTokenState } from '../../components/atoms';
+import useAxios from '../../hooks/useAxios';
+import useCurrentUser from '../../hooks/useCurrentUser';
+import useUserList from '../../hooks/useUserList';
 
 const Item = styled(Paper)(({ theme }) => ({
   height: 60,
@@ -47,7 +48,7 @@ const UserListPage = () => {
   const DisplayUsers = ({ user }: { user: string }) => {
     return (
       <Box sx={{ cursor: 'pointer' }}>
-        <Link href={`${user}`}>
+        <Link href={`${user}`} passHref>
           <Item>
             <h4>{user}</h4>
           </Item>
@@ -82,7 +83,7 @@ const UserListPage = () => {
       ) : currentUserIsError ? (
         <ErrorComponent></ErrorComponent>
       ) : currentUser.role !== 'admin' ? (
-        <div>You don't have permission</div>
+        <PermissionErrorComponent></PermissionErrorComponent>
       ) : (
         <Box sx={{ textAlign: 'center' }}>
           <form onSubmit={onSearchHandler}>
@@ -99,7 +100,7 @@ const UserListPage = () => {
                 <FontAwesomeIcon className={styles.icon} icon={faSearch} size='2x' />
               </button>
             </Tooltip>
-            <Link href='/auth/signup'>
+            <Link href='/auth/signup' passHref>
               <Tooltip title='社員を追加'>
                 <button type='button' className={styles.resetButton}>
                   <FontAwesomeIcon className={styles.icon} icon={faUserPlus} size='2x' />

@@ -1,9 +1,5 @@
-import Layout from '../../components/Layout';
-import useCurrentUser from '../../hooks/useCurrentUser';
-import { useRouter } from 'next/router';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '../../components/atoms';
-import React, { useState } from 'react';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
   Table,
@@ -16,23 +12,27 @@ import {
   CircularProgress,
   Backdrop,
   Tooltip,
+  Box,
 } from '@mui/material';
-import { useSnackbar } from 'notistack';
-import useAxios from '../../hooks/useAxios';
-import useUserList from '../../hooks/useUserList';
-import { Controller, useForm } from 'react-hook-form';
-import Select from 'react-select';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
-import { mutate } from 'swr';
-import { Box } from '@material-ui/core';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import Select from 'react-select';
+import { useRecoilValue } from 'recoil';
+import { mutate } from 'swr';
 dayjs.locale('ja');
-
 import styles from '../../../styels/timecardList.module.css';
 import ErrorComponent from '../../components/ErrorComponent';
+import Layout from '../../components/Layout';
+import PermissionErrorComponent from '../../components/PermissionErrorComponent';
+import { accessTokenState } from '../../components/atoms';
+import useAxios from '../../hooks/useAxios';
+import useCurrentUser from '../../hooks/useCurrentUser';
+import useUserList from '../../hooks/useUserList';
 
 type TypeSelectBoxItem = {
   value: string;
@@ -266,7 +266,7 @@ const UserListPage = () => {
           <ErrorComponent></ErrorComponent>
         </Layout>
       ) : currentUser.role !== 'admin' ? (
-        <div>You don't have permission</div>
+        <PermissionErrorComponent></PermissionErrorComponent>
       ) : (
         <Box>
           <Layout title='ミズホエンジニアリング | 勤怠管理表'>
@@ -311,9 +311,12 @@ const UserListPage = () => {
                     />
                   )}
                 />
-                <div className={styles.buttonGroupe}>
+                <Box sx={{ textAlign: "center" }}>
                   <Button
-                    className={styles.button}
+                    sx={{
+                      margin: "1rem",
+                      width: "6rem"
+                    }}
                     variant='outlined'
                     type='submit'
                     disabled={!watch('user') || !watch('year') || !watch('month')}
@@ -321,7 +324,10 @@ const UserListPage = () => {
                     確定
                   </Button>
                   <Button
-                    className={styles.button}
+                    sx={{
+                      margin: "1rem",
+                      width: "6rem"
+                    }}
                     variant='outlined'
                     color='success'
                     onClick={async () => onExcelHandler()}
@@ -329,12 +335,15 @@ const UserListPage = () => {
                   >
                     Excel
                   </Button>
-                  <Link href='/timecard/new'>
-                    <Button className={styles.button} variant='outlined' color='info'>
+                  <Link href='/timecard/new' passHref>
+                    <Button sx={{
+                      margin: "1rem",
+                      width: "6rem"
+                    }} variant='outlined' color='info'>
                       新規作成
                     </Button>
                   </Link>
-                </div>
+                </Box>
               </form>
             </Box>
           </Layout>
@@ -411,14 +420,12 @@ const UserListPage = () => {
                       </TableCell>
                       <TableCell align='center'>
                         {row.regularWorkTime !== null &&
-                          `${Math.floor(row.regularWorkTime / 60)}時間${
-                            row.regularWorkTime % 60
+                          `${Math.floor(row.regularWorkTime / 60)}時間${row.regularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>
                         {row.irregularWorkTime !== null &&
-                          `${Math.floor(row.irregularWorkTime / 60)}時間${
-                            row.irregularWorkTime % 60
+                          `${Math.floor(row.irregularWorkTime / 60)}時間${row.irregularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>

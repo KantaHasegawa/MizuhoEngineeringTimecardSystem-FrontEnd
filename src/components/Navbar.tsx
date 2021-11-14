@@ -1,9 +1,3 @@
-import React, { ReactNode } from 'react';
-import Link from 'next/link';
-import Logout from './Logout';
-import styles from '../../styels/layout.module.css';
-import { AppBar, Box, Toolbar, Tooltip, CircularProgress } from '@mui/material';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faMapMarkedAlt,
   faCalendarAlt,
@@ -11,11 +5,17 @@ import {
   faSignInAlt,
   faSignOutAlt,
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AppBar, Box, Toolbar, Tooltip, CircularProgress } from '@mui/material';
 import Image from 'next/image';
-import mizuhoLogo from '../../public/mizuho-logo.png';
-import useCurrentUser from '../hooks/useCurrentUser';
-import { accessTokenState } from './atoms';
+import Link from 'next/link';
+import React, { ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
+import mizuhoLogo from '../../public/mizuho-logo.png';
+import styles from '../../styels/layout.module.css';
+import useCurrentUser from '../hooks/useCurrentUser';
+import Logout from './Logout';
+import { accessTokenState } from './atoms';
 
 const Navbar = () => {
   const accessToken = useRecoilValue(accessTokenState);
@@ -27,7 +27,7 @@ const Navbar = () => {
           <Toolbar>
             <Tooltip title='ホーム'>
               <div className={styles.imageWrapper}>
-                <Link href='/'>
+                <Link href='/' passHref>
                   <Image
                     src={mizuhoLogo}
                     alt='ミズホエンジニアリング'
@@ -49,14 +49,14 @@ const Navbar = () => {
               <div className={styles.navbarIcons}>
                 <Tooltip title='社員リスト'>
                   <div style={{ display: 'inline' }}>
-                    <Link href='/user/list'>
+                    <Link href='/user/list' passHref>
                       <FontAwesomeIcon icon={faUsers} size='2x' className={styles.navbarIcon} />
                     </Link>
                   </div>
                 </Tooltip>
                 <Tooltip title='勤務地リスト'>
                   <div style={{ display: 'inline' }}>
-                    <Link href='/workspot/list'>
+                    <Link href='/workspot/list' passHref>
                       <FontAwesomeIcon
                         icon={faMapMarkedAlt}
                         size='2x'
@@ -67,7 +67,7 @@ const Navbar = () => {
                 </Tooltip>
                 <Tooltip title='勤怠管理表'>
                   <div style={{ display: 'inline' }}>
-                    <Link href='/timecard/list'>
+                    <Link href='/timecard/list' passHref>
                       <FontAwesomeIcon
                         icon={faCalendarAlt}
                         size='2x'

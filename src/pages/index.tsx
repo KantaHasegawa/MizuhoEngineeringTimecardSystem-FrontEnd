@@ -1,16 +1,16 @@
+import { CircularProgress } from '@material-ui/core';
+import { TextField, Button } from '@mui/material';
 import { useRouter } from 'next/router';
-import Layout from '../components/Layout';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useRecoilValue } from 'recoil';
 import AdminPage from '../components/AdminPage';
 import CommonPage from '../components/CommonPage';
-import { Controller, useForm } from 'react-hook-form';
-import { TextField, Button } from '@mui/material';
-import { useState } from 'react';
+import ErrorComponent from '../components/ErrorComponent';
+import Layout from '../components/Layout';
+import { accessTokenState } from '../components/atoms';
 import useAxios from '../hooks/useAxios';
 import useCurrentUser from '../hooks/useCurrentUser';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '../components/atoms';
-import { CircularProgress } from '@material-ui/core';
-import ErrorComponent from '../components/ErrorComponent';
 
 const SignUpPage = () => {
   const axios = useAxios();

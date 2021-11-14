@@ -1,3 +1,4 @@
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   CircularProgress,
   Accordion,
@@ -8,7 +9,6 @@ import {
   Card,
   Box,
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import useGetAllLatestTimecard, { TypeTimecard } from '../hooks/useGetAllLatestTimecard';
 import ErrorComponent from './ErrorComponent';
 
@@ -86,7 +86,7 @@ const AdminPage = () => {
           </AccordionSummary>
           {latestTimecards.notLeaveTimecards.map((item, index) => {
             return (
-              <AccordionDetails>
+              <AccordionDetails key={index}>
                 <NotLeave timecard={item} key={index}></NotLeave>
               </AccordionDetails>
             );
@@ -107,7 +107,7 @@ const AdminPage = () => {
           </AccordionSummary>
           {latestTimecards.alreadyLeaveTimecards.map((item, index) => {
             return (
-              <AccordionDetails>
+              <AccordionDetails key={index}>
                 <AlreadyLeave timecard={item} key={index}></AlreadyLeave>
               </AccordionDetails>
             );
@@ -128,7 +128,7 @@ const AdminPage = () => {
           </AccordionSummary>
           {latestTimecards.notAttendTimecards.map((item, index) => {
             return (
-              <AccordionDetails>
+              <AccordionDetails key={index}>
                 <NotAttend timecard={item} key={index}></NotAttend>
               </AccordionDetails>
             );

@@ -1,13 +1,12 @@
-import Layout from '../../components/Layout';
-import useCurrentUser from '../../hooks/useCurrentUser';
-import { useRouter } from 'next/router';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '../../components/atoms';
-import React, { useState } from 'react';
-import { useSWRConfig } from 'swr';
-import useAxios from '../../hooks/useAxios';
-import Link from 'next/link';
-import useWorkspotRelationList, { TypeWorkspotRelation } from '../../hooks/useWorkspotRelationList';
+import {
+  faUserEdit,
+  faCalendarAlt,
+  faUsers,
+  faSignInAlt,
+  faSignOutAlt,
+  faTrashAlt,
+} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   CircularProgress,
   Box,
@@ -17,20 +16,24 @@ import {
   Backdrop,
   Typography,
 } from '@mui/material';
-import AlertDialog from '../../components/AlertDialog';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
-import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faUserEdit,
-  faCalendarAlt,
-  faUsers,
-  faSignInAlt,
-  faSignOutAlt,
-  faTrashAlt,
-} from '@fortawesome/free-solid-svg-icons';
+import React, { useState } from 'react';
+// eslint-disable-next-line import/named
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
+import { useRecoilValue } from 'recoil';
+import { useSWRConfig } from 'swr';
+import AlertDialog from '../../components/AlertDialog';
 import ErrorComponent from '../../components/ErrorComponent';
+import Layout from '../../components/Layout';
+import PermissionErrorComponent from '../../components/PermissionErrorComponent';
+import { accessTokenState } from '../../components/atoms';
+import useAxios from '../../hooks/useAxios';
+import useCurrentUser from '../../hooks/useCurrentUser';
+
+import useWorkspotRelationList, { TypeWorkspotRelation } from '../../hooks/useWorkspotRelationList';
+import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs';
 
 type TypeParams = {
   id: string;
@@ -72,7 +75,7 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
     const actions = [
       {
         icon: (
-          <Link href={`/workspot/relation/${workspot}`}>
+          <Link href={`/workspot/relation/${workspot}`} passHref>
             <FontAwesomeIcon icon={faUsers} size='lg' />
           </Link>
         ),
@@ -130,7 +133,7 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
         ) : currentUserIsError ? (
           <ErrorComponent></ErrorComponent>
         ) : currentUser.role !== 'admin' ? (
-          <div>You don't have permission</div>
+          <PermissionErrorComponent></PermissionErrorComponent>
         ) : (
           <>
             <Box sx={{ width: '23rem' }}>

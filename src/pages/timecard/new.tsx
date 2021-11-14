@@ -1,5 +1,5 @@
-import { useRouter } from 'next/router';
-import Layout from '../../components/Layout';
+import { LocalizationProvider, DateTimePicker } from '@mui/lab';
+import AdapterDayjs from '@mui/lab/AdapterDayjs';
 import {
   TextField,
   Button,
@@ -9,21 +9,22 @@ import {
   Stack,
   Backdrop,
 } from '@mui/material';
-import { useSnackbar } from 'notistack';
-import { useState } from 'react';
-import useAxios from '../../hooks/useAxios';
-import useCurrentUser from '../../hooks/useCurrentUser';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '../../components/atoms';
-import { LocalizationProvider, DateTimePicker } from '@mui/lab';
-import AdapterDayjs from '@mui/lab/AdapterDayjs';
-import Select from 'react-select';
-import useUserList from '../../hooks/useUserList';
-import useWorkspotList from '../../hooks/useWorkspotList';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import 'dayjs/locale/ja';
+import { useRouter } from 'next/router';
+import { useSnackbar } from 'notistack';
+import { useState } from 'react';
+import Select from 'react-select';
+import { useRecoilValue } from 'recoil';
 import ErrorComponent from '../../components/ErrorComponent';
+import Layout from '../../components/Layout';
+import PermissionErrorComponent from '../../components/PermissionErrorComponent';
+import { accessTokenState } from '../../components/atoms';
+import useAxios from '../../hooks/useAxios';
+import useCurrentUser from '../../hooks/useCurrentUser';
+import useUserList from '../../hooks/useUserList';
+import useWorkspotList from '../../hooks/useWorkspotList';
+import 'dayjs/locale/ja';
 dayjs.locale('ja');
 dayjs.extend(isSameOrBefore);
 
@@ -155,7 +156,7 @@ const TimecardNewPage = () => {
       ) : currentUserIsError ? (
         <ErrorComponent></ErrorComponent>
       ) : currentUser.role !== 'admin' ? (
-        <div>You don't have permission</div>
+        <PermissionErrorComponent></PermissionErrorComponent>
       ) : (
         <>
           <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>勤怠登録</Typography>

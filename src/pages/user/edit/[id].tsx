@@ -1,10 +1,3 @@
-import { useRouter } from 'next/router';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '../../../components/atoms';
-import Layout from '../../../components/Layout';
-import useCurrentUser from '../../../hooks/useCurrentUser';
-import getAllUserIDs from '../../../lib/getAllUserIDs';
-import { Controller, useForm } from 'react-hook-form';
 import {
   TextField,
   Button,
@@ -15,10 +8,18 @@ import {
   CardContent,
   Backdrop,
 } from '@mui/material';
+import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
-import useAxios from '../../../hooks/useAxios';
+import { Controller, useForm } from 'react-hook-form';
+import { useRecoilValue } from 'recoil';
 import ErrorComponent from '../../../components/ErrorComponent';
+import Layout from '../../../components/Layout';
+import PermissionErrorComponent from '../../../components/PermissionErrorComponent';
+import { accessTokenState } from '../../../components/atoms';
+import useAxios from '../../../hooks/useAxios';
+import useCurrentUser from '../../../hooks/useCurrentUser';
+import getAllUserIDs from '../../../lib/getAllUserIDs';
 
 type TypeParams = {
   id: string;
@@ -78,7 +79,7 @@ export const UserEditPage = ({ user }: { user: string }) => {
           ) : currentUserIsError ? (
             <ErrorComponent></ErrorComponent>
           ) : currentUser.role !== 'admin' ? (
-            <div>You don't have permission</div>
+            <PermissionErrorComponent></PermissionErrorComponent>
           ) : (
             <>
               <Card variant='outlined'>

@@ -1,7 +1,7 @@
-import { AppProps } from 'next/app';
 import { CssBaseline, Box } from '@mui/material';
-import { RecoilRoot } from 'recoil';
+import { AppProps } from 'next/app';
 import { SnackbarProvider } from 'notistack';
+import { RecoilRoot } from 'recoil';
 import '../../styels/global.css';
 import Footer from '../components/Footer';
 

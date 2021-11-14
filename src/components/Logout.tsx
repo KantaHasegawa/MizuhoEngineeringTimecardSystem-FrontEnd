@@ -1,15 +1,15 @@
-import { useRouter } from 'next/router';
-import { Tooltip, Backdrop, CircularProgress } from '@mui/material';
-import { useSnackbar } from 'notistack';
-import useAxios from '../hooks/useAxios';
-import { useSetRecoilState } from 'recoil';
-import { accessTokenState } from './atoms';
-import Cookies from 'js-cookie';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import styles from '../../styels/layout.module.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Tooltip, Backdrop, CircularProgress } from '@mui/material';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
+import { useSnackbar } from 'notistack';
 import { useState } from 'react';
+import { useSetRecoilState } from 'recoil';
+import styles from '../../styels/layout.module.css';
+import useAxios from '../hooks/useAxios';
 import AlertDialog from './AlertDialog';
+import { accessTokenState } from './atoms';
 
 const Logout = () => {
   const axios = useAxios();

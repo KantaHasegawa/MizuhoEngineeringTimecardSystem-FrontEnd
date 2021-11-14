@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { faSearch, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Tooltip,
   CircularProgress,
@@ -9,18 +10,18 @@ import {
   Pagination,
   Typography,
 } from '@mui/material';
-import useCurrentUser from '../../hooks/useCurrentUser';
-import Layout from '../../components/Layout';
-import { accessTokenState } from '../../components/atoms';
-import { useRecoilValue } from 'recoil';
-import router from 'next/router';
-import useWorkspotList from '../../hooks/useWorkspotList';
+import { styled } from '@mui/material/styles';
 import Link from 'next/link';
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import router from 'next/router';
+import React, { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import styles from '../../../styels/workspotList.module.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faPlusSquare } from '@fortawesome/free-solid-svg-icons';
 import ErrorComponent from '../../components/ErrorComponent';
+import Layout from '../../components/Layout';
+import PermissionErrorComponent from '../../components/PermissionErrorComponent';
+import { accessTokenState } from '../../components/atoms';
+import useCurrentUser from '../../hooks/useCurrentUser';
+import useWorkspotList from '../../hooks/useWorkspotList';
 
 const Item = styled(Paper)(({ theme }) => ({
   height: 80,
@@ -42,7 +43,7 @@ const WorkspotListPage = () => {
   const DisplayWorkspotList = ({ workspot }: { workspot: string }) => {
     return (
       <Box sx={{ cursor: 'pointer' }}>
-        <Link href={`${workspot}`}>
+        <Link href={`${workspot}`} passHref>
           <Item>
             <Typography sx={{ fontWeight: 'bold', fontSize: '1rem' }}>{workspot}</Typography>
           </Item>
@@ -77,7 +78,7 @@ const WorkspotListPage = () => {
       ) : currentUserIsError ? (
         <ErrorComponent></ErrorComponent>
       ) : currentUser.role !== 'admin' ? (
-        <div>You don't have permission</div>
+        <PermissionErrorComponent></PermissionErrorComponent>
       ) : (
         <Box sx={{ textAlign: 'center' }}>
           <form onSubmit={onSearchHandler}>
@@ -94,7 +95,7 @@ const WorkspotListPage = () => {
                 <FontAwesomeIcon className={styles.icon} icon={faSearch} size='2x' />
               </button>
             </Tooltip>
-            <Link href='/workspot/new'>
+            <Link href='/workspot/new' passHref>
               <Tooltip title='勤務地を追加'>
                 <button type='button' className={styles.resetButton}>
                   <FontAwesomeIcon className={styles.icon} icon={faPlusSquare} size='2x' />

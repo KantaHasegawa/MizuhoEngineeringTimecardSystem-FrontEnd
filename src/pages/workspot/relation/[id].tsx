@@ -1,23 +1,25 @@
-import Layout from '../../../components/Layout';
-import useCurrentUser from '../../../hooks/useCurrentUser';
+import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop } from '@mui/material';
 import { useRouter } from 'next/router';
-import { useRecoilValue } from 'recoil';
-import { accessTokenState } from '../../../components/atoms';
+import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
-import getAllWorkspotIDs from '../../../lib/getAllWorkspotIDs';
+import Select from 'react-select';
+// eslint-disable-next-line import/named
+import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
+import { useRecoilValue } from 'recoil';
+import { mutate } from 'swr';
+import styles from '../../../../styels/workspotRelationPage.module.css';
+import ErrorComponent from '../../../components/ErrorComponent';
+import Layout from '../../../components/Layout';
+import PermissionErrorComponent from '../../../components/PermissionErrorComponent';
+import { accessTokenState } from '../../../components/atoms';
+import useAxios from '../../../hooks/useAxios';
+import useCurrentUser from '../../../hooks/useCurrentUser';
 import useWorkspotRelationEdit, {
   TypeWorkspotRelation,
 } from '../../../hooks/useWorkspotRelationEdit';
-import Select from 'react-select';
-import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop } from '@mui/material';
-import { useSnackbar } from 'notistack';
-import useAxios from '../../../hooks/useAxios';
-import { mutate } from 'swr';
-import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import styles from '../../../../styels/workspotRelationPage.module.css';
-import ErrorComponent from '../../../components/ErrorComponent';
+import getAllWorkspotIDs from '../../../lib/getAllWorkspotIDs';
 
 type TypeParams = {
   id: string;
@@ -106,7 +108,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
           ) : currentUserIsError ? (
             <ErrorComponent></ErrorComponent>
           ) : currentUser.role !== 'admin' ? (
-            <div>You don't have permission</div>
+            <PermissionErrorComponent></PermissionErrorComponent>
           ) : (
             <>
               <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>{workspot}</Typography>

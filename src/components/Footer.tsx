@@ -1,7 +1,7 @@
 import { useMediaQuery, Box, Typography, Link } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import Image from 'next/image';
 import mizuhoLogo from '../../public/mizuho-logo.png';
-import { useTheme } from '@mui/material/styles';
 
 const Footer = () => {
   const theme = useTheme();
