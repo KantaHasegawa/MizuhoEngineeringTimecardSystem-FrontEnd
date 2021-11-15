@@ -8,7 +8,9 @@ import {
   Badge,
   Card,
   Box,
+  Button,
 } from '@mui/material';
+import Link from 'next/link';
 import useGetAllLatestTimecard, { TypeTimecard } from '../hooks/useGetAllLatestTimecard';
 import ErrorComponent from './ErrorComponent';
 
@@ -133,7 +135,10 @@ const AdminPage = () => {
               </AccordionDetails>
             );
           })}
-        </Accordion>
+            </Accordion>
+            <Link href="/line" passHref>
+            <Button sx={{marginTop: "1rem"}} size="small" variant="outlined" color="success" >LINEと連携する</Button>
+            </Link>
       </Box>
     </>
   );
