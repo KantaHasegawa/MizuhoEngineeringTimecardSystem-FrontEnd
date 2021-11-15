@@ -13,7 +13,7 @@ const ErrorComponent = () => {
       }}
     >
       <Typography>エラーが発生しました</Typography>
-      <Typography>数秒経っても表示が切り替わらない場合は管理者にお問い合わせください</Typography>
+      <Typography>リロードする、または数秒経っても表示が切り替わらない場合は管理者にお問い合わせください</Typography>
     </Box>
   );
 };
