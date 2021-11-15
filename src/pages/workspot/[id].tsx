@@ -168,7 +168,7 @@ export const getStaticPaths = async () => {
   const paths = await getAllWorkspotIDs();
   return {
     paths,
-    fallback: false,
+    fallback: true,
   };
 };
 

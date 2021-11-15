@@ -171,7 +171,7 @@ export const getStaticPaths = async () => {
   const paths = await getAllUserIDs();
   return {
     paths,
-    fallback: false,
+    fallback: true,
   };
 };
 
