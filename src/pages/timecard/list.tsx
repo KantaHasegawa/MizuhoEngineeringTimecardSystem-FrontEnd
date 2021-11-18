@@ -14,6 +14,7 @@ import {
   Tooltip,
   Box,
 } from '@mui/material';
+import { base64StringToBlob } from 'blob-util';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
 import Link from 'next/link';
@@ -178,19 +179,19 @@ const TimecardListPage = () => {
     setLoading(true);
     const values = getValues();
     try {
-      const result = await axios.get<Blob>(
-        `timecard/excel/${values.user.value}/${values.year.value}/${values.month.value}`,
-        { responseType: 'blob' },
+      const result = await axios.get<string>(
+        `timecard/excel/${values.user.value}/${values.year.value}/${values.month.value}`
       );
+      const blob = base64StringToBlob(result.data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
       if (window.navigator.msSaveOrOpenBlob) {
         // for IE,Edge
         window.navigator.msSaveOrOpenBlob(
-          result.data,
+          blob,
           `${values.year.value}年${values.month.value}月${values.user.value}.xlsx`,
         );
       } else {
         // for chrome, firefox
-        const url = URL.createObjectURL(new Blob([result.data], { type: 'text/csv' }));
+        const url = URL.createObjectURL(new Blob([blob], { type: 'text/csv' }));
         const linkEl = document.createElement('a');
         linkEl.href = url;
         linkEl.setAttribute(
