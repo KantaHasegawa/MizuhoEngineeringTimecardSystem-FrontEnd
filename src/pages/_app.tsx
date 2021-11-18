@@ -3,18 +3,23 @@ import { AppProps } from 'next/app';
 import { SnackbarProvider } from 'notistack';
 import { RecoilRoot } from 'recoil';
 import '../../styels/global.css';
+import { SWRConfig } from 'swr';
 import Footer from '../components/Footer';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }): JSX.Element => {
   return (
     <RecoilRoot>
-      <CssBaseline />
-      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <SnackbarProvider>
-          <Component {...pageProps} />
-          <Footer />
-        </SnackbarProvider>
-      </Box>
+      <SWRConfig
+        value={{ refreshInterval: 600000 }}
+      >
+        <CssBaseline />
+        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          <SnackbarProvider>
+            <Component {...pageProps} />
+            <Footer />
+          </SnackbarProvider>
+        </Box>
+      </SWRConfig>
     </RecoilRoot>
   );
 };

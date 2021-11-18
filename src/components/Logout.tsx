@@ -1,7 +1,6 @@
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Tooltip, Backdrop, CircularProgress } from '@mui/material';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
@@ -17,15 +16,14 @@ const Logout = () => {
   const setAccessToken = useSetRecoilState(accessTokenState);
   const [loading, setLoading] = useState(false);
   const [dialog, setDialog] = useState(false);
-  const refreshToken = Cookies.get('refreshToken');
   const onClickHandler = async () => {
     setLoading(true);
     try {
-      await axios.post('auth/logout', { refreshToken: refreshToken });
+      await axios.get('auth/logout');
       setAccessToken('');
       router.push('/auth/login');
       enqueueSnackbar('ログアウトしました', { variant: 'success' });
-    } catch (err: any) {
+    } catch (err) {
       enqueueSnackbar('ログアウトに失敗しました', { variant: 'error' });
       console.log(err);
     } finally {
