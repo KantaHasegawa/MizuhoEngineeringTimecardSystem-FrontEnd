@@ -9,8 +9,8 @@ export const accessTokenState = atom({
   effects_UNSTABLE: [persistAtom],
 });
 
-export const userState = atom({
-  key: 'userState',
-  default: '',
+export const refreshState = atom<Boolean>({
+  key: 'refreshState',
+  default: false,
   effects_UNSTABLE: [persistAtom],
 });

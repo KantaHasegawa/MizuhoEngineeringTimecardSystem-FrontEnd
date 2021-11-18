@@ -1,11 +1,12 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
-import { useRecoilState } from 'recoil';
-import { accessTokenState } from '../components/atoms';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { accessTokenState, refreshState } from '../components/atoms';
 
 const useAxios = () => {
   const router = useRouter();
+  const setRefresh = useSetRecoilState(refreshState);
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
   const refreshToken = Cookies.get('refreshToken');
   const api = axios.create({
@@ -32,6 +33,7 @@ const useAxios = () => {
           config.headers['Authorization'] = 'Bearer ' + result.data.accessToken;
           return axios.request(error.config);
         } catch (err) {
+          setRefresh(true);
           router.push('/auth/login');
         }
       }

@@ -17,7 +17,7 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import mizuhoLogo from '../../../public/mizuho-logo.png';
-import { accessTokenState, userState } from '../../components/atoms';
+import { accessTokenState, refreshState } from '../../components/atoms';
 import useAxios from '../../hooks/useAxios';
 import useCurrentUser from '../../hooks/useCurrentUser';
 
@@ -38,15 +38,15 @@ const LoginPage = () => {
     formState: { errors },
   } = useForm<FormData>();
   const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
-  const setUser = useSetRecoilState(userState);
+  const [refresh, setRefresh] = useRecoilState(refreshState);
   const { currentUser, currentUserIsLoading } = useCurrentUser(accessToken);
-  if (currentUser) router.push('/');
+  if (!refresh && currentUser) router.push('/');
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
       const result: any = await axios.post(`auth/login`, data);
       setAccessToken(result.data.accessToken);
-      setUser(data.username);
+      setRefresh(false);
       router.push('/');
       enqueueSnackbar('ログインしました', { variant: 'success' });
     } catch (err: any) {
@@ -73,7 +73,7 @@ const LoginPage = () => {
         <Box sx={{ paddingTop: '2rem', width: '350px', marginLeft: 'auto', marginRight: 'auto' }}>
           {currentUserIsLoading ? (
             <CircularProgress />
-          ) : currentUser ? (
+          ) : !refreshState && currentUser ? (
             <Box
               color='white'
               sx={{
