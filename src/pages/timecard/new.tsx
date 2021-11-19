@@ -1,4 +1,4 @@
-import { LocalizationProvider, DateTimePicker } from '@mui/lab';
+import { LocalizationProvider, DateTimePicker, MobileDateTimePicker } from '@mui/lab';
 import AdapterDayjs from '@mui/lab/AdapterDayjs';
 import {
   TextField,
@@ -27,7 +27,6 @@ import useWorkspotList from '../../hooks/useWorkspotList';
 import 'dayjs/locale/ja';
 dayjs.locale('ja');
 dayjs.extend(isSameOrBefore);
-
 type TypeSelectedOption = {
   value: string;
   label: string;
@@ -171,7 +170,7 @@ const TimecardNewPage = () => {
             <SelelectBoxWorkspot></SelelectBoxWorkspot>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Stack spacing={3} sx={{ marginBottom: '1rem' }}>
-                <DateTimePicker
+                <MobileDateTimePicker
                   label='出勤時刻'
                   value={attendance}
                   onChange={handleAttendanceChange}
@@ -179,7 +178,7 @@ const TimecardNewPage = () => {
                 />
               </Stack>
               <Stack spacing={3} sx={{ marginBottom: '1rem' }}>
-                <DateTimePicker
+                <MobileDateTimePicker
                   label='退勤時刻'
                   value={leave}
                   onChange={handleLeaveChange}
