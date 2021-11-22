@@ -12,12 +12,14 @@ import { mutate } from 'swr';
 import ErrorComponent from '../../../components/ErrorComponent';
 import Layout from '../../../components/Layout';
 import PermissionErrorComponent from '../../../components/PermissionErrorComponent';
-import { accessTokenState } from '../../../components/atoms';
-import useAxios from '../../../hooks/useAxios';
+import { isUserLoadingState, userInfoState } from '../../../components/atoms';
+import useCsrf from '../../../hooks/useCsrf';
 import useCurrentUser from '../../../hooks/useCurrentUser';
+import useProtectedPage from '../../../hooks/useProtectedPage';
 import useWorkspotRelationEdit, {
   TypeWorkspotRelation,
 } from '../../../hooks/useWorkspotRelationEdit';
+import axios from '../../../lib/axiosSetting';
 import getAllWorkspotIDs from '../../../lib/getAllWorkspotIDs';
 
 type TypeParams = {
@@ -30,15 +32,15 @@ type TypeSelectedOption = {
 } | null;
 
 const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
+  useCurrentUser();
+  useProtectedPage();
+  useCsrf();
   const router = useRouter();
-  const axios = useAxios();
-  const accessToken = useRecoilValue(accessTokenState);
+  const isUserLoading = useRecoilValue(isUserLoadingState);
+  const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState<TypeSelectedOption>(null);
-  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
-  if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))
-    router.push('/');
 
   const { workspotSelectBoxResponse, workspotSelectBoxResponseIsError } =
     useWorkspotRelationEdit(workspot);
@@ -88,7 +90,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
         <Typography sx={{ fontSize: '1rem' }}>{data[index].user}</Typography>
         <Tooltip title='削除' placement='left-start'>
           <div onClick={async () => onDelete(data[index].user)}>
-            <FontAwesomeIcon icon={faTrashAlt} size='lg' className="trashIcon" />
+            <FontAwesomeIcon icon={faTrashAlt} size='lg' className='trashIcon' />
           </div>
         </Tooltip>
       </div>
@@ -102,11 +104,11 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
       </Backdrop>
       <Layout title='ミズホエンジニアリング | 編集'>
         <Box>
-          {currentUserIsLoading ? (
+          {isUserLoading ? (
             <CircularProgress />
-          ) : currentUserIsError ? (
+          ) : !userInfo.role ? (
             <ErrorComponent></ErrorComponent>
-          ) : currentUser.role !== 'admin' ? (
+          ) : userInfo.role !== 'admin' ? (
             <PermissionErrorComponent></PermissionErrorComponent>
           ) : (
             <>
@@ -126,7 +128,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
                   />
                   <Box sx={{ textAlign: 'center', margin: '1rem' }}>
                     <Button
-                      sx={{width: "6rem"}}
+                      sx={{ width: '6rem' }}
                       variant='outlined'
                       onClick={async () => onSubmit()}
                     >

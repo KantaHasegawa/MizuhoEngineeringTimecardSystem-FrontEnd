@@ -2,7 +2,6 @@ import { faSearch, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, CircularProgress, TextField, Box, Tooltip, Backdrop } from '@mui/material';
 import { GoogleMap, useLoadScript, Circle, Marker } from '@react-google-maps/api';
-import router from 'next/router';
 import { useSnackbar } from 'notistack';
 import React, { useCallback, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -10,9 +9,11 @@ import { useRecoilValue } from 'recoil';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
-import { accessTokenState } from '../../components/atoms';
-import useAxios from '../../hooks/useAxios';
+import { isUserLoadingState, userInfoState } from '../../components/atoms';
+import useCsrf from '../../hooks/useCsrf';
 import useCurrentUser from '../../hooks/useCurrentUser';
+import useProtectedPage from '../../hooks/useProtectedPage';
+import axios from '../../lib/axiosSetting';
 
 type FormData = {
   address: string;
@@ -34,15 +35,15 @@ const options = {
 };
 
 const WorkspotNewPage = () => {
-  const axios = useAxios();
-  const accessToken = useRecoilValue(accessTokenState);
+  useCurrentUser();
+  useProtectedPage();
+  useCsrf();
+  const isUserLoading = useRecoilValue(isUserLoadingState);
+  const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [center, setCenter] = useState({ lat: 35.1346609, lng: 136.9381131 });
   const { control, handleSubmit, reset } = useForm<FormData>();
-  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
-  if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))
-    router.push('/');
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY || 'default',
   });
@@ -101,11 +102,11 @@ const WorkspotNewPage = () => {
         <CircularProgress color='inherit' />
       </Backdrop>
       <Layout title='ミズホエンジニアリング | 勤務地登録'>
-        {currentUserIsLoading ? (
+        {isUserLoading ? (
           <CircularProgress />
-        ) : currentUserIsError ? (
+        ) : !userInfo.role ? (
           <ErrorComponent></ErrorComponent>
-        ) : currentUser.role !== 'admin' ? (
+        ) : userInfo.role !== 'admin' ? (
           <PermissionErrorComponent></PermissionErrorComponent>
         ) : (
           <>
@@ -133,8 +134,8 @@ const WorkspotNewPage = () => {
                         )}
                       />
                       <Tooltip title='検索'>
-                        <button className="resetButton" type='submit'>
-                          <FontAwesomeIcon className="icon" icon={faSearch} size='2x' />
+                        <button className='resetButton' type='submit'>
+                          <FontAwesomeIcon className='icon' icon={faSearch} size='2x' />
                         </button>
                       </Tooltip>
                     </div>

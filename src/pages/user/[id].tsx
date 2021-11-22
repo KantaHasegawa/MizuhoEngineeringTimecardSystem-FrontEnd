@@ -1,8 +1,4 @@
-import {
-  faUserEdit,
-  faMapMarkedAlt,
-  faTrashAlt,
-} from '@fortawesome/free-solid-svg-icons';
+import { faUserEdit, faMapMarkedAlt, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   CircularProgress,
@@ -25,10 +21,12 @@ import AlertDialog from '../../components/AlertDialog';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
-import { accessTokenState } from '../../components/atoms';
-import useAxios from '../../hooks/useAxios';
+import { isUserLoadingState, userInfoState } from '../../components/atoms';
+import useCsrf from '../../hooks/useCsrf';
 import useCurrentUser from '../../hooks/useCurrentUser';
+import useProtectedPaeg from '../../hooks/useProtectedPage';
 import useUserRelationList, { TypeUserRelation } from '../../hooks/useUserRelationList';
+import axios from '../../lib/axiosSetting';
 import getAllUserIDs from '../../lib/getAllUserIDs';
 
 type TypeParams = {
@@ -36,17 +34,17 @@ type TypeParams = {
 };
 
 const UserShowPage = ({ user }: { user: string }) => {
+  useCurrentUser();
+  useProtectedPaeg();
+  useCsrf();
   const router = useRouter();
-  const axios = useAxios();
   const { mutate } = useSWRConfig();
   const { enqueueSnackbar } = useSnackbar();
-  const accessToken = useRecoilValue(accessTokenState);
+  const isUserLoading = useRecoilValue(isUserLoadingState);
+  const userInfo = useRecoilValue(userInfoState);
   const [loading, setLoading] = useState(false);
   const [dialog, setDialog] = useState(false);
-  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
   const { userRelationList, userRelationListIsError } = useUserRelationList(user);
-  if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))
-    router.push('/');
 
   const onClickDeleteUser = async (user: string) => {
     setLoading(true);
@@ -128,11 +126,11 @@ const UserShowPage = ({ user }: { user: string }) => {
         }}
       />
       <Layout title='ミズホエンジニアリング | 社員詳細'>
-        {currentUserIsLoading ? (
+        {isUserLoading ? (
           <CircularProgress />
-        ) : currentUserIsError ? (
+        ) : !userInfo.role ? (
           <ErrorComponent></ErrorComponent>
-        ) : currentUser.role !== 'admin' ? (
+        ) : userInfo.role !== 'admin' ? (
           <PermissionErrorComponent></PermissionErrorComponent>
         ) : (
           <>

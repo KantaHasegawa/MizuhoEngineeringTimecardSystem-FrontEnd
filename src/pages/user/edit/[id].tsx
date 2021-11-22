@@ -8,7 +8,6 @@ import {
   CardContent,
   Backdrop,
 } from '@mui/material';
-import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -16,9 +15,11 @@ import { useRecoilValue } from 'recoil';
 import ErrorComponent from '../../../components/ErrorComponent';
 import Layout from '../../../components/Layout';
 import PermissionErrorComponent from '../../../components/PermissionErrorComponent';
-import { accessTokenState } from '../../../components/atoms';
-import useAxios from '../../../hooks/useAxios';
+import { isUserLoadingState, userInfoState } from '../../../components/atoms';
+import useCsrf from '../../../hooks/useCsrf';
 import useCurrentUser from '../../../hooks/useCurrentUser';
+import useProtectedPage from '../../../hooks/useProtectedPage';
+import axios from '../../../lib/axiosSetting';
 import getAllUserIDs from '../../../lib/getAllUserIDs';
 
 type TypeParams = {
@@ -30,9 +31,11 @@ type FormData = {
 };
 
 export const UserEditPage = ({ user }: { user: string }) => {
-  const axios = useAxios();
-  const router = useRouter();
-  const accessToken = useRecoilValue(accessTokenState);
+  useCurrentUser();
+  useProtectedPage();
+  useCsrf();
+  const isUserLoading = useRecoilValue(isUserLoadingState);
+  const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
   const {
     control,
@@ -42,9 +45,7 @@ export const UserEditPage = ({ user }: { user: string }) => {
   } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
   const [serverSideError, setServerSideError] = useState<string>('');
-  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
-  if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))
-    router.push('/');
+
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     const params = {
@@ -74,11 +75,11 @@ export const UserEditPage = ({ user }: { user: string }) => {
       </Backdrop>
       <Layout title='ミズホエンジニアリング | パスワード変更'>
         <Box sx={{ paddingTop: '2rem', width: '350px', marginLeft: 'auto', marginRight: 'auto' }}>
-          {currentUserIsLoading ? (
+          {isUserLoading ? (
             <CircularProgress />
-          ) : currentUserIsError ? (
+          ) : !userInfo.role ? (
             <ErrorComponent></ErrorComponent>
-          ) : currentUser.role !== 'admin' ? (
+          ) : userInfo.role !== 'admin' ? (
             <PermissionErrorComponent></PermissionErrorComponent>
           ) : (
             <>

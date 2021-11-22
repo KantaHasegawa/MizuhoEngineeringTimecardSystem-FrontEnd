@@ -13,18 +13,19 @@ import { useRecoilValue } from 'recoil';
 import mizuhoLogo from '../../public/mizuho-logo.png';
 import useCurrentUser from '../hooks/useCurrentUser';
 import Logout from './Logout';
-import { accessTokenState } from './atoms';
+import { userInfoState, isUserLoadingState } from './atoms';
 
 const Navbar = () => {
-  const accessToken = useRecoilValue(accessTokenState);
-  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
+  const userInfo = useRecoilValue(userInfoState);
+  const isUserLoading = useRecoilValue(isUserLoadingState);
+  useCurrentUser();
   return (
     <header>
       <Box sx={{ flexGrow: 1 }}>
         <AppBar position='static' color='default'>
           <Toolbar>
             <Tooltip title='ホーム'>
-              <div style={{ cursor: "pointer", padding: "0.3rem" }}>
+              <div style={{ cursor: 'pointer', padding: '0.3rem' }}>
                 <Link href='/' passHref>
                   <Image
                     src={mizuhoLogo}
@@ -35,49 +36,35 @@ const Navbar = () => {
                 </Link>
               </div>
             </Tooltip>
-            {currentUserIsLoading ? (
+            {isUserLoading ? (
               <CircularProgress />
-            ) : currentUserIsError ? (
-              <Tooltip title='ログイン'>
-                <div style={{ marginLeft: "auto" }}>
-                  <FontAwesomeIcon icon={faSignInAlt} size='2x' className="navbarIcon" />
-                </div>
-              </Tooltip>
-            ) : currentUser.role === 'admin' ? (
-              <div style={{ marginLeft: "auto" }}>
+            ) : userInfo.role === 'admin' ? (
+              <div style={{ marginLeft: 'auto' }}>
                 <Tooltip title='社員リスト'>
                   <div style={{ display: 'inline' }}>
                     <Link href='/user/list' passHref>
-                      <FontAwesomeIcon icon={faUsers} size='2x' className="navbarIcon" />
+                      <FontAwesomeIcon icon={faUsers} size='2x' className='navbarIcon' />
                     </Link>
                   </div>
                 </Tooltip>
                 <Tooltip title='勤務地リスト'>
                   <div style={{ display: 'inline' }}>
                     <Link href='/workspot/list' passHref>
-                      <FontAwesomeIcon
-                        icon={faMapMarkedAlt}
-                        size='2x'
-                        className="navbarIcon"
-                      />
+                      <FontAwesomeIcon icon={faMapMarkedAlt} size='2x' className='navbarIcon' />
                     </Link>
                   </div>
                 </Tooltip>
                 <Tooltip title='勤怠管理表'>
                   <div style={{ display: 'inline' }}>
                     <Link href='/timecard/list' passHref>
-                      <FontAwesomeIcon
-                        icon={faCalendarAlt}
-                        size='2x'
-                        className="navbarIcon"
-                      />
+                      <FontAwesomeIcon icon={faCalendarAlt} size='2x' className='navbarIcon' />
                     </Link>
                   </div>
                 </Tooltip>
                 <Logout></Logout>
               </div>
             ) : (
-              <div style={{ marginLeft: "auto" }}>
+              <div style={{ marginLeft: 'auto' }}>
                 <Logout></Logout>
               </div>
             )}

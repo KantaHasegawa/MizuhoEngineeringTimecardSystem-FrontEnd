@@ -1,24 +1,16 @@
 import { faSearch, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Tooltip,
-  CircularProgress,
-  TextField,
-  Box,
-  Paper,
-  Pagination,
-  Grid,
-} from '@mui/material';
+import { Tooltip, CircularProgress, TextField, Box, Paper, Pagination, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
-import { accessTokenState } from '../../components/atoms';
+import { isUserLoadingState, userInfoState } from '../../components/atoms';
 import useCurrentUser from '../../hooks/useCurrentUser';
+import useProtectedPage from '../../hooks/useProtectedPage';
 import useUserList from '../../hooks/useUserList';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -27,11 +19,10 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const UserListPage = () => {
-  const router = useRouter();
-  const accessToken = useRecoilValue(accessTokenState);
-  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
-  if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))
-    router.push('/');
+  useCurrentUser();
+  useProtectedPage();
+  const isUserLoading = useRecoilValue(isUserLoadingState);
+  const userInfo = useRecoilValue(userInfoState);
   const { state, userListState, setUserListState } = useUserList();
   const [inputState, setInputState] = useState('');
   const [pageNumber, setPageNumber] = useState(1);
@@ -72,11 +63,11 @@ const UserListPage = () => {
 
   return (
     <Layout title='ミズホエンジニアリング | 社員リスト'>
-      {currentUserIsLoading ? (
+      {isUserLoading ? (
         <CircularProgress />
-      ) : currentUserIsError ? (
+      ) : !userInfo.role ? (
         <ErrorComponent></ErrorComponent>
-      ) : currentUser.role !== 'admin' ? (
+      ) : userInfo.role !== 'admin' ? (
         <PermissionErrorComponent></PermissionErrorComponent>
       ) : (
         <Box sx={{ textAlign: 'center' }}>
@@ -90,14 +81,14 @@ const UserListPage = () => {
               size='small'
             />
             <Tooltip title='検索'>
-              <button type='submit' className="resetButton" onClick={onSearchHandler}>
-                <FontAwesomeIcon className="icon" icon={faSearch} size='2x' />
+              <button type='submit' className='resetButton' onClick={onSearchHandler}>
+                <FontAwesomeIcon className='icon' icon={faSearch} size='2x' />
               </button>
             </Tooltip>
             <Link href='/auth/signup' passHref>
               <Tooltip title='社員を追加'>
-                      <button type='button' className="resetButton">
-                  <FontAwesomeIcon className="icon" icon={faUserPlus} size='2x' />
+                <button type='button' className='resetButton'>
+                  <FontAwesomeIcon className='icon' icon={faUserPlus} size='2x' />
                 </button>
               </Tooltip>
             </Link>

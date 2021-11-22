@@ -1,29 +1,37 @@
 import { CircularProgress } from '@material-ui/core';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import AdminPage from '../components/AdminPage';
 import CommonPage from '../components/CommonPage';
 import ErrorComponent from '../components/ErrorComponent';
 import Layout from '../components/Layout';
-import { accessTokenState } from '../components/atoms';
+import { userInfoState, isUserLoadingState, isLogedInState } from '../components/atoms';
 import useCurrentUser from '../hooks/useCurrentUser';
 
 const IndexPage = () => {
   const router = useRouter();
-  const accessToken = useRecoilValue(accessTokenState);
-  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
-  if (!currentUserIsLoading && !currentUser) router.push('/auth/login');
+  const isLogedIn = useRecoilValue(isLogedInState);
+  const userInfo = useRecoilValue(userInfoState);
+  const isUserLoading = useRecoilValue(isUserLoadingState);
+  useCurrentUser();
+
+  useEffect(() => {
+    if (!isLogedIn) {
+      router.push('/auth/login');
+    }
+  }, []);
 
   return (
     <Layout title='ミズホエンジニアリング | ホーム'>
-      {currentUserIsLoading ? (
+      {isUserLoading ? (
         <CircularProgress />
-      ) : currentUserIsError ? (
+      ) : !userInfo.role ? (
         <ErrorComponent></ErrorComponent>
-      ) : currentUser.role === 'admin' ? (
+      ) : userInfo.role === 'admin' ? (
         <AdminPage></AdminPage>
       ) : (
-        <CommonPage user={currentUser}></CommonPage>
+        <CommonPage user={userInfo}></CommonPage>
       )}
     </Layout>
   );

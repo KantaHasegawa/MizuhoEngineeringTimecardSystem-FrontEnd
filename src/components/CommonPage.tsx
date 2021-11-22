@@ -7,10 +7,10 @@ import { useState } from 'react';
 // eslint-disable-next-line import/named
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
 import { mutate } from 'swr';
-import useAxios from '../hooks/useAxios';
+import useCsrf from '../hooks/useCsrf';
 import useGetLatestTimecard, { TypeTimecard } from '../hooks/useGetLatestTimecard';
 import useUserRelationList, { TypeUserRelation } from '../hooks/useUserRelationList';
-
+import axios from '../lib/axiosSetting';
 import AlertDialog from './AlertDialog';
 import ErrorComponent from './ErrorComponent';
 dayjs.locale('ja');
@@ -34,7 +34,7 @@ const isTimecardStatus = (timecard: TypeTimecard): TypeTimecardStatus => {
 };
 
 const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
-  const axios = useAxios();
+  useCsrf();
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [dialog, setDialog] = useState(false);

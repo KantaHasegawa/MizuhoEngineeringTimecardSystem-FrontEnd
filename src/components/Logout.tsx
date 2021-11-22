@@ -7,20 +7,20 @@ import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import useAxios from '../hooks/useAxios';
 import AlertDialog from './AlertDialog';
-import { accessTokenState } from './atoms';
+import { userInfoState } from './atoms';
 
 const Logout = () => {
   const axios = useAxios();
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
-  const setAccessToken = useSetRecoilState(accessTokenState);
+  const setUserInfo = useSetRecoilState(userInfoState);
   const [loading, setLoading] = useState(false);
   const [dialog, setDialog] = useState(false);
   const onClickHandler = async () => {
     setLoading(true);
     try {
       await axios.get('auth/logout');
-      setAccessToken('');
+      setUserInfo({ name: '', role: '' });
       router.push('/auth/login');
       enqueueSnackbar('ログアウトしました', { variant: 'success' });
     } catch (err) {
@@ -45,7 +45,7 @@ const Logout = () => {
       />
       <Tooltip title='ログアウト'>
         <div onClick={() => setDialog(true)} style={{ display: 'inline' }}>
-          <FontAwesomeIcon icon={faSignOutAlt} size='2x' className="navbarIcon" />
+          <FontAwesomeIcon icon={faSignOutAlt} size='2x' className='navbarIcon' />
         </div>
       </Tooltip>
     </>

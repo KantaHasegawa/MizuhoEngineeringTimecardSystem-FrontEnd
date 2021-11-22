@@ -12,14 +12,14 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Link from 'next/link';
-import router from 'next/router';
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
-import { accessTokenState } from '../../components/atoms';
+import { isUserLoadingState, userInfoState } from '../../components/atoms';
 import useCurrentUser from '../../hooks/useCurrentUser';
+import useProtectedPage from '../../hooks/useProtectedPage';
 import useWorkspotList from '../../hooks/useWorkspotList';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -28,10 +28,10 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const WorkspotListPage = () => {
-  const accessToken = useRecoilValue(accessTokenState);
-  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
-  if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))
-    router.push('/');
+  useCurrentUser();
+  useProtectedPage();
+  const isUserLoading = useRecoilValue(isUserLoadingState);
+  const userInfo = useRecoilValue(userInfoState);
   const { state, workspotListState, setWorkspotListState } = useWorkspotList();
   const [inputState, setInputState] = useState('');
   const [pageNumber, setPageNumber] = useState(1);
@@ -72,11 +72,11 @@ const WorkspotListPage = () => {
 
   return (
     <Layout title='ミズホエンジニアリング | 勤務地リスト'>
-      {currentUserIsLoading ? (
+      {isUserLoading ? (
         <CircularProgress />
-      ) : currentUserIsError ? (
+      ) : !userInfo.role ? (
         <ErrorComponent></ErrorComponent>
-      ) : currentUser.role !== 'admin' ? (
+      ) : userInfo.role !== 'admin' ? (
         <PermissionErrorComponent></PermissionErrorComponent>
       ) : (
         <Box sx={{ textAlign: 'center' }}>
@@ -90,14 +90,14 @@ const WorkspotListPage = () => {
               onChange={onChangeHandler}
             />
             <Tooltip title='検索'>
-              <button type='submit' className="resetButton" onClick={onSearchHandler}>
-                <FontAwesomeIcon className="icon" icon={faSearch} size='2x' />
+              <button type='submit' className='resetButton' onClick={onSearchHandler}>
+                <FontAwesomeIcon className='icon' icon={faSearch} size='2x' />
               </button>
             </Tooltip>
             <Link href='/workspot/new' passHref>
               <Tooltip title='勤務地を追加'>
-                <button type='button' className="resetButton">
-                  <FontAwesomeIcon className="icon" icon={faPlusSquare} size='2x' />
+                <button type='button' className='resetButton'>
+                  <FontAwesomeIcon className='icon' icon={faPlusSquare} size='2x' />
                 </button>
               </Tooltip>
             </Link>

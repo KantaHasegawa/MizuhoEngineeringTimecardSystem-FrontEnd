@@ -135,10 +135,12 @@ const AdminPage = () => {
               </AccordionDetails>
             );
           })}
-            </Accordion>
-            <Link href="/line" passHref>
-            <Button sx={{marginTop: "1rem"}} size="small" variant="outlined" color="success" >LINEと連携する</Button>
-            </Link>
+        </Accordion>
+        <Link href='/line' passHref>
+          <Button sx={{ marginTop: '1rem' }} size='small' variant='outlined' color='success'>
+            LINEと連携する
+          </Button>
+        </Link>
       </Box>
     </>
   );

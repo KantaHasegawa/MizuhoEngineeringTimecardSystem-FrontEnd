@@ -1,5 +1,5 @@
 import useSWR from 'swr';
-import useAxios from './useAxios';
+import axios from '../lib/axiosSetting';
 
 export type TypeWorkspotRelation = {
   attendance: string;
@@ -13,8 +13,6 @@ type TypeWorkspotRelationList = {
 };
 
 const useWorkspotRelationList = (workspot: string) => {
-  const axios = useAxios();
-
   const fetcher = async (url: string): Promise<any> => {
     const res = await axios.get(url);
     return res.data;

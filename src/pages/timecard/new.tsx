@@ -1,4 +1,4 @@
-import { LocalizationProvider, DateTimePicker, MobileDateTimePicker } from '@mui/lab';
+import { LocalizationProvider, MobileDateTimePicker } from '@mui/lab';
 import AdapterDayjs from '@mui/lab/AdapterDayjs';
 import {
   TextField,
@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 import Select from 'react-select';
@@ -19,11 +18,13 @@ import { useRecoilValue } from 'recoil';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
-import { accessTokenState } from '../../components/atoms';
-import useAxios from '../../hooks/useAxios';
+import { isUserLoadingState, userInfoState } from '../../components/atoms';
+import useCsrf from '../../hooks/useCsrf';
 import useCurrentUser from '../../hooks/useCurrentUser';
+import useProtectedPage from '../../hooks/useProtectedPage';
 import useUserList from '../../hooks/useUserList';
 import useWorkspotList from '../../hooks/useWorkspotList';
+import axios from '../../lib/axiosSetting';
 import 'dayjs/locale/ja';
 dayjs.locale('ja');
 dayjs.extend(isSameOrBefore);
@@ -33,13 +34,12 @@ type TypeSelectedOption = {
 } | null;
 
 const TimecardNewPage = () => {
-  const axios = useAxios();
-  const router = useRouter();
-  const accessToken = useRecoilValue(accessTokenState);
+  useCurrentUser();
+  useProtectedPage();
+  useCsrf();
+  const isUserLoading = useRecoilValue(isUserLoadingState);
+  const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
-  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
-  if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))
-    router.push('/');
 
   const { state: userState } = useUserList();
   const selectBoxUsers =
@@ -153,11 +153,11 @@ const TimecardNewPage = () => {
 
   return (
     <Layout title='ミズホエンジニアリング | 勤怠登録'>
-      {currentUserIsLoading ? (
+      {isUserLoading ? (
         <CircularProgress />
-      ) : currentUserIsError ? (
+      ) : !userInfo.role ? (
         <ErrorComponent></ErrorComponent>
-      ) : currentUser.role !== 'admin' ? (
+      ) : userInfo.role !== 'admin' ? (
         <PermissionErrorComponent></PermissionErrorComponent>
       ) : (
         <>

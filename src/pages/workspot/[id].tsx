@@ -1,7 +1,4 @@
-import {
-  faUsers,
-  faTrashAlt,
-} from '@fortawesome/free-solid-svg-icons';
+import { faUsers, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   CircularProgress,
@@ -24,10 +21,12 @@ import AlertDialog from '../../components/AlertDialog';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
-import { accessTokenState } from '../../components/atoms';
-import useAxios from '../../hooks/useAxios';
+import { isUserLoadingState, userInfoState } from '../../components/atoms';
+import useCsrf from '../../hooks/useCsrf';
 import useCurrentUser from '../../hooks/useCurrentUser';
+import useProtectedPage from '../../hooks/useProtectedPage';
 import useWorkspotRelationList, { TypeWorkspotRelation } from '../../hooks/useWorkspotRelationList';
+import axios from '../../lib/axiosSetting';
 import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs';
 
 type TypeParams = {
@@ -35,17 +34,17 @@ type TypeParams = {
 };
 
 const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
+  useCurrentUser();
+  useProtectedPage();
+  useCsrf();
   const router = useRouter();
-  const axios = useAxios();
   const { mutate } = useSWRConfig();
-  const accessToken = useRecoilValue(accessTokenState);
+  const isUserLoading = useRecoilValue(isUserLoadingState);
+  const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [dialog, setDialog] = useState(false);
-  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
   const { workspotRelationList, workspotRelationListIsError } = useWorkspotRelationList(workspot);
-  if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))
-    router.push('/');
 
   const onClickDeleteWorkspot = async (workspot: string) => {
     setLoading(true);
@@ -123,11 +122,11 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
         }}
       />
       <Layout title='ミズホエンジニアリング | 勤務地詳細'>
-        {currentUserIsLoading ? (
+        {isUserLoading ? (
           <CircularProgress />
-        ) : currentUserIsError ? (
+        ) : !userInfo.role ? (
           <ErrorComponent></ErrorComponent>
-        ) : currentUser.role !== 'admin' ? (
+        ) : userInfo.role !== 'admin' ? (
           <PermissionErrorComponent></PermissionErrorComponent>
         ) : (
           <>

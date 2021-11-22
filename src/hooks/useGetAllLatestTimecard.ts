@@ -1,5 +1,5 @@
 import useSWR from 'swr';
-import useAxios from './useAxios';
+import axios from '../lib/axiosSetting';
 
 export type TypeTimecard = {
   user: string;
@@ -19,8 +19,6 @@ export type TypeAllLatestTimecard = {
 };
 
 const useGetAllLatestTimecard = () => {
-  const axios = useAxios();
-
   const fetcher = async (url: string): Promise<any> => {
     const res = await axios.get(url);
     return res.data;

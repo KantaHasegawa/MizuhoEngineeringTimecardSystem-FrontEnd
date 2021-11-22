@@ -13,13 +13,14 @@ import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import mizuhoLogo from '../../../public/mizuho-logo.png';
-import { accessTokenState, refreshState } from '../../components/atoms';
-import useAxios from '../../hooks/useAxios';
+import { isLogedInState, isUserLoadingState } from '../../components/atoms';
+import useCsrf from '../../hooks/useCsrf';
 import useCurrentUser from '../../hooks/useCurrentUser';
+import axios from '../../lib/axiosSetting';
 
 type FormData = {
   username: string;
@@ -27,26 +28,32 @@ type FormData = {
 };
 
 const LoginPage = () => {
-  const axios = useAxios();
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [serverSideError, setServerSideError] = useState<string>('');
+  const [isLogedIn, setIsLogedIn] = useRecoilState(isLogedInState);
+  const isUserLoading = useRecoilValue(isUserLoadingState);
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
-  const [refresh, setRefresh] = useRecoilState(refreshState);
-  const { currentUser, currentUserIsLoading } = useCurrentUser(accessToken);
-  if (!refresh && currentUser) router.push('/');
+
+  useEffect(() => {
+    if (isLogedIn) {
+      router.push('/');
+    }
+  }, []);
+
+  useCsrf();
+  useCurrentUser();
+
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
-      const result: any = await axios.post(`auth/login`, data);
-      setAccessToken(result.data.accessToken);
-      setRefresh(false);
+      await axios.post(`auth/login`, data);
+      setIsLogedIn(true);
       router.push('/');
       enqueueSnackbar('ログインしました', { variant: 'success' });
     } catch (err: any) {
@@ -71,9 +78,9 @@ const LoginPage = () => {
       </Head>
       <Container maxWidth='sm'>
         <Box sx={{ paddingTop: '2rem', width: '350px', marginLeft: 'auto', marginRight: 'auto' }}>
-          {currentUserIsLoading ? (
+          {isUserLoading ? (
             <CircularProgress />
-          ) : !refreshState && currentUser ? (
+          ) : isLogedIn ? (
             <Box
               color='white'
               sx={{
@@ -88,7 +95,7 @@ const LoginPage = () => {
             </Box>
           ) : (
             <>
-              <div style={{ marginBottom: "1rem", textAlign: "center" }}>
+              <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
                 <Image
                   src={mizuhoLogo}
                   alt='ミズホエンジニアリング'
@@ -111,7 +118,7 @@ const LoginPage = () => {
 
                     <form onSubmit={handleSubmit(onSubmit)}>
                       <div className='form'>
-                        <Box sx={{marginBottom: "1rem"}}>
+                        <Box sx={{ marginBottom: '1rem' }}>
                           <Controller
                             name='username'
                             control={control}
@@ -134,7 +141,7 @@ const LoginPage = () => {
                         </Box>
                       </div>
                       <div className='form'>
-                        <Box sx={{marginBottom: "1rem"}}>
+                        <Box sx={{ marginBottom: '1rem' }}>
                           <Controller
                             name='password'
                             control={control}

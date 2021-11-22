@@ -1,5 +1,5 @@
 import { useState, useEffect, useReducer } from 'react';
-import useAxios from './useAxios';
+import axios from '../lib/axiosSetting';
 
 type TypeUser = {
   params: {
@@ -58,7 +58,6 @@ const dataFetchReducer = (state: TypeState, action: TypeAction) => {
 };
 
 const useUserList = () => {
-  const axios = useAxios();
   const [userListState, setUserListState] = useState<string[]>([]);
   const [state, dispatch] = useReducer(dataFetchReducer, {
     isLoading: false,

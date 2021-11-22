@@ -1,7 +1,6 @@
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop } from '@mui/material';
-import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import Select from 'react-select';
@@ -12,10 +11,12 @@ import { mutate } from 'swr';
 import ErrorComponent from '../../../components/ErrorComponent';
 import Layout from '../../../components/Layout';
 import PermissionErrorComponent from '../../../components/PermissionErrorComponent';
-import { accessTokenState } from '../../../components/atoms';
-import useAxios from '../../../hooks/useAxios';
+import { isUserLoadingState, userInfoState } from '../../../components/atoms';
+import useCsrf from '../../../hooks/useCsrf';
 import useCurrentUser from '../../../hooks/useCurrentUser';
+import useProtectedPage from '../../../hooks/useProtectedPage';
 import useUserRelationEdit, { TypeUserRelation } from '../../../hooks/useUserRelationEdit';
+import axios from '../../../lib/axiosSetting';
 import getAllUserIDs from '../../../lib/getAllUserIDs';
 
 type TypeParams = {
@@ -28,15 +29,14 @@ type TypeSelectedOption = {
 } | null;
 
 const UserRelationEditPage = ({ user }: { user: string }) => {
-  const router = useRouter();
-  const axios = useAxios();
-  const accessToken = useRecoilValue(accessTokenState);
+  useCurrentUser();
+  useProtectedPage();
+  useCsrf();
+  const isUserLoading = useRecoilValue(isUserLoadingState);
+  const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState<TypeSelectedOption>(null);
-  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
-  if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))
-    router.push('/');
 
   const { userSelectBoxResponse, userSelectBoxResponseIsError } = useUserRelationEdit(user);
 
@@ -85,7 +85,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
         <Typography sx={{ fontSize: '1rem' }}>{data[index].workspot}</Typography>
         <Tooltip title='削除' placement='left-start'>
           <div onClick={async () => onDelete(data[index].workspot)}>
-            <FontAwesomeIcon icon={faTrashAlt} size='lg' className="trashIcon" />
+            <FontAwesomeIcon icon={faTrashAlt} size='lg' className='trashIcon' />
           </div>
         </Tooltip>
       </div>
@@ -99,11 +99,11 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
       </Backdrop>
       <Layout title='ミズホエンジニアリング | 編集'>
         <Box>
-          {currentUserIsLoading ? (
+          {isUserLoading ? (
             <CircularProgress />
-          ) : currentUserIsError ? (
+          ) : !userInfo.role ? (
             <ErrorComponent></ErrorComponent>
-          ) : currentUser.role !== 'admin' ? (
+          ) : userInfo.role !== 'admin' ? (
             <PermissionErrorComponent></PermissionErrorComponent>
           ) : (
             <>
@@ -123,7 +123,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
                   />
                   <Box sx={{ textAlign: 'center', margin: '1rem' }}>
                     <Button
-                      sx={{ width: "6rem" }}
+                      sx={{ width: '6rem' }}
                       variant='outlined'
                       onClick={async () => onSubmit()}
                     >

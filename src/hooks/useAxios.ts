@@ -1,23 +1,28 @@
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { accessTokenState, refreshState } from '../components/atoms';
+import { useRecoilValue } from 'recoil';
+import { csrfTokenState } from '../components/atoms';
 
 type TypeRefreshResponse = {
   accessToken: string;
-}
+};
 
 const useAxios = () => {
   const router = useRouter();
-  const setRefresh = useSetRecoilState(refreshState);
-  const [accessToken, setAccessToken] = useRecoilState(accessTokenState);
+  const csrfToken = useRecoilValue(csrfTokenState);
   const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_HOST,
     timeout: 10000,
     withCredentials: true,
   });
   api.interceptors.request.use((config: any) => {
-    config.headers.common['Authorization'] = 'Bearer ' + accessToken;
+    const method = config.method.toUpperCase();
+    if (method !== 'OPTIONS' && method !== 'GET') {
+      config.headers = {
+        ...config.headers,
+        'X-CSRF-TOKEN': csrfToken,
+      };
+    }
     return config;
   });
   api.interceptors.response.use(
@@ -27,13 +32,12 @@ const useAxios = () => {
     async (error) => {
       if (error.config && error.response && error.response.data.message === 'jwt expired') {
         try {
-          const result = await axios.get<TypeRefreshResponse>(`${process.env.NEXT_PUBLIC_API_HOST}auth/refresh`, {withCredentials: true});
-          setAccessToken(result.data.accessToken);
-          const config = error.config;
-          config.headers['Authorization'] = 'Bearer ' + result.data.accessToken;
+          await axios.get<TypeRefreshResponse>(`${process.env.NEXT_PUBLIC_API_HOST}auth/refresh`, {
+            withCredentials: true,
+            headers: { 'X-CSRF-TOKEN': csrfToken },
+          });
           return axios.request(error.config);
         } catch (err) {
-          setRefresh(true);
           router.push('/auth/login');
         }
       }

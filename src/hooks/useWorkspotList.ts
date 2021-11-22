@@ -1,5 +1,5 @@
 import { useState, useEffect, useReducer } from 'react';
-import useAxios from './useAxios';
+import axios from '../lib/axiosSetting';
 
 type TypeWorkspot = {
   params: {
@@ -59,7 +59,6 @@ const dataFetchReducer = (state: TypeState, action: TypeAction) => {
 };
 
 const useWorkspotList = () => {
-  const axios = useAxios();
   const [workspotListState, setWorkspotListState] = useState<string[]>([]);
   const [state, dispatch] = useReducer(dataFetchReducer, {
     isLoading: false,

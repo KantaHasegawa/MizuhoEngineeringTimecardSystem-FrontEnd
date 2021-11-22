@@ -13,10 +13,12 @@ import {
   Backdrop,
   Tooltip,
   Box,
+  Container,
 } from '@mui/material';
 import { base64StringToBlob } from 'blob-util';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
@@ -28,11 +30,14 @@ import { mutate } from 'swr';
 dayjs.locale('ja');
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
+import Navbar from '../../components/Navbar';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
-import { accessTokenState } from '../../components/atoms';
-import useAxios from '../../hooks/useAxios';
+import { isLogedInState, isUserLoadingState, userInfoState } from '../../components/atoms';
+import useCsrf from '../../hooks/useCsrf';
 import useCurrentUser from '../../hooks/useCurrentUser';
+import useProtectedPage from '../../hooks/useProtectedPage';
 import useUserList from '../../hooks/useUserList';
+import axios from '../../lib/axiosSetting';
 
 type TypeSelectBoxItem = {
   value: string;
@@ -70,15 +75,14 @@ type TypeTimecard = {
 };
 
 const TimecardListPage = () => {
-  const router = useRouter();
-  const axios = useAxios();
-  const accessToken = useRecoilValue(accessTokenState);
+  useCurrentUser();
+  useProtectedPage();
+  useCsrf();
+  const isUserLoading = useRecoilValue(isUserLoadingState);
+  const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
   const [timecard, setTimecard] = useState<TypeTimecard[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
-  if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))
-    router.push('/');
   const { handleSubmit, control, watch, getValues } = useForm<FormData>();
   const { state: userState } = useUserList();
   const userSelectBoxItems =
@@ -180,9 +184,12 @@ const TimecardListPage = () => {
     const values = getValues();
     try {
       const result = await axios.get<string>(
-        `timecard/excel/${values.user.value}/${values.year.value}/${values.month.value}`
+        `timecard/excel/${values.user.value}/${values.year.value}/${values.month.value}`,
       );
-      const blob = base64StringToBlob(result.data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      const blob = base64StringToBlob(
+        result.data,
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      );
       if (window.navigator.msSaveOrOpenBlob) {
         // for IE,Edge
         window.navigator.msSaveOrOpenBlob(
@@ -247,29 +254,31 @@ const TimecardListPage = () => {
 
   return (
     <>
+      <Head>
+        <title>ミズホエンジニアリング | 勤怠管理表</title>
+        <meta charSet='utf-8' />
+        <meta name='viewport' content='initial-scale=1.0, width=device-width' />
+      </Head>
       <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
         <CircularProgress color='inherit' />
       </Backdrop>
-      {currentUserIsLoading ? (
-        <Layout title='ミズホエンジニアリング | 勤怠管理表'>
-          <CircularProgress />
-        </Layout>
-      ) : currentUserIsError ? (
-        <Layout title='ミズホエンジニアリング | 勤怠管理表'>
-          <ErrorComponent></ErrorComponent>
-        </Layout>
-      ) : currentUser.role !== 'admin' ? (
+      <Navbar></Navbar>
+      {isUserLoading ? (
+        <CircularProgress />
+      ) : !userInfo.role ? (
+        <ErrorComponent></ErrorComponent>
+      ) : userInfo.role !== 'admin' ? (
         <PermissionErrorComponent></PermissionErrorComponent>
       ) : (
-        <Box>
-          <Layout title='ミズホエンジニアリング | 勤怠管理表'>
+        <>
+          <Container maxWidth='sm'>
             <Box sx={{ paddingTop: '2rem' }}>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Controller
                   name='user'
                   control={control}
                   render={({ field }) => (
-                    <Box sx={{ marginBottom: "1rem" }}>
+                    <Box sx={{ marginBottom: '1rem' }}>
                       <Select
                         {...field}
                         options={userSelectBoxItems || []}
@@ -283,7 +292,7 @@ const TimecardListPage = () => {
                   name='year'
                   control={control}
                   render={({ field }) => (
-                    <Box sx={{ marginBottom: "1rem" }}>
+                    <Box sx={{ marginBottom: '1rem' }}>
                       <Select
                         {...field}
                         options={yearSelectBoxItems}
@@ -297,7 +306,7 @@ const TimecardListPage = () => {
                   name='month'
                   control={control}
                   render={({ field }) => (
-                    <Box sx={{ marginBottom: "1rem" }}>
+                    <Box sx={{ marginBottom: '1rem' }}>
                       <Select
                         {...field}
                         options={monthSelectBoxItems}
@@ -307,11 +316,11 @@ const TimecardListPage = () => {
                     </Box>
                   )}
                 />
-                <Box sx={{ textAlign: "center" }}>
+                <Box sx={{ textAlign: 'center' }}>
                   <Button
                     sx={{
-                      margin: "1rem",
-                      width: "6rem"
+                      margin: '1rem',
+                      width: '6rem',
                     }}
                     variant='outlined'
                     type='submit'
@@ -321,8 +330,8 @@ const TimecardListPage = () => {
                   </Button>
                   <Button
                     sx={{
-                      margin: "1rem",
-                      width: "6rem"
+                      margin: '1rem',
+                      width: '6rem',
                     }}
                     variant='outlined'
                     color='success'
@@ -332,18 +341,21 @@ const TimecardListPage = () => {
                     Excel
                   </Button>
                   <Link href='/timecard/new' passHref>
-                    <Button sx={{
-                      margin: "1rem",
-                      width: "6rem"
-                    }} variant='outlined' color='info'>
+                    <Button
+                      sx={{
+                        margin: '1rem',
+                        width: '6rem',
+                      }}
+                      variant='outlined'
+                      color='info'
+                    >
                       新規作成
                     </Button>
                   </Link>
                 </Box>
               </form>
             </Box>
-          </Layout>
-
+          </Container>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 1300, marginBottom: '2rem' }} aria-label='simple table'>
               <TableHead>
@@ -416,12 +428,14 @@ const TimecardListPage = () => {
                       </TableCell>
                       <TableCell align='center'>
                         {row.regularWorkTime !== null &&
-                          `${Math.floor(row.regularWorkTime / 60)}時間${row.regularWorkTime % 60
+                          `${Math.floor(row.regularWorkTime / 60)}時間${
+                            row.regularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>
                         {row.irregularWorkTime !== null &&
-                          `${Math.floor(row.irregularWorkTime / 60)}時間${row.irregularWorkTime % 60
+                          `${Math.floor(row.irregularWorkTime / 60)}時間${
+                            row.irregularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>
@@ -431,11 +445,7 @@ const TimecardListPage = () => {
                         {row.attendance && (
                           <Tooltip title='削除'>
                             <div onClick={async () => onDeleteHandler(row.user, row.attendance)}>
-                              <FontAwesomeIcon
-                                icon={faTrashAlt}
-                                size='lg'
-                                className="trashIcon"
-                              />
+                              <FontAwesomeIcon icon={faTrashAlt} size='lg' className='trashIcon' />
                             </div>
                           </Tooltip>
                         )}
@@ -446,7 +456,7 @@ const TimecardListPage = () => {
               )}
             </Table>
           </TableContainer>
-        </Box>
+        </>
       )}
     </>
   );

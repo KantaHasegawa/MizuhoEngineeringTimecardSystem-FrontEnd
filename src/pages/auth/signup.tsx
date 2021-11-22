@@ -8,7 +8,6 @@ import {
   Typography,
   Backdrop,
 } from '@mui/material';
-import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -16,9 +15,10 @@ import { useRecoilValue } from 'recoil';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
-import { accessTokenState } from '../../components/atoms';
-import useAxios from '../../hooks/useAxios';
+import { isUserLoadingState, userInfoState } from '../../components/atoms';
 import useCurrentUser from '../../hooks/useCurrentUser';
+import useProtectedPage from '../../hooks/useProtectedPage';
+import axios from '../../lib/axiosSetting';
 
 type FormData = {
   username: string;
@@ -26,10 +26,9 @@ type FormData = {
 };
 
 const SignUpPage = () => {
-  const axios = useAxios();
-  const router = useRouter();
-  const accessToken = useRecoilValue(accessTokenState);
   const { enqueueSnackbar } = useSnackbar();
+  const userInfo = useRecoilValue(userInfoState);
+  const isUserLoading = useRecoilValue(isUserLoadingState);
   const [serverSideError, setServerSideError] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const {
@@ -38,9 +37,10 @@ const SignUpPage = () => {
     reset,
     formState: { errors },
   } = useForm<FormData>();
-  const { currentUser, currentUserIsLoading, currentUserIsError } = useCurrentUser(accessToken);
-  if ((!currentUserIsLoading && !currentUser) || (currentUser && currentUser.role !== 'admin'))
-    router.push('/');
+
+  useCurrentUser();
+  useProtectedPage();
+
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
@@ -68,11 +68,11 @@ const SignUpPage = () => {
       </Backdrop>
       <Layout title='ミズホエンジニアリング | 社員登録'>
         <Box sx={{ paddingTop: '2rem', width: '350px', marginLeft: 'auto', marginRight: 'auto' }}>
-          {currentUserIsLoading ? (
+          {isUserLoading ? (
             <CircularProgress />
-          ) : currentUserIsError ? (
+          ) : !userInfo.role ? (
             <ErrorComponent></ErrorComponent>
-          ) : currentUser.role !== 'admin' ? (
+          ) : userInfo.role !== 'admin' ? (
             <PermissionErrorComponent></PermissionErrorComponent>
           ) : (
             <>
@@ -98,7 +98,7 @@ const SignUpPage = () => {
                   </Typography>
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div className='form'>
-                      <Box sx={{marginBottom: "1rem"}}>
+                      <Box sx={{ marginBottom: '1rem' }}>
                         <Controller
                           name='username'
                           control={control}
@@ -121,7 +121,7 @@ const SignUpPage = () => {
                     </div>
 
                     <div className='form'>
-                      <Box sx={{marginBottom: "1rem"}}>
+                      <Box sx={{ marginBottom: '1rem' }}>
                         <Controller
                           name='password'
                           control={control}

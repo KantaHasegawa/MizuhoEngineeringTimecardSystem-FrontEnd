@@ -7,15 +7,29 @@ export default class MyDocument extends Document {
     return (
       <Html lang='ja'>
         <Head>
-          <link rel="apple-touch-icon" sizes="180x180" href="/favicon_package/apple-touch-icon.png" />
-          <link rel="icon" type="image/png" sizes="32x32" href="/favicon_package/favicon-32x32.png" />
-          <link rel="icon" type="image/png" sizes="16x16" href="/favicon_package/favicon-16x16.png" />
-          <link rel="manifest" href="/favicon_package/site.webmanifest" />
-          <link rel="mask-icon" href="/favicon_package/safari-pinned-tab.svg" color="#000000" />
-          <link rel="shortcut icon" href="/favicon_package/favicon.ico" />
-          <meta name="msapplication-TileColor" content="#ffffff" />
-          <meta name="msapplication-config" content="/favicon_package/browserconfig.xml" />
-          <meta name="theme-color" content="#ffffff" />
+          <link
+            rel='apple-touch-icon'
+            sizes='180x180'
+            href='/favicon_package/apple-touch-icon.png'
+          />
+          <link
+            rel='icon'
+            type='image/png'
+            sizes='32x32'
+            href='/favicon_package/favicon-32x32.png'
+          />
+          <link
+            rel='icon'
+            type='image/png'
+            sizes='16x16'
+            href='/favicon_package/favicon-16x16.png'
+          />
+          <link rel='manifest' href='/favicon_package/site.webmanifest' />
+          <link rel='mask-icon' href='/favicon_package/safari-pinned-tab.svg' color='#000000' />
+          <link rel='shortcut icon' href='/favicon_package/favicon.ico' />
+          <meta name='msapplication-TileColor' content='#ffffff' />
+          <meta name='msapplication-config' content='/favicon_package/browserconfig.xml' />
+          <meta name='theme-color' content='#ffffff' />
         </Head>
         <body>
           <Main />
