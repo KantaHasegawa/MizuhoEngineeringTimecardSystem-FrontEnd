@@ -20,7 +20,6 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -28,11 +27,11 @@ import Select from 'react-select';
 import { useRecoilValue } from 'recoil';
 import { mutate } from 'swr';
 dayjs.locale('ja');
+import AlertDialog from '../../components/AlertDialog';
 import ErrorComponent from '../../components/ErrorComponent';
-import Layout from '../../components/Layout';
 import Navbar from '../../components/Navbar';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
-import { isLogedInState, isUserLoadingState, userInfoState } from '../../components/atoms';
+import { isUserLoadingState, userInfoState } from '../../components/atoms';
 import useCsrf from '../../hooks/useCsrf';
 import useCurrentUser from '../../hooks/useCurrentUser';
 import useProtectedPage from '../../hooks/useProtectedPage';
@@ -83,6 +82,7 @@ const TimecardListPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [timecard, setTimecard] = useState<TypeTimecard[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [dialog, setDialog] = useState(false);
   const { handleSubmit, control, watch, getValues } = useForm<FormData>();
   const { state: userState } = useUserList();
   const userSelectBoxItems =
@@ -180,6 +180,7 @@ const TimecardListPage = () => {
   };
 
   const onExcelHandler = async () => {
+    setDialog(false);
     setLoading(true);
     const values = getValues();
     try {
@@ -271,6 +272,14 @@ const TimecardListPage = () => {
         <PermissionErrorComponent></PermissionErrorComponent>
       ) : (
         <>
+          <AlertDialog
+            msg={"Excelファイルを出力します 集計を表示するには保護ビューを解除してください"}
+            isOpen={dialog}
+            doYes={async () => onExcelHandler()}
+            doNo={() => {
+              setDialog(false);
+            }}
+          />
           <Container maxWidth='sm'>
             <Box sx={{ paddingTop: '2rem' }}>
               <form onSubmit={handleSubmit(onSubmit)}>
@@ -335,7 +344,7 @@ const TimecardListPage = () => {
                     }}
                     variant='outlined'
                     color='success'
-                    onClick={async () => onExcelHandler()}
+                    onClick={async () => setDialog(true)}
                     disabled={!watch('user') || !watch('year') || !watch('month')}
                   >
                     Excel
@@ -428,14 +437,12 @@ const TimecardListPage = () => {
                       </TableCell>
                       <TableCell align='center'>
                         {row.regularWorkTime !== null &&
-                          `${Math.floor(row.regularWorkTime / 60)}時間${
-                            row.regularWorkTime % 60
+                          `${Math.floor(row.regularWorkTime / 60)}時間${row.regularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>
                         {row.irregularWorkTime !== null &&
-                          `${Math.floor(row.irregularWorkTime / 60)}時間${
-                            row.irregularWorkTime % 60
+                          `${Math.floor(row.irregularWorkTime / 60)}時間${row.irregularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>

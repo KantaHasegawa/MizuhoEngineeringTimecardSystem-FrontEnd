@@ -47,6 +47,7 @@ const UserShowPage = ({ user }: { user: string }) => {
   const { userRelationList, userRelationListIsError } = useUserRelationList(user);
 
   const onClickDeleteUser = async (user: string) => {
+    setDialog(false);
     setLoading(true);
     try {
       await axios.delete(`user/delete/${user}`);

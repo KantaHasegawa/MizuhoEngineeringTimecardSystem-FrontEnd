@@ -47,6 +47,7 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
   const { workspotRelationList, workspotRelationListIsError } = useWorkspotRelationList(workspot);
 
   const onClickDeleteWorkspot = async (workspot: string) => {
+    setDialog(false);
     setLoading(true);
     const params = {
       workspot: workspot,
