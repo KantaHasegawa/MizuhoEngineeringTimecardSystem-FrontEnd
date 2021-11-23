@@ -24,13 +24,25 @@ import PermissionErrorComponent from '../../components/PermissionErrorComponent'
 import { isUserLoadingState, userInfoState } from '../../components/atoms';
 import useCsrf from '../../hooks/useCsrf';
 import useCurrentUser from '../../hooks/useCurrentUser';
+import useFetchData from '../../hooks/useFetchData';
 import useProtectedPaeg from '../../hooks/useProtectedPage';
-import useUserRelationList, { TypeUserRelation } from '../../hooks/useUserRelationList';
 import axios from '../../lib/axiosSetting';
 import getAllUserIDs from '../../lib/getAllUserIDs';
 
 type TypeParams = {
   id: string;
+};
+
+export type TypeUserRelation = {
+  workspot: string;
+  user: string;
+  attendance: string;
+  latitude: number;
+  longitude: number;
+};
+
+type TypeUserRelationList = {
+  params: TypeUserRelation[];
 };
 
 const UserShowPage = ({ user }: { user: string }) => {
@@ -44,7 +56,8 @@ const UserShowPage = ({ user }: { user: string }) => {
   const userInfo = useRecoilValue(userInfoState);
   const [loading, setLoading] = useState(false);
   const [dialog, setDialog] = useState(false);
-  const { userRelationList, userRelationListIsError } = useUserRelationList(user);
+  const { data: userRelationList, error: userRelationListIsError } =
+    useFetchData<TypeUserRelationList>(`relation/user/${user}`);
 
   const onClickDeleteUser = async (user: string) => {
     setDialog(false);

@@ -14,13 +14,31 @@ import PermissionErrorComponent from '../../../components/PermissionErrorCompone
 import { isUserLoadingState, userInfoState } from '../../../components/atoms';
 import useCsrf from '../../../hooks/useCsrf';
 import useCurrentUser from '../../../hooks/useCurrentUser';
+import useFetchData from '../../../hooks/useFetchData';
 import useProtectedPage from '../../../hooks/useProtectedPage';
-import useUserRelationEdit, { TypeUserRelation } from '../../../hooks/useUserRelationEdit';
 import axios from '../../../lib/axiosSetting';
 import getAllUserIDs from '../../../lib/getAllUserIDs';
 
 type TypeParams = {
   id: string;
+};
+
+export type TypeUserRelation = {
+  workspot: string;
+  user: string;
+  attendance: string;
+  latitude: number;
+  longitude: number;
+};
+
+export type TypeSelectBoxItme = {
+  value: string;
+  label: string;
+};
+
+type TypeUserSelectBoxResponse = {
+  selectBoxItems: TypeSelectBoxItme[];
+  relations: TypeUserRelation[];
 };
 
 type TypeSelectedOption = {
@@ -38,7 +56,8 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
   const [loading, setLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState<TypeSelectedOption>(null);
 
-  const { userSelectBoxResponse, userSelectBoxResponseIsError } = useUserRelationEdit(user);
+  const { data: userSelectBoxResponse, error: userSelectBoxResponseIsError } =
+    useFetchData<TypeUserSelectBoxResponse>(`relation/user/selectbox/${user}`);
 
   const onSubmit = async () => {
     if (!selectedOption?.value) return;

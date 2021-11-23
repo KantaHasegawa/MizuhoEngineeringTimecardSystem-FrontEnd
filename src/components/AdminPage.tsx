@@ -11,11 +11,29 @@ import {
   Button,
 } from '@mui/material';
 import Link from 'next/link';
-import useGetAllLatestTimecard, { TypeTimecard } from '../hooks/useGetAllLatestTimecard';
+import useFetchData from '../hooks/useFetchData';
 import ErrorComponent from './ErrorComponent';
 
+export type TypeTimecard = {
+  user: string;
+  workspot?: string;
+  attendance: string;
+  leave?: string;
+  workTime?: number;
+  regularWorkTime?: number;
+  irregularWorkTime?: number;
+  rest?: number;
+};
+
+export type TypeAllLatestTimecard = {
+  alreadyLeaveTimecards: TypeTimecard[];
+  notAttendTimecards: TypeTimecard[];
+  notLeaveTimecards: TypeTimecard[];
+};
+
 const AdminPage = () => {
-  const { latestTimecards, latestTimecardsIsError } = useGetAllLatestTimecard();
+  const { data: latestTimecards, error: latestTimecardsIsError } =
+    useFetchData<TypeAllLatestTimecard>('timecard/latestall');
 
   const NotAttend = ({ timecard }: { timecard: TypeTimecard }) => {
     return (

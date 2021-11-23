@@ -1,7 +1,6 @@
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop } from '@mui/material';
-import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import Select from 'react-select';
@@ -15,15 +14,30 @@ import PermissionErrorComponent from '../../../components/PermissionErrorCompone
 import { isUserLoadingState, userInfoState } from '../../../components/atoms';
 import useCsrf from '../../../hooks/useCsrf';
 import useCurrentUser from '../../../hooks/useCurrentUser';
+import useFetchData from '../../../hooks/useFetchData';
 import useProtectedPage from '../../../hooks/useProtectedPage';
-import useWorkspotRelationEdit, {
-  TypeWorkspotRelation,
-} from '../../../hooks/useWorkspotRelationEdit';
 import axios from '../../../lib/axiosSetting';
 import getAllWorkspotIDs from '../../../lib/getAllWorkspotIDs';
 
 type TypeParams = {
   id: string;
+};
+
+export type TypeWorkspotRelation = {
+  attendance: string;
+  password: string;
+  role: string;
+  user: string;
+};
+
+export type TypeSelectBoxItme = {
+  value: string;
+  label: string;
+};
+
+type TypeWorkspotSelectBoxResponse = {
+  selectBoxItems: TypeSelectBoxItme[];
+  relations: TypeWorkspotRelation[];
 };
 
 type TypeSelectedOption = {
@@ -35,15 +49,14 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
   useCurrentUser();
   useProtectedPage();
   useCsrf();
-  const router = useRouter();
   const isUserLoading = useRecoilValue(isUserLoadingState);
   const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [selectedOption, setSelectedOption] = useState<TypeSelectedOption>(null);
 
-  const { workspotSelectBoxResponse, workspotSelectBoxResponseIsError } =
-    useWorkspotRelationEdit(workspot);
+  const { data: workspotSelectBoxResponse, error: workspotSelectBoxResponseIsError } =
+    useFetchData<TypeWorkspotSelectBoxResponse>(`relation/workspot/selectbox/${workspot}`);
 
   const onSubmit = async () => {
     if (!selectedOption?.value) return;

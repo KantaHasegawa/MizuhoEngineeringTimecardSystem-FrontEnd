@@ -24,13 +24,24 @@ import PermissionErrorComponent from '../../components/PermissionErrorComponent'
 import { isUserLoadingState, userInfoState } from '../../components/atoms';
 import useCsrf from '../../hooks/useCsrf';
 import useCurrentUser from '../../hooks/useCurrentUser';
+import useFetchData from '../../hooks/useFetchData';
 import useProtectedPage from '../../hooks/useProtectedPage';
-import useWorkspotRelationList, { TypeWorkspotRelation } from '../../hooks/useWorkspotRelationList';
 import axios from '../../lib/axiosSetting';
 import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs';
 
 type TypeParams = {
   id: string;
+};
+
+export type TypeWorkspotRelation = {
+  attendance: string;
+  password: string;
+  role: string;
+  user: string;
+};
+
+type TypeWorkspotRelationList = {
+  params: TypeWorkspotRelation[];
 };
 
 const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
@@ -44,7 +55,8 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [dialog, setDialog] = useState(false);
-  const { workspotRelationList, workspotRelationListIsError } = useWorkspotRelationList(workspot);
+  const { data: workspotRelationList, error: workspotRelationListIsError } =
+    useFetchData<TypeWorkspotRelationList>(`relation/workspot/${workspot}`);
 
   const onClickDeleteWorkspot = async (workspot: string) => {
     setDialog(false);

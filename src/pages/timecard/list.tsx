@@ -273,7 +273,7 @@ const TimecardListPage = () => {
       ) : (
         <>
           <AlertDialog
-            msg={"Excelファイルを出力します 集計を表示するには保護ビューを解除してください"}
+            msg={'Excelファイルを出力します 集計を表示するには保護ビューを解除してください'}
             isOpen={dialog}
             doYes={async () => onExcelHandler()}
             doNo={() => {
@@ -437,12 +437,14 @@ const TimecardListPage = () => {
                       </TableCell>
                       <TableCell align='center'>
                         {row.regularWorkTime !== null &&
-                          `${Math.floor(row.regularWorkTime / 60)}時間${row.regularWorkTime % 60
+                          `${Math.floor(row.regularWorkTime / 60)}時間${
+                            row.regularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>
                         {row.irregularWorkTime !== null &&
-                          `${Math.floor(row.irregularWorkTime / 60)}時間${row.irregularWorkTime % 60
+                          `${Math.floor(row.irregularWorkTime / 60)}時間${
+                            row.irregularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>

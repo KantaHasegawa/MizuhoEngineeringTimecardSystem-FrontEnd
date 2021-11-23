@@ -8,8 +8,7 @@ import { useState } from 'react';
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
 import { mutate } from 'swr';
 import useCsrf from '../hooks/useCsrf';
-import useGetLatestTimecard, { TypeTimecard } from '../hooks/useGetLatestTimecard';
-import useUserRelationList, { TypeUserRelation } from '../hooks/useUserRelationList';
+import useFetchData from '../hooks/useFetchData';
 import axios from '../lib/axiosSetting';
 import AlertDialog from './AlertDialog';
 import ErrorComponent from './ErrorComponent';
@@ -18,6 +17,29 @@ dayjs.locale('ja');
 type TypeCurrentUser = {
   name: string;
   role: string;
+};
+
+export type TypeTimecard = {
+  user: string;
+  workspot: string;
+  attendance: string;
+  leave: string;
+  workTime: number;
+  regularWorkTime: number;
+  irregularWorkTime: number;
+  rest: number;
+};
+
+export type TypeUserRelation = {
+  workspot: string;
+  user: string;
+  attendance: string;
+  latitude: number;
+  longitude: number;
+};
+
+type TypeUserRelationList = {
+  params: TypeUserRelation[];
 };
 
 type TypeTimecardStatus = 'NotAttend' | 'NotLeave' | 'AlreadyLeave';
@@ -38,8 +60,11 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [dialog, setDialog] = useState(false);
-  const { latestTimecard, latestTimecardIsError } = useGetLatestTimecard(user.name);
-  const { userRelationList, userRelationListIsError } = useUserRelationList(user.name);
+  const { data: latestTimecard, error: latestTimecardIsError } = useFetchData<TypeTimecard>(
+    `timecard/latest/${user.name}`,
+  );
+  const { data: userRelationList, error: userRelationListIsError } =
+    useFetchData<TypeUserRelationList>(`relation/user/${user.name}`);
 
   const onClickHandler = async () => {
     setDialog(false);
