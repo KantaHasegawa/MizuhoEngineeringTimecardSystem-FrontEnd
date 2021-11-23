@@ -5,12 +5,11 @@ import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
-import useAxios from '../hooks/useAxios';
+import axios from '../lib/axiosSetting';
 import AlertDialog from './AlertDialog';
 import { userInfoState } from './atoms';
 
 const Logout = () => {
-  const axios = useAxios();
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const setUserInfo = useSetRecoilState(userInfoState);
