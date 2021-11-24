@@ -1,6 +1,7 @@
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop } from '@mui/material';
+import { GetServerSideProps } from 'next';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import Select from 'react-select';
@@ -17,12 +18,16 @@ import useCurrentUser from '../../../hooks/useCurrentUser';
 import useFetchData from '../../../hooks/useFetchData';
 import useProtectedPage from '../../../hooks/useProtectedPage';
 import axios from '../../../lib/axiosSetting';
-import getAllUserIDs from '../../../lib/getAllUserIDs';
+import serversideAxios from '../../../lib/axiosSettingServerside';
 
-type TypeParams = {
-  id: string;
-};
-
+type TypeUser = {
+  user: {
+    user: string,
+    role: string,
+    password: string,
+    attendance: string
+  }
+}
 export type TypeUserRelation = {
   workspot: string;
   user: string;
@@ -171,20 +176,28 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
   );
 };
 
-export const getStaticPaths = async () => {
-  const paths = await getAllUserIDs();
-  return {
-    paths,
-    fallback: true,
-  };
-};
-
-export const getStaticProps = ({ params }: { params: TypeParams }) => {
-  return {
-    props: {
-      user: params.id,
-    },
-  };
-};
-
 export default UserRelationEditPage;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const host =
+    process.env.NODE_ENV === 'development'
+      ? 'http://backend:4000/api/v1/'
+      : process.env.NEXT_PUBLIC_API_HOST;
+  const cookie = ctx.req?.headers.cookie;
+  const { id } = ctx.query;
+  console.log(host);
+
+  if (!id || Array.isArray(id)) {
+    return {
+      notFound: true
+    };
+  }
+
+  const result = await serversideAxios.get<TypeUser>(`${host}user/show?name=${encodeURI(id)}`, { headers: { cookie: cookie! } });
+  if (!result?.data?.user?.user) {
+    return {
+      notFound: true
+    };
+  }
+  return { props: { user: result.data.user.user } };
+};

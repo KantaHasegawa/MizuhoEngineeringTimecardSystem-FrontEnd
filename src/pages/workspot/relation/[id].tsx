@@ -1,6 +1,7 @@
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop } from '@mui/material';
+import { GetServerSideProps } from 'next';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import Select from 'react-select';
@@ -17,11 +18,17 @@ import useCurrentUser from '../../../hooks/useCurrentUser';
 import useFetchData from '../../../hooks/useFetchData';
 import useProtectedPage from '../../../hooks/useProtectedPage';
 import axios from '../../../lib/axiosSetting';
-import getAllWorkspotIDs from '../../../lib/getAllWorkspotIDs';
+import serversideAxios from '../../../lib/axiosSettingServerside';
 
-type TypeParams = {
-  id: string;
-};
+type TypeWorkspot = {
+  workspot: {
+    workspot: string;
+    user: string;
+    attendance: string;
+    latitude: number;
+    longitude: number;
+  }
+}
 
 export type TypeWorkspotRelation = {
   attendance: string;
@@ -170,20 +177,29 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
   );
 };
 
-export const getStaticPaths = async () => {
-  const paths = await getAllWorkspotIDs();
-  return {
-    paths,
-    fallback: true,
-  };
-};
-
-export const getStaticProps = ({ params }: { params: TypeParams }) => {
-  return {
-    props: {
-      workspot: params.id,
-    },
-  };
-};
-
 export default WorkspotRelationEditPage;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const host =
+    process.env.NODE_ENV === 'development'
+      ? 'http://backend:4000/api/v1/'
+      : process.env.NEXT_PUBLIC_API_HOST;
+  const cookie = ctx.req?.headers.cookie;
+  const { id } = ctx.query;
+  console.log(host);
+
+  if (!id || Array.isArray(id)) {
+    return {
+      notFound: true
+    };
+  }
+
+  const result = await serversideAxios.get<TypeWorkspot>(`${host}workspot/show?name=${encodeURI(id)}`, { headers: { cookie: cookie! } });
+  console.log(result.data);
+  if (!result?.data?.workspot?.workspot) {
+    return {
+      notFound: true
+    };
+  }
+  return { props: { workspot: result.data.workspot.workspot } };
+};

@@ -9,6 +9,7 @@ import {
   Backdrop,
   Typography,
 } from '@mui/material';
+import { GetServerSideProps } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
@@ -27,11 +28,17 @@ import useCurrentUser from '../../hooks/useCurrentUser';
 import useFetchData from '../../hooks/useFetchData';
 import useProtectedPage from '../../hooks/useProtectedPage';
 import axios from '../../lib/axiosSetting';
-import getAllWorkspotIDs from '../../lib/getAllWorkspotIDs';
+import serversideAxios from '../../lib/axiosSettingServerside';
 
-type TypeParams = {
-  id: string;
-};
+type TypeWorkspot = {
+  workspot: {
+    workspot: string;
+    user: string;
+    attendance: string;
+    latitude: number;
+    longitude: number;
+  }
+}
 
 export type TypeWorkspotRelation = {
   attendance: string;
@@ -176,20 +183,29 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
   );
 };
 
-export const getStaticPaths = async () => {
-  const paths = await getAllWorkspotIDs();
-  return {
-    paths,
-    fallback: true,
-  };
-};
-
-export const getStaticProps = ({ params }: { params: TypeParams }) => {
-  return {
-    props: {
-      workspot: params.id,
-    },
-  };
-};
-
 export default WorkspotShowPage;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const host =
+    process.env.NODE_ENV === 'development'
+      ? 'http://backend:4000/api/v1/'
+      : process.env.NEXT_PUBLIC_API_HOST;
+  const cookie = ctx.req?.headers.cookie;
+  const { id } = ctx.query;
+  console.log(host);
+
+  if (!id || Array.isArray(id)) {
+    return {
+      notFound: true
+    };
+  }
+
+  const result = await serversideAxios.get<TypeWorkspot>(`${host}workspot/show?name=${encodeURI(id)}`, { headers: { cookie: cookie! } });
+  console.log(result.data);
+  if (!result?.data?.workspot?.workspot) {
+    return {
+      notFound: true
+    };
+  }
+  return { props: { workspot: result.data.workspot.workspot } };
+};
