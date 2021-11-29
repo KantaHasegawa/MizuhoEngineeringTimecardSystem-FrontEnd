@@ -36,10 +36,13 @@ const LineIndexPage = () => {
           <Typography sx={{ fontSize: '0.8rem' }}>
             一度友達追加すれば後はログインしなくても大丈夫です
           </Typography>
+          <Typography sx={{ fontSize: '0.8rem', color: 'red' }}>
+            デモサイトではこの機能は無効になります
+          </Typography>
           <Box sx={{ textAlign: 'center', marginTop: '3rem' }}>
-            <MUILink href={url}>
-              <Image src={LineLoginButton} alt='ラインでログイン'></Image>
-            </MUILink>
+            {/* <MUILink href={url}> */}
+            <Image src={LineLoginButton} alt='ラインでログイン'></Image>
+            {/* </MUILink> */}
           </Box>
         </Box>
       )}
