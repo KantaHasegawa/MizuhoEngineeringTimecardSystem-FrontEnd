@@ -209,7 +209,7 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
         <Typography sx={{ fontSize: '0.8rem' }}>
           リンクをタップするとGoogleMapが開きます。
         </Typography>
-        <Box sx={{ marginTop: '1rem' }}>
+        <Box sx={{ marginTop: '1rem', marginBottom: '3rem' }}>
           <List
             className='List'
             height={350}

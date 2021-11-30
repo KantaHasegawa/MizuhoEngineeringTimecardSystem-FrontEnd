@@ -137,7 +137,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
               ) : userSelectBoxResponseIsError ? (
                 <ErrorComponent></ErrorComponent>
               ) : (
-                <div>
+                <Box sx={{ marginBottom: '3rem' }}>
                   <Select
                     defaultValue={selectedOption}
                     value={selectedOption}
@@ -166,7 +166,7 @@ const UserRelationEditPage = ({ user }: { user: string }) => {
                       {Row}
                     </List>
                   )}
-                </div>
+                </Box>
               )}
             </>
           )}

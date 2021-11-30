@@ -160,7 +160,7 @@ const UserShowPage = ({ user }: { user: string }) => {
             <div style={{ position: 'relative', zIndex: 1 }}>
               <SpeedDialComponent></SpeedDialComponent>
             </div>
-            <Box sx={{ padding: '0 1rem', textAlign: 'center', marginTop: '2rem' }}>
+            <Box sx={{ padding: '0 1rem', textAlign: 'center', marginTop: '2rem', marginBottom: '3rem' }}>
               {!userRelationList ? (
                 <CircularProgress />
               ) : userRelationListIsError ? (
