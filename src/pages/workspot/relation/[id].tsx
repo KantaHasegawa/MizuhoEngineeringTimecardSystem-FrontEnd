@@ -138,7 +138,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
               ) : workspotSelectBoxResponseIsError ? (
                 <ErrorComponent></ErrorComponent>
               ) : (
-                <div>
+                <Box sx={{marginBottom: '3rem'}}>
                   <Select
                     defaultValue={selectedOption}
                     value={selectedOption}
@@ -167,7 +167,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
                       {Row}
                     </List>
                   )}
-                </div>
+                </Box>
               )}
             </>
           )}

@@ -10,7 +10,7 @@ const Footer = () => {
   return matches ? (
     <Box
       sx={{
-        backgroundColor: '#828787',
+        backgroundColor: '#CBCDCD',
         color: 'white',
         marginTop: 'auto',
         padding: '2rem',
@@ -58,7 +58,7 @@ const Footer = () => {
   ) : (
     <Box
       sx={{
-        backgroundColor: '#979B9B',
+        backgroundColor: '#CBCDCD',
         color: 'white',
         marginTop: 'auto',
         padding: '2rem 10rem',
