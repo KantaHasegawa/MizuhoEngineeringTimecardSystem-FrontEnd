@@ -5,7 +5,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Box,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
@@ -39,7 +38,7 @@ const AlertDialog = ({
       >
         <DialogTitle id='alert-dialog-title'>{'確認ダイアログ'}</DialogTitle>
         <DialogContent>
-          <DialogContentText id='alert-dialog-description'>{msg}</DialogContentText>
+          <DialogContentText sx={{ color: "red" }} id='alert-dialog-description'>{msg}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => doNo()}>いいえ</Button>
