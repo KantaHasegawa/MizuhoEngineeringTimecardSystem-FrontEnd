@@ -27,6 +27,36 @@ type FormData = {
   password: string;
 };
 
+const adminGuestUser = {
+  username: "管理者",
+  password: "admin"
+};
+
+const commonGuestUser1 = {
+  username: "テスト一郎",
+  password: "test1"
+};
+
+const commonGuestUser2 = {
+  username: "テスト二郎",
+  password: "test2"
+};
+
+const commonGuestUser3 = {
+  username: "テスト三郎",
+  password: "test3"
+};
+
+const commonGuestUser4 = {
+  username: "テスト四郎",
+  password: "test4"
+};
+
+const commonGuestUser5 = {
+  username: "テスト五郎",
+  password: "test5"
+};
+
 const LoginPage = () => {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
@@ -161,6 +191,14 @@ const LoginPage = () => {
                             {errors.password?.type === 'pattern' &&
                               'パスワードは半角英数字で入力してください'}
                           </Typography>
+                          <Box sx={{ textAlign: "center", marginTop: "1rem" }}>
+                            <Button onClick={async () => onSubmit(adminGuestUser)}>管理者権限でゲストログイン</Button>
+                            <Button onClick={async () => onSubmit(commonGuestUser1)}>社員権限でゲストログイン1</Button>
+                            <Button onClick={async () => onSubmit(commonGuestUser2)}>社員権限でゲストログイン2</Button>
+                            <Button onClick={async () => onSubmit(commonGuestUser3)}>社員権限でゲストログイン3</Button>
+                            <Button onClick={async () => onSubmit(commonGuestUser4)}>社員権限でゲストログイン4</Button>
+                            <Button onClick={async () => onSubmit(commonGuestUser5)}>社員権限でゲストログイン5</Button>
+                          </Box>
                         </Box>
                       </div>
                       <Button fullWidth variant='outlined' type='submit'>
