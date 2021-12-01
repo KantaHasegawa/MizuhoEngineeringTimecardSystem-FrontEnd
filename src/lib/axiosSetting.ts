@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Router from 'next/router';
 
 type TypeRefreshResponse = {
   accessToken: string;
@@ -26,6 +27,9 @@ api.interceptors.response.use(
     return response;
   },
   async (error) => {
+    if (error.config && error.response && error.response.data.message === 'invalid csrf token') {
+      Router.reload();
+    }
     if (error.config && error.response && error.response.data.message === 'jwt expired') {
       await axios.get<TypeRefreshResponse>(`${process.env.NEXT_PUBLIC_API_HOST}auth/refresh`, {
         withCredentials: true,
