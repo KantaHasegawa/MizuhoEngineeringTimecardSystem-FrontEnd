@@ -1,4 +1,4 @@
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
+import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button,
@@ -412,6 +412,7 @@ const TimecardListPage = () => {
                     <TableCell align='center'></TableCell>
                     <TableCell align='center'></TableCell>
                     <TableCell align='center'></TableCell>
+                    <TableCell align='center'></TableCell>
                   </TableRow>
                 </TableBody>
               ) : (
@@ -437,18 +438,27 @@ const TimecardListPage = () => {
                       </TableCell>
                       <TableCell align='center'>
                         {row.regularWorkTime !== null &&
-                          `${Math.floor(row.regularWorkTime / 60)}時間${
-                            row.regularWorkTime % 60
+                          `${Math.floor(row.regularWorkTime / 60)}時間${row.regularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>
                         {row.irregularWorkTime !== null &&
-                          `${Math.floor(row.irregularWorkTime / 60)}時間${
-                            row.irregularWorkTime % 60
+                          `${Math.floor(row.irregularWorkTime / 60)}時間${row.irregularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>
                         {row.rest !== null && `${Math.floor(row.rest / 60)}時間${row.rest % 60}分`}
+                      </TableCell>
+                      <TableCell align='center'>
+                        {row.attendance && (
+                          <Link href={`/timecard/edit/${row.user}/${row.attendance}`} passHref>
+                            <Tooltip title='編集'>
+                              <div>
+                                <FontAwesomeIcon className='editIcon' icon={faEdit} size='lg' />
+                              </div>
+                            </Tooltip>
+                          </Link>
+                        )}
                       </TableCell>
                       <TableCell align='center'>
                         {row.attendance && (

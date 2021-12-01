@@ -31,6 +31,17 @@
   transform: scale(1.08);
 }
 
+.editIcon {
+  cursor: pointer;
+  color: #2484c5;
+  transition: transform 450ms, color 0.7s;
+}
+
+.editIcon:hover {
+  color: #073c8c;
+  transform: scale(1.08);
+}
+
 .icon {
   display: inline-block;
   margin-top: 0.7rem;

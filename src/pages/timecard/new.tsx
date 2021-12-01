@@ -25,8 +25,6 @@ import useProtectedPage from '../../hooks/useProtectedPage';
 import useUserList from '../../hooks/useUserList';
 import useWorkspotList from '../../hooks/useWorkspotList';
 import axios from '../../lib/axiosSetting';
-import 'dayjs/locale/ja';
-dayjs.locale('ja');
 dayjs.extend(isSameOrBefore);
 type TypeSelectedOption = {
   value: string;
@@ -135,9 +133,6 @@ const TimecardNewPage = () => {
   const SelelectBoxWorkspot = () => {
     return (
       <Box sx={{ marginBottom: '1rem' }}>
-        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
-          <CircularProgress color='inherit' />
-        </Backdrop>
         {workspotState.isLoading ? (
           <CircularProgress />
         ) : workspotState.isError ? (
@@ -160,6 +155,9 @@ const TimecardNewPage = () => {
 
   return (
     <Layout title='ミズホエンジニアリング | 勤怠登録'>
+      <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
+        <CircularProgress color='inherit' />
+      </Backdrop>
       {isUserLoading ? (
         <CircularProgress />
       ) : !userInfo.role ? (
