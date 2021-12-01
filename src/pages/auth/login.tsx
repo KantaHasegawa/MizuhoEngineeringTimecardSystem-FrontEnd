@@ -78,7 +78,7 @@ const LoginPage = () => {
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
       </Head>
       <Container maxWidth='sm'>
-        <Box sx={{ paddingTop: '2rem', width: '350px', marginLeft: 'auto', marginRight: 'auto' }}>
+        <Box sx={{ paddingTop: '2rem', width: '350px', marginLeft: 'auto', marginRight: 'auto', marginBottom: "3rem" }}>
           {isUserLoading ? (
             <CircularProgress />
           ) : isLogedIn ? (
@@ -126,7 +126,7 @@ const LoginPage = () => {
                             defaultValue=''
                             rules={{
                               required: true,
-                              pattern: { value: /^[ぁ-んァ-ヶｱ-ﾝﾞﾟ一-龠]*$/, message: '' },
+                              pattern: { value: /^[ぁ-んァ-ヶーｱ-ﾝﾞﾟ一-龠]*$/, message: '' },
                             }}
                             render={({ field }) => (
                               <TextField size='small' fullWidth label='氏名' {...field} />

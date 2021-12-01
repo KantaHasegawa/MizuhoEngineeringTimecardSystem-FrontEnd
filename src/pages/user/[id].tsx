@@ -154,9 +154,11 @@ const UserShowPage = ({ user }: { user: string }) => {
           <PermissionErrorComponent></PermissionErrorComponent>
         ) : (
           <>
-            <Typography sx={{ fontSize: '1.5rem', fontWeight: 'bold', marginLeft: '3rem' }}>
-              {user}
-            </Typography>
+            <Box sx={{ width: "15rem" }}>
+              <Typography sx={{ fontSize: '1rem', fontWeight: 'bold', marginLeft: '3rem' }}>
+                {user}
+              </Typography>
+            </Box>
             <div style={{ position: 'relative', zIndex: 1 }}>
               <SpeedDialComponent></SpeedDialComponent>
             </div>

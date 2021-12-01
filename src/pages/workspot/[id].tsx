@@ -150,7 +150,7 @@ const WorkspotShowPage = ({ workspot }: { workspot: string }) => {
           <PermissionErrorComponent></PermissionErrorComponent>
         ) : (
           <>
-            <Box sx={{ width: '23rem' }}>
+            <Box sx={{ width: '15rem' }}>
               <Typography sx={{ fontSize: '1rem', fontWeight: 'bold', marginLeft: '1rem' }}>
                 {workspot}
               </Typography>
