@@ -1,18 +1,15 @@
-import { useEffect } from 'react';
-import axios from '../lib/axiosSetting';
+import useSWR from 'swr';
+import fetcher from '../lib/fetcher';
 
 type Response = {
   csrfToken: string;
 };
 
-const useCsrf = () => {
-  useEffect(() => {
-    const getCsrfToken = async () => {
-      const result = await axios.get<Response>(`auth/csrf`);
-      localStorage.setItem('csrfToken', result.data.csrfToken);
-    };
-    getCsrfToken();
-  }, []);
-};
+function useCsrfSWR() {
+  const { data } = useSWR<Response>(`auth/csrf`, fetcher);
+  if (data) {
+    localStorage.setItem('csrfToken', data.csrfToken);
+  }
+}
 
-export default useCsrf;
+export default useCsrfSWR;
