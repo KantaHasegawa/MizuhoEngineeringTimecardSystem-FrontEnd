@@ -8,9 +8,11 @@ import {
   CardContent,
   Backdrop,
 } from '@mui/material';
+import serversideAxios from 'axios';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import ErrorComponent from '../../../components/ErrorComponent';
@@ -21,7 +23,6 @@ import useCsrf from '../../../hooks/useCsrf';
 import useCurrentUser from '../../../hooks/useCurrentUser';
 import useProtectedPage from '../../../hooks/useProtectedPage';
 import axios from '../../../lib/axiosSetting';
-import serversideAxios from '../../../lib/axiosSettingServerside';
 
 type TypeUser = {
   user: {
@@ -32,14 +33,19 @@ type TypeUser = {
   }
 }
 
+type RefreshTokenResponse = {
+  accessToken: string;
+}
+
 type FormData = {
   password: string;
 };
 
-export const UserEditPage = ({ user }: { user: string }) => {
+export const UserEditPage = ({ user, isError }: { user: string | undefined, isError: boolean }) => {
   useCurrentUser();
   useProtectedPage();
   useCsrf();
+  const router = useRouter();
   const isUserLoading = useRecoilValue(isUserLoadingState);
   const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
@@ -75,6 +81,17 @@ export const UserEditPage = ({ user }: { user: string }) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isError) {
+      router.push('/auth/login');
+    }
+  }, []);
+
+  if (isError) {
+    return (<ErrorComponent></ErrorComponent>);
+  }
+
   return (
     <>
       <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
@@ -178,11 +195,33 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
-  const result = await serversideAxios.get<TypeUser>(`${host}user/show?name=${encodeURI(id)}`, { headers: { cookie: cookie! } });
-  if (!result?.data?.user?.user) {
-    return {
-      notFound: true
-    };
+  try {
+    const result = await serversideAxios.get<TypeUser>(`${host}user/show?name=${encodeURI(id)}`, { headers: { cookie: cookie! } });
+    if (!result?.data?.user?.user) {
+      return {
+        notFound: true
+      };
+    }
+    return { props: { user: result.data.user.user } };
+  } catch (err: any) {
+    try {
+      if (err.config && err.response && err.response.data.message === 'jwt expired') {
+        const accessToken = await serversideAxios.get<RefreshTokenResponse>(`${host}auth/refresh`, {
+          headers: { cookie: cookie! }
+        });
+        const result = await serversideAxios.get<TypeUser>(`${host}user/show?name=${encodeURI(id)}`, {
+          headers: { cookie: `accessToken=${accessToken.data.accessToken}` }
+        });
+        if (!result?.data?.user?.user) {
+          return {
+            notFound: true
+          };
+        }
+        return { props: { timecard: result.data.user.user } };
+      }
+    } catch (err) {
+      return { props: { isError: true } };
+    }
+    return { props: { isError: true } };
   }
-  return { props: { user: result.data.user.user } };
 };

@@ -1,9 +1,11 @@
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop } from '@mui/material';
+import serversideAxios from 'axios';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 // eslint-disable-next-line import/named
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
@@ -18,7 +20,6 @@ import useCurrentUser from '../../../hooks/useCurrentUser';
 import useFetchData from '../../../hooks/useFetchData';
 import useProtectedPage from '../../../hooks/useProtectedPage';
 import axios from '../../../lib/axiosSetting';
-import serversideAxios from '../../../lib/axiosSettingServerside';
 
 type TypeWorkspot = {
   workspot: {
@@ -28,6 +29,10 @@ type TypeWorkspot = {
     latitude: number;
     longitude: number;
   }
+}
+
+type RefreshTokenResponse = {
+  accessToken: string;
 }
 
 export type TypeWorkspotRelation = {
@@ -52,10 +57,11 @@ type TypeSelectedOption = {
   label: string;
 } | null;
 
-const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
+const WorkspotRelationEditPage = ({ workspot, isError }: { workspot: string, isError: boolean }) => {
   useCurrentUser();
   useProtectedPage();
   useCsrf();
+  const router = useRouter();
   const isUserLoading = useRecoilValue(isUserLoadingState);
   const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
@@ -117,6 +123,14 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
     );
   };
 
+  useEffect(() => {
+    if (isError) {
+      router.push('/auth/login');
+    }
+  }, []);
+
+  if (isError) { return (<ErrorComponent />); }
+
   return (
     <>
       <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
@@ -138,7 +152,7 @@ const WorkspotRelationEditPage = ({ workspot }: { workspot: string }) => {
               ) : workspotSelectBoxResponseIsError ? (
                 <ErrorComponent></ErrorComponent>
               ) : (
-                <Box sx={{marginBottom: '3rem'}}>
+                <Box sx={{ marginBottom: '3rem' }}>
                   <Select
                     defaultValue={selectedOption}
                     value={selectedOption}
@@ -194,12 +208,33 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
-  const result = await serversideAxios.get<TypeWorkspot>(`${host}workspot/show?name=${encodeURI(id)}`, { headers: { cookie: cookie! } });
-  console.log(result.data);
-  if (!result?.data?.workspot?.workspot) {
-    return {
-      notFound: true
-    };
+  try {
+    const result = await serversideAxios.get<TypeWorkspot>(`${host}workspot/show?name=${encodeURI(id)}`, { headers: { cookie: cookie! } });
+    if (!result?.data?.workspot?.workspot) {
+      return {
+        notFound: true
+      };
+    }
+    return { props: { workspot: result.data.workspot.workspot } };
+  } catch (err: any) {
+    try {
+      if (err.config && err.response && err.response.data.message === 'jwt expired') {
+        const accessToken = await serversideAxios.get<RefreshTokenResponse>(`${host}auth/refresh`, {
+          headers: { cookie: cookie! }
+        });
+        const result = await serversideAxios.get<TypeWorkspot>(`${host}workspot/show?name=${encodeURI(id)}`, {
+          headers: { cookie: `accessToken=${accessToken.data.accessToken}` }
+        });
+        if (!result?.data?.workspot?.workspot) {
+          return {
+            notFound: true
+          };
+        }
+        return { props: { timecard: result.data.workspot.workspot } };
+      }
+    } catch (err) {
+      return { props: { isError: true } };
+    }
+    return { props: { isError: true } };
   }
-  return { props: { workspot: result.data.workspot.workspot } };
 };
