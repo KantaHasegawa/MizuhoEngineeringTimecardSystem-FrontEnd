@@ -65,6 +65,7 @@ const TimecardNewPage = () => {
   const [loading, setLoading] = useState(false);
   const [attendance, setAttendance] = useState<dayjs.Dayjs | null>(dayjs());
   const [leave, setLeave] = useState<dayjs.Dayjs | null>(null);
+  const [rest, setRest] = useState<number>(60);
   const [selectedUser, setSelectedUser] = useState<TypeSelectedOption>(null);
   const [selectedWorkspot, setSelectedWorkspot] = useState<TypeSelectedOption>(null);
 
@@ -78,14 +79,19 @@ const TimecardNewPage = () => {
     setLeave(newValue);
   };
 
+  const handleRestChange = (e: any) => {
+    setRest(e?.target?.value);
+  };
+
   const onClickHandler = async () => {
     if (!attendance || !leave || !selectedUser || !selectedWorkspot) return;
     setLoading(true);
     const params = {
       user: selectedUser.value,
       workspot: selectedWorkspot.value,
-      attendance: attendance.format('YYYYMMDDHHmmss'),
-      leave: leave.format('YYYYMMDDHHmmss'),
+      attendance: attendance.format('YYYYMMDDHHmm') + '00',
+      leave: leave.format('YYYYMMDDHHmm') + '00',
+      rest: rest,
     };
     try {
       await axios.post('timecard/admin/new', params);
@@ -93,6 +99,7 @@ const TimecardNewPage = () => {
       setSelectedWorkspot(null);
       setAttendance(null);
       setLeave(null);
+      setRest(60);
       enqueueSnackbar('登録に成功しました', { variant: 'success' });
     } catch (err) {
       enqueueSnackbar('登録に失敗しました', { variant: 'error' });
@@ -187,6 +194,8 @@ const TimecardNewPage = () => {
                 />
               </Stack>
             </LocalizationProvider>
+            <TextField fullWidth label="休憩時間"
+              type="number" value={rest} onChange={handleRestChange} sx={{ marginBottom: '1rem' }} />
             <Box sx={{ textAlign: 'center', marginBottom: '3rem' }}>
               <Button
                 variant='outlined'
