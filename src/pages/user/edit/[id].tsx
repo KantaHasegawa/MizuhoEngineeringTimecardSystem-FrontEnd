@@ -63,6 +63,7 @@ export const UserEditPage = ({ user }: { user: string }) => {
       reset({
         password: '',
       });
+      setServerSideError("");
       enqueueSnackbar('パスワードの変更に成功しました', { variant: 'success' });
     } catch (err: any) {
       enqueueSnackbar('パスワードの変更に失敗しました', { variant: 'error' });

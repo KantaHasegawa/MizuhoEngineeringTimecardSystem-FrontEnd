@@ -54,6 +54,7 @@ const LoginPage = () => {
     try {
       await axios.post(`auth/login`, data);
       setIsLogedIn(true);
+      setServerSideError("");
       router.push('/');
       enqueueSnackbar('ログインしました', { variant: 'success' });
     } catch (err: any) {

@@ -49,6 +49,7 @@ const SignUpPage = () => {
         username: '',
         password: '',
       });
+      setServerSideError("");
       enqueueSnackbar('登録に成功しました', { variant: 'success' });
     } catch (err: any) {
       enqueueSnackbar('登録に失敗しました', { variant: 'error' });
