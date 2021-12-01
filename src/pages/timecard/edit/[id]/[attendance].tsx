@@ -132,7 +132,6 @@ const TimecardEditPage = ({ timecard, isError }: { timecard: Timecard, isError: 
     );
   };
 
-
   useEffect(() => {
     if (isError) {
       router.push('/auth/login');
@@ -217,7 +216,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
   try {
     const result = await serversideAxios.get<TimecardResponse>(`${host}timecard/show?username=${encodeURI(id)}&attendance=${encodeURI(attendance)}`, { headers: { cookie: cookie! } });
-    console.log(result.data);
     if (!result?.data?.timecard) {
       return {
         notFound: true
@@ -238,7 +236,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             notFound: true
           };
         }
-        console.log(result);
         return { props: { timecard: result.data.timecard } };
       }
     } catch (err) {
