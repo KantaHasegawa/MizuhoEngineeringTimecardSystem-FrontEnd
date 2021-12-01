@@ -187,7 +187,7 @@ const TimecardNewPage = () => {
                 />
               </Stack>
             </LocalizationProvider>
-            <Box sx={{ textAlign: 'center' }}>
+            <Box sx={{ textAlign: 'center', marginBottom: '3rem' }}>
               <Button
                 variant='outlined'
                 disabled={!attendance || !leave || !selectedUser || !selectedWorkspot}

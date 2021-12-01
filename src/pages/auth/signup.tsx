@@ -68,7 +68,7 @@ const SignUpPage = () => {
         <CircularProgress color='inherit' />
       </Backdrop>
       <Layout title='ミズホエンジニアリング | 社員登録'>
-        <Box sx={{ paddingTop: '2rem', width: '350px', marginLeft: 'auto', marginRight: 'auto' }}>
+        <Box sx={{ paddingTop: '2rem', width: '350px', marginLeft: 'auto', marginRight: 'auto', marginBottom: '3rem' }}>
           {isUserLoading ? (
             <CircularProgress />
           ) : !userInfo.role ? (
