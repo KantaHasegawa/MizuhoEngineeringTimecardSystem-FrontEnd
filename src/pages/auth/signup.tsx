@@ -105,7 +105,7 @@ const SignUpPage = () => {
                           defaultValue=''
                           rules={{
                             required: true,
-                            pattern: { value: /^[ぁ-んァ-ヶｱ-ﾝﾞﾟ一-龠]*$/, message: '' },
+                            pattern: { value: /^[ぁ-んァ-ヶーｱ-ﾝﾞﾟ一-龠]*$/, message: '' },
                           }}
                           render={({ field }) => (
                             <TextField size='small' fullWidth label='氏名' {...field} />
