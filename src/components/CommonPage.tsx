@@ -50,8 +50,8 @@ const isTimecardStatus = (timecard: TypeTimecard): TypeTimecardStatus => {
     timecard.leave === 'none'
       ? 'NotLeave'
       : timecard.attendance.slice(0, 8) === today
-      ? 'AlreadyLeave'
-      : 'NotAttend';
+        ? 'AlreadyLeave'
+        : 'NotAttend';
   return result;
 };
 
@@ -77,6 +77,11 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
   };
 
   const getCurrentPositionSuccessFunction = async (position: GeolocationPosition) => {
+    if (position.coords.accuracy > 1000) {
+      enqueueSnackbar('取得した位置情報の精度が悪いようです。Wifiを使用している場合は切断してください。', { variant: 'warning' });
+      setLoading(false);
+      return;
+    }
     const params = {
       lat: position.coords.latitude,
       lon: position.coords.longitude,
@@ -88,7 +93,6 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
       enqueueSnackbar('成功しました', { variant: 'success' });
     } catch (err) {
       enqueueSnackbar('失敗しました', { variant: 'error' });
-      console.log(err);
     } finally {
       setLoading(false);
     }
