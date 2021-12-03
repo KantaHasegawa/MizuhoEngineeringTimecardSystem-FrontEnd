@@ -36,8 +36,8 @@ const Navbar = () => {
                     <Image
                       src={mizuhoLogo}
                       alt='ミズホエンジニアリング'
-                      width={100}
-                      height={66}
+                      width={80}
+                      height={53}
                     ></Image>
                   </Link>
                 </div>
@@ -87,8 +87,8 @@ const Navbar = () => {
                     <Image
                       src={mizuhoLogo}
                       alt='ミズホエンジニアリング'
-                        width={80}
-                        height={53}
+                      width={80}
+                      height={53}
                     ></Image>
                   </Link>
                 </div>
