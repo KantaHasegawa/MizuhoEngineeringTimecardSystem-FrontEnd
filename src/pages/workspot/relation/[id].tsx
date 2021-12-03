@@ -1,12 +1,11 @@
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop } from '@mui/material';
+import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop, Select, MenuItem } from '@mui/material';
 import serversideAxios from 'axios';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
 // eslint-disable-next-line import/named
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
 import { useRecoilValue } from 'recoil';
@@ -42,20 +41,11 @@ export type TypeWorkspotRelation = {
   user: string;
 };
 
-export type TypeSelectBoxItme = {
-  value: string;
-  label: string;
-};
-
 type TypeWorkspotSelectBoxResponse = {
-  selectBoxItems: TypeSelectBoxItme[];
+  selectBoxItems: string[];
   relations: TypeWorkspotRelation[];
 };
 
-type TypeSelectedOption = {
-  value: string;
-  label: string;
-} | null;
 
 const WorkspotRelationEditPage = ({ workspot, isError }: { workspot: string, isError: boolean }) => {
   useCurrentUser();
@@ -66,22 +56,25 @@ const WorkspotRelationEditPage = ({ workspot, isError }: { workspot: string, isE
   const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<TypeSelectedOption>(null);
+  const [selectedOption, setSelectedOption] = useState<string>("none");
 
   const { data: workspotSelectBoxResponse, error: workspotSelectBoxResponseIsError } =
     useFetchData<TypeWorkspotSelectBoxResponse>(`relation/workspot/selectbox/${workspot}`);
 
+  const onChange = (event: any) => {
+    setSelectedOption(event?.target?.value);
+  };
+
   const onSubmit = async () => {
-    if (!selectedOption?.value) return;
     setLoading(true);
     try {
       const params = {
-        user: selectedOption.value,
+        user: selectedOption,
         workspot: workspot,
       };
       await axios.post('relation/new', params);
       mutate(`relation/workspot/selectbox/${workspot}`);
-      setSelectedOption(null);
+      setSelectedOption("none");
       enqueueSnackbar('登録に成功しました', { variant: 'success' });
     } catch (err) {
       enqueueSnackbar('登録に失敗しました', { variant: 'error' });
@@ -100,7 +93,7 @@ const WorkspotRelationEditPage = ({ workspot, isError }: { workspot: string, isE
       };
       await axios.post('relation/delete', params);
       mutate(`relation/workspot/selectbox/${workspot}`);
-      setSelectedOption(null);
+      setSelectedOption("none");
       enqueueSnackbar('削除に成功しました', { variant: 'success' });
     } catch (err) {
       enqueueSnackbar('削除に失敗しました', { variant: 'error' });
@@ -154,17 +147,24 @@ const WorkspotRelationEditPage = ({ workspot, isError }: { workspot: string, isE
               ) : (
                 <Box sx={{ marginBottom: '3rem' }}>
                   <Select
-                    defaultValue={selectedOption}
+                    fullWidth
                     value={selectedOption}
-                    onChange={setSelectedOption}
-                    options={workspotSelectBoxResponse.selectBoxItems}
-                    isClearable={true}
-                  />
+                    onChange={onChange}>
+                    <MenuItem value="none">未選択</MenuItem>
+                    {
+                      workspotSelectBoxResponse.selectBoxItems.map((item, index) => {
+                        return (
+                          <MenuItem key={index} value={item}>{item}</MenuItem>
+                        );
+                      })
+                    }
+                  </Select>
                   <Box sx={{ textAlign: 'center', margin: '1rem' }}>
                     <Button
                       sx={{ width: '6rem' }}
                       variant='outlined'
                       onClick={async () => onSubmit()}
+                      disabled={selectedOption === "none"}
                     >
                       登録
                     </Button>

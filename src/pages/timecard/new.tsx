@@ -8,12 +8,13 @@ import {
   Typography,
   Stack,
   Backdrop,
+  Select,
+  MenuItem
 } from '@mui/material';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
-import Select from 'react-select';
 import { useRecoilValue } from 'recoil';
 import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
@@ -38,34 +39,22 @@ const TimecardNewPage = () => {
   const isUserLoading = useRecoilValue(isUserLoadingState);
   const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
-
   const { state: userState } = useUserList();
-  const selectBoxUsers =
-    !userState.isLoading &&
-    !userState.isError &&
-    userState.data.map((item) => {
-      return {
-        label: item,
-        value: item,
-      };
-    });
-
   const { state: workspotState } = useWorkspotList();
-  const selectBoxWorkspots =
-    !workspotState.isLoading &&
-    !workspotState.isError &&
-    workspotState.data.map((item) => {
-      return {
-        label: item,
-        value: item,
-      };
-    });
   const [loading, setLoading] = useState(false);
   const [attendance, setAttendance] = useState<dayjs.Dayjs | null>(dayjs());
   const [leave, setLeave] = useState<dayjs.Dayjs | null>(null);
   const [rest, setRest] = useState<number>(60);
-  const [selectedUser, setSelectedUser] = useState<TypeSelectedOption>(null);
-  const [selectedWorkspot, setSelectedWorkspot] = useState<TypeSelectedOption>(null);
+  const [selectedUser, setSelectedUser] = useState<string>("none");
+  const [selectedWorkspot, setSelectedWorkspot] = useState<string>("none");
+
+  const handleWorkspotChange = (event: any) => {
+    setSelectedWorkspot(event?.target?.value);
+  };
+
+  const handleUserChange = (event: any) => {
+    setSelectedUser(event?.target?.value);
+  };
 
   const handleAttendanceChange = (newValue: dayjs.Dayjs | null) => {
     setAttendance(newValue);
@@ -77,24 +66,24 @@ const TimecardNewPage = () => {
     setLeave(newValue);
   };
 
-  const handleRestChange = (e: any) => {
-    setRest(e?.target?.value);
+  const handleRestChange = (event: any) => {
+    setRest(event?.target?.value);
   };
 
   const onClickHandler = async () => {
     if (!attendance || !leave || !selectedUser || !selectedWorkspot) return;
     setLoading(true);
     const params = {
-      user: selectedUser.value,
-      workspot: selectedWorkspot.value,
+      user: selectedUser,
+      workspot: selectedWorkspot,
       attendance: attendance.format('YYYYMMDDHHmm') + '00',
       leave: leave.format('YYYYMMDDHHmm') + '00',
       rest: rest,
     };
     try {
       await axios.post('timecard/admin/new', params);
-      setSelectedUser(null);
-      setSelectedWorkspot(null);
+      setSelectedUser("none");
+      setSelectedWorkspot("none");
       setAttendance(null);
       setLeave(null);
       setRest(60);
@@ -116,15 +105,19 @@ const TimecardNewPage = () => {
           <ErrorComponent></ErrorComponent>
         ) : (
           <Select
-            defaultValue={selectedUser}
             value={selectedUser}
-            onChange={setSelectedUser}
-            options={selectBoxUsers || []}
-            isClearable={true}
-            menuPortalTarget={document.body}
-            styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-            placeholder='社員'
-          />
+            onChange={handleUserChange}
+            fullWidth
+          >
+            <MenuItem value="none">未選択</MenuItem>
+            {
+              userState.data.map((item, index) => {
+                return (
+                  <MenuItem key={index} value={item}>{item}</MenuItem>
+                );
+              })
+            }
+          </Select>
         )}
       </Box>
     );
@@ -139,15 +132,19 @@ const TimecardNewPage = () => {
           <ErrorComponent></ErrorComponent>
         ) : (
           <Select
-            defaultValue={selectedWorkspot}
             value={selectedWorkspot}
-            onChange={setSelectedWorkspot}
-            options={selectBoxWorkspots || []}
-            isClearable={true}
-            menuPortalTarget={document.body}
-            styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
-            placeholder='勤務地'
-          />
+            onChange={handleWorkspotChange}
+            fullWidth
+          >
+            <MenuItem value="none">未選択</MenuItem>
+            {
+              workspotState.data.map((item, index) => {
+                return (
+                  <MenuItem key={index} value={item}>{item}</MenuItem>
+                );
+              })
+            }
+          </Select>
         )}
       </Box>
     );
@@ -197,7 +194,7 @@ const TimecardNewPage = () => {
             <Box sx={{ textAlign: 'center', marginBottom: '3rem' }}>
               <Button
                 variant='outlined'
-                disabled={!attendance || !leave || !selectedUser || !selectedWorkspot}
+                disabled={!attendance || !leave || selectedUser === "none" || selectedWorkspot === "none"}
                 onClick={async () => onClickHandler()}
                 sx={{ width: '13rem' }}
               >

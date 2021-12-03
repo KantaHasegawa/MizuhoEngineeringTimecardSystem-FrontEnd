@@ -42,20 +42,10 @@ export type TypeUserRelation = {
   longitude: number;
 };
 
-export type TypeSelectBoxItme = {
-  value: string;
-  label: string;
-};
-
 type TypeUserSelectBoxResponse = {
-  selectBoxItems: TypeSelectBoxItme[];
+  selectBoxItems: string[];
   relations: TypeUserRelation[];
 };
-
-type TypeSelectedOption = {
-  value: string;
-  label: string;
-} | null;
 
 const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolean }) => {
   useCurrentUser();
@@ -71,8 +61,11 @@ const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolea
   const { data: userSelectBoxResponse, error: userSelectBoxResponseIsError } =
     useFetchData<TypeUserSelectBoxResponse>(`relation/user/selectbox/${user}`);
 
+  const onChange = (event: any) => {
+    setSelectedOption(event?.target?.value);
+  };
+
   const onSubmit = async () => {
-    // if (!selectedOption?.value) return;
     setLoading(true);
     try {
       const params = {
@@ -108,10 +101,6 @@ const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolea
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleChange = (event: any) => {
-    setSelectedOption(event.target.value);
   };
 
   const Row = ({ data, index, style }: ListChildComponentProps<TypeUserRelation[]>) => {
@@ -159,36 +148,25 @@ const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolea
                 <ErrorComponent></ErrorComponent>
               ) : (
                 <Box sx={{ marginBottom: '3rem' }}>
-                  {/* <Select
-                    defaultValue={selectedOption}
-                    value={selectedOption}
-                    onChange={setSelectedOption}
-                    options={userSelectBoxResponse.selectBoxItems}
-                    isClearable={true}
-                  /> */}
                   <Select
                     fullWidth
                     value={selectedOption}
-                    onChange={handleChange}>
-                    <MenuItem value={"hello"}>ハロー</MenuItem>
-                    <MenuItem value={"none"}>あ</MenuItem>
-                    <MenuItem value={"none"}>りんご</MenuItem>
-                    <MenuItem value={"none"}>りんご</MenuItem>
-                    <MenuItem value={"none"}>りんご</MenuItem>
-                    <MenuItem value={"none"}>りんご</MenuItem>
-                    <MenuItem value={"none"}>りんご</MenuItem>
-                    <MenuItem value={"none"}>のりんごん</MenuItem>
-                    <MenuItem value={"none"}>りんご</MenuItem>
-                    <MenuItem value={"none"}>りんご</MenuItem>
-                    <MenuItem value={"none"}>りんご</MenuItem>
-                    <MenuItem value={"none"}>りんご</MenuItem>
-                    <MenuItem value={"none"}>りんご</MenuItem>
+                    onChange={onChange}>
+                    <MenuItem value="none">未選択</MenuItem>
+                    {
+                      userSelectBoxResponse.selectBoxItems.map((item, index) => {
+                        return (
+                          <MenuItem key={index} value={item}>{item}</MenuItem>
+                        );
+                      })
+                    }
                   </Select>
                   <Box sx={{ textAlign: 'center', margin: '1rem' }}>
                     <Button
                       sx={{ width: '6rem' }}
                       variant='outlined'
                       onClick={async () => onSubmit()}
+                      disabled={selectedOption === "none"}
                     >
                       登録
                     </Button>
