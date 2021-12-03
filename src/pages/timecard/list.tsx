@@ -14,6 +14,8 @@ import {
   Tooltip,
   Box,
   Container,
+  Select,
+  MenuItem
 } from '@mui/material';
 import { base64StringToBlob } from 'blob-util';
 import dayjs from 'dayjs';
@@ -23,7 +25,6 @@ import Link from 'next/link';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import Select from 'react-select';
 import { useRecoilValue } from 'recoil';
 import { mutate } from 'swr';
 dayjs.locale('ja');
@@ -38,15 +39,10 @@ import useProtectedPage from '../../hooks/useProtectedPage';
 import useUserList from '../../hooks/useUserList';
 import axios from '../../lib/axiosSetting';
 
-type TypeSelectBoxItem = {
-  value: string;
-  label: string;
-};
-
 type FormData = {
-  user: TypeSelectBoxItem;
-  year: TypeSelectBoxItem;
-  month: TypeSelectBoxItem;
+  user: string;
+  year: string;
+  month: string;
 };
 
 type TypeAxiosResponse = {
@@ -83,51 +79,21 @@ const TimecardListPage = () => {
   const [timecard, setTimecard] = useState<TypeTimecard[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [dialog, setDialog] = useState(false);
-  const { handleSubmit, control, watch, getValues } = useForm<FormData>();
+  const { handleSubmit, control, watch, getValues } = useForm<FormData>({ defaultValues: { user: "none", year: dayjs().format("YYYY"), month: dayjs().format("MM") } });
   const { state: userState } = useUserList();
-  const userSelectBoxItems =
-    !userState.isLoading &&
-    !userState.isError &&
-    userState.data.map((item) => {
-      return {
-        label: item,
-        value: item,
-      };
-    });
-  const yearSelectBoxItems: TypeSelectBoxItem[] = [];
-  const monthSelectBoxItems: TypeSelectBoxItem[] = [];
+  const years: string[] = [];
 
   for (let i = 2021; i <= 2100; i++) {
-    let params = {
-      label: `${i}年`,
-      value: `${i}`,
-    };
-    yearSelectBoxItems.push(params);
-  }
-
-  for (let i = 1; i <= 12; i++) {
-    if (i < 10) {
-      let params = {
-        label: `${i}月`,
-        value: `0${i}`,
-      };
-      monthSelectBoxItems.push(params);
-    } else {
-      let params = {
-        label: `${i}月`,
-        value: `${i}`,
-      };
-      monthSelectBoxItems.push(params);
-    }
+    years.push(`${i}`);
   }
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
       const result = await axios.get<TypeAxiosResponse[]>(
-        `timecard/index/${data.user.value}/${data.year.value}/${data.month.value}`,
+        `timecard/index/${data.user}/${data.year}/${data.month}`,
       );
-      const daysInMonth = dayjs(`${data.year.value}-${data.month.value}`).daysInMonth();
+      const daysInMonth = dayjs(`${data.year}-${data.month}`).daysInMonth();
       const newArray: TypeTimecard[] = [];
       let flag = false;
       for (let i = 1; i <= daysInMonth; i++) {
@@ -136,9 +102,9 @@ const TimecardListPage = () => {
           if (i < itemDate) break;
           if (i === itemDate) {
             const params = {
-              user: data.user.value,
+              user: data.user,
               date: i,
-              dayOfWeek: dayjs(`${data.year.value}-${data.month.value}-${i}`).format('ddd'),
+              dayOfWeek: dayjs(`${data.year}-${data.month}-${i}`).format('ddd'),
               workspot: item.workspot,
               attendance: item.attendance,
               leave: item.leave,
@@ -157,9 +123,9 @@ const TimecardListPage = () => {
           continue;
         } else {
           let params = {
-            user: data.user.value,
+            user: data.user,
             date: i,
-            dayOfWeek: dayjs(`${data.year.value}-${data.month.value}-${i}`).format('ddd'),
+            dayOfWeek: dayjs(`${data.year}-${data.month}-${i}`).format('ddd'),
             workspot: null,
             attendance: null,
             leave: null,
@@ -185,7 +151,7 @@ const TimecardListPage = () => {
     const values = getValues();
     try {
       const result = await axios.get<string>(
-        `timecard/excel/${values.user.value}/${values.year.value}/${values.month.value}`,
+        `timecard/excel/${values.user}/${values.year}/${values.month}`,
       );
       const blob = base64StringToBlob(
         result.data,
@@ -195,7 +161,7 @@ const TimecardListPage = () => {
         // for IE,Edge
         window.navigator.msSaveOrOpenBlob(
           blob,
-          `${values.year.value}年${values.month.value}月${values.user.value}.xlsx`,
+          `${values.year}年${values.month}月${values.user}.xlsx`,
         );
       } else {
         // for chrome, firefox
@@ -204,7 +170,7 @@ const TimecardListPage = () => {
         linkEl.href = url;
         linkEl.setAttribute(
           'download',
-          `${values.year.value}年${values.month.value}月${values.user.value}.xlsx`,
+          `${values.year}年${values.month}月${values.user}.xlsx`,
         );
         document.body.appendChild(linkEl);
         linkEl.click();
@@ -228,22 +194,8 @@ const TimecardListPage = () => {
     };
     try {
       await axios.post('timecard/admin/delete', params);
-      const data = {
-        user: {
-          label: user,
-          value: user,
-        },
-        year: {
-          label: attendance.slice(0, 4),
-          value: attendance.slice(0, 4),
-        },
-        month: {
-          label: attendance.slice(4, 6),
-          value: attendance.slice(4, 6),
-        },
-      };
       mutate(`timecard/common/${user}`);
-      onSubmit(data);
+      onSubmit({ user: user, year: attendance.slice(0, 4), month: attendance.slice(4, 6) });
       enqueueSnackbar('削除に成功しました', { variant: 'success' });
     } catch (err) {
       enqueueSnackbar('削除に失敗しました', { variant: 'error' });
@@ -290,10 +242,17 @@ const TimecardListPage = () => {
                     <Box sx={{ marginBottom: '1rem' }}>
                       <Select
                         {...field}
-                        options={userSelectBoxItems || []}
-                        isClearable={true}
-                        placeholder='社員'
-                      />
+                        fullWidth
+                      >
+                        <MenuItem value={"none"}>未選択</MenuItem>
+                        {
+                          userState.data.map((item, index) => {
+                            return (
+                              <MenuItem key={index} value={item}>{item}</MenuItem>
+                            );
+                          })
+                        }
+                      </Select>
                     </Box>
                   )}
                 />
@@ -304,10 +263,17 @@ const TimecardListPage = () => {
                     <Box sx={{ marginBottom: '1rem' }}>
                       <Select
                         {...field}
-                        options={yearSelectBoxItems}
-                        isClearable={true}
-                        placeholder='年'
-                      />
+                        fullWidth
+                      >
+                        <MenuItem value={"none"}>未選択</MenuItem>
+                        {
+                          years.map((item, index) => {
+                            return (
+                              <MenuItem key={index} value={item}>{`${item}年`}</MenuItem>
+                            );
+                          })
+                        }
+                      </Select>
                     </Box>
                   )}
                 />
@@ -318,10 +284,22 @@ const TimecardListPage = () => {
                     <Box sx={{ marginBottom: '1rem' }}>
                       <Select
                         {...field}
-                        options={monthSelectBoxItems}
-                        isClearable={true}
-                        placeholder='月'
-                      />
+                        fullWidth
+                      >
+                        <MenuItem value={"none"}>未選択</MenuItem>
+                        <MenuItem value={"01"}>1月</MenuItem>
+                        <MenuItem value={"02"}>2月</MenuItem>
+                        <MenuItem value={"03"}>3月</MenuItem>
+                        <MenuItem value={"04"}>4月</MenuItem>
+                        <MenuItem value={"05"}>5月</MenuItem>
+                        <MenuItem value={"06"}>6月</MenuItem>
+                        <MenuItem value={"07"}>7月</MenuItem>
+                        <MenuItem value={"08"}>8月</MenuItem>
+                        <MenuItem value={"09"}>9月</MenuItem>
+                        <MenuItem value={"10"}>10月</MenuItem>
+                        <MenuItem value={"11"}>11月</MenuItem>
+                        <MenuItem value={"12"}>12月</MenuItem>
+                      </Select>
                     </Box>
                   )}
                 />
@@ -333,7 +311,7 @@ const TimecardListPage = () => {
                     }}
                     variant='outlined'
                     type='submit'
-                    disabled={!watch('user') || !watch('year') || !watch('month')}
+                    disabled={watch('user') === 'none' || watch('year') === 'none' || watch('month') === 'none'}
                   >
                     確定
                   </Button>
@@ -345,7 +323,7 @@ const TimecardListPage = () => {
                     variant='outlined'
                     color='success'
                     onClick={async () => setDialog(true)}
-                    disabled={!watch('user') || !watch('year') || !watch('month')}
+                    disabled={watch('user') === 'none' || watch('year') === 'none' || watch('month') === 'none'}
                   >
                     Excel
                   </Button>
