@@ -112,7 +112,7 @@ const WorkspotShowPage = ({ workspot, isError }: { workspot: string, isError: bo
       <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
         <SpeedDial
           ariaLabel='SpeedDial basic example'
-          sx={{ position: 'absolute', bottom: -155, right: 30 }}
+          sx={{ position: 'absolute', bottom: -130, right: 10 }}
           icon={<SpeedDialIcon />}
           direction='down'
         >
@@ -164,7 +164,7 @@ const WorkspotShowPage = ({ workspot, isError }: { workspot: string, isError: bo
           <PermissionErrorComponent></PermissionErrorComponent>
         ) : (
           <>
-            <Box sx={{ width: '15rem' }}>
+            <Box sx={{ width: '13rem' }}>
               <Typography sx={{ fontSize: '1rem', fontWeight: 'bold', marginLeft: '1rem' }}>
                 {workspot}
               </Typography>

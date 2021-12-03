@@ -125,7 +125,7 @@ const WorkspotNewPage = () => {
                         defaultValue=''
                         render={({ field }) => (
                           <TextField
-                            sx={{ display: 'inline-block', width: '20rem' }}
+                            sx={{ display: 'inline-block', width: '15rem' }}
                             fullWidth
                             size='small'
                             label='住所'

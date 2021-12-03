@@ -108,7 +108,7 @@ const LoginPage = () => {
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
       </Head>
       <Container maxWidth='sm'>
-        <Box sx={{ paddingTop: '2rem', width: '350px', marginLeft: 'auto', marginRight: 'auto', marginBottom: "3rem" }}>
+        <Box sx={{ paddingTop: '2rem', width: '280px', marginLeft: 'auto', marginRight: 'auto', marginBottom: "3rem" }}>
           {isUserLoading ? (
             <CircularProgress />
           ) : isLogedIn ? (

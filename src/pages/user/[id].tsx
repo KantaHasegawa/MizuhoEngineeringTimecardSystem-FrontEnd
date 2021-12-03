@@ -116,7 +116,7 @@ const UserShowPage = ({ user, isError }: { user: string, isError: boolean }) => 
       <Box sx={{ transform: 'translateZ(0px)', flexGrow: 1 }}>
         <SpeedDial
           ariaLabel='SpeedDial basic example'
-          sx={{ position: 'absolute', bottom: -200, right: 70 }}
+          sx={{ position: 'absolute', bottom: -208, right: 10 }}
           icon={<SpeedDialIcon />}
           direction='down'
         >
@@ -168,7 +168,7 @@ const UserShowPage = ({ user, isError }: { user: string, isError: boolean }) => 
           <PermissionErrorComponent></PermissionErrorComponent>
         ) : (
           <>
-            <Box sx={{ width: "15rem" }}>
+            <Box sx={{ width: "13rem" }}>
               <Typography sx={{ fontSize: '1rem', fontWeight: 'bold', marginLeft: '3rem' }}>
                 {user}
               </Typography>

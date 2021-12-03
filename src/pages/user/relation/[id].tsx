@@ -1,6 +1,6 @@
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop, Select, MenuItem } from '@mui/material';
+import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop, Select, MenuItem, makeStyles } from '@mui/material';
 import serversideAxios from 'axios';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -156,7 +156,10 @@ const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolea
                     {
                       userSelectBoxResponse.selectBoxItems.map((item, index) => {
                         return (
-                          <MenuItem key={index} value={item}>{item}</MenuItem>
+                          <MenuItem key={index} value={item} sx={{
+                            whiteSpace: "unset",
+                            wordBreak: "break-all"
+                          }}>{item}</MenuItem>
                         );
                       })
                     }
