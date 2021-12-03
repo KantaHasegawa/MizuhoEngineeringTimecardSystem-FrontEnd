@@ -1,12 +1,12 @@
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop } from '@mui/material';
+import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop, Select, MenuItem } from '@mui/material';
 import serversideAxios from 'axios';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useState } from 'react';
-import Select from 'react-select';
+// import Select from 'react-select';
 // eslint-disable-next-line import/named
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
 import { useRecoilValue } from 'recoil';
@@ -66,22 +66,22 @@ const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolea
   const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<TypeSelectedOption>(null);
+  const [selectedOption, setSelectedOption] = useState<string>("none");
 
   const { data: userSelectBoxResponse, error: userSelectBoxResponseIsError } =
     useFetchData<TypeUserSelectBoxResponse>(`relation/user/selectbox/${user}`);
 
   const onSubmit = async () => {
-    if (!selectedOption?.value) return;
+    // if (!selectedOption?.value) return;
     setLoading(true);
     try {
       const params = {
         user: user,
-        workspot: selectedOption.value,
+        workspot: selectedOption,
       };
       await axios.post('relation/new', params);
       mutate(`relation/user/selectbox/${user}`);
-      setSelectedOption(null);
+      setSelectedOption("none");
       enqueueSnackbar('登録に成功しました', { variant: 'success' });
     } catch (err) {
       enqueueSnackbar('登録に失敗しました', { variant: 'error' });
@@ -100,7 +100,7 @@ const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolea
       };
       await axios.post('relation/delete', params);
       mutate(`relation/user/selectbox/${user}`);
-      setSelectedOption(null);
+      setSelectedOption("none");
       enqueueSnackbar('削除に成功しました', { variant: 'success' });
     } catch (err) {
       enqueueSnackbar('削除に失敗しました', { variant: 'error' });
@@ -108,6 +108,10 @@ const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolea
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleChange = (event: any) => {
+    setSelectedOption(event.target.value);
   };
 
   const Row = ({ data, index, style }: ListChildComponentProps<TypeUserRelation[]>) => {
@@ -155,13 +159,31 @@ const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolea
                 <ErrorComponent></ErrorComponent>
               ) : (
                 <Box sx={{ marginBottom: '3rem' }}>
-                  <Select
+                  {/* <Select
                     defaultValue={selectedOption}
                     value={selectedOption}
                     onChange={setSelectedOption}
                     options={userSelectBoxResponse.selectBoxItems}
                     isClearable={true}
-                  />
+                  /> */}
+                  <Select
+                    fullWidth
+                    value={selectedOption}
+                    onChange={handleChange}>
+                    <MenuItem value={"hello"}>ハロー</MenuItem>
+                    <MenuItem value={"none"}>あ</MenuItem>
+                    <MenuItem value={"none"}>りんご</MenuItem>
+                    <MenuItem value={"none"}>りんご</MenuItem>
+                    <MenuItem value={"none"}>りんご</MenuItem>
+                    <MenuItem value={"none"}>りんご</MenuItem>
+                    <MenuItem value={"none"}>りんご</MenuItem>
+                    <MenuItem value={"none"}>のりんごん</MenuItem>
+                    <MenuItem value={"none"}>りんご</MenuItem>
+                    <MenuItem value={"none"}>りんご</MenuItem>
+                    <MenuItem value={"none"}>りんご</MenuItem>
+                    <MenuItem value={"none"}>りんご</MenuItem>
+                    <MenuItem value={"none"}>りんご</MenuItem>
+                  </Select>
                   <Box sx={{ textAlign: 'center', margin: '1rem' }}>
                     <Button
                       sx={{ width: '6rem' }}
