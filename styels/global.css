@@ -8,6 +8,11 @@
   display: inline-block;
 }
 
+.drawerIcon {
+  color: #2484c5;
+  margin-right: 10px;
+}
+
 .navbarIcon {
   margin: 0 0.8rem;
   color: #2484c5;

@@ -1,6 +1,7 @@
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Tooltip, Backdrop, CircularProgress } from '@mui/material';
+import { Tooltip, Backdrop, CircularProgress, useMediaQuery, ListItem, ListItemText, Box } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
@@ -11,10 +12,12 @@ import { userInfoState } from './atoms';
 
 const Logout = () => {
   const router = useRouter();
+  const theme = useTheme();
   const { enqueueSnackbar } = useSnackbar();
   const setUserInfo = useSetRecoilState(userInfoState);
   const [loading, setLoading] = useState(false);
   const [dialog, setDialog] = useState(false);
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
   const onClickHandler = async () => {
     setLoading(true);
     try {
@@ -42,11 +45,20 @@ const Logout = () => {
           setDialog(false);
         }}
       />
-      <Tooltip title='ログアウト'>
-        <div onClick={() => setDialog(true)} style={{ display: 'inline' }}>
-          <FontAwesomeIcon icon={faSignOutAlt} size='2x' className='navbarIcon' />
-        </div>
-      </Tooltip>
+      {!matches ? (
+        <Tooltip title='ログアウト'>
+          <div onClick={() => setDialog(true)} style={{ display: 'inline' }}>
+            <FontAwesomeIcon icon={faSignOutAlt} size='2x' className='navbarIcon' />
+          </div>
+        </Tooltip>
+      ) : (
+        <ListItem onClick={() => setDialog(true)}>
+          <Box sx={{ display: "block", width: "60px" }}>
+            <FontAwesomeIcon icon={faSignOutAlt} size='2x' className='drawerIcon' />
+          </Box>
+          <ListItemText primary="ログアウト" />
+        </ListItem>
+      )}
     </>
   );
 };

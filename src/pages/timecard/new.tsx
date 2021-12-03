@@ -136,11 +136,14 @@ const TimecardNewPage = () => {
             onChange={handleWorkspotChange}
             fullWidth
           >
-            <MenuItem value="none">未選択</MenuItem>
+            <MenuItem value="none" >未選択</MenuItem>
             {
               workspotState.data.map((item, index) => {
                 return (
-                  <MenuItem key={index} value={item}>{item}</MenuItem>
+                  <MenuItem key={index} value={item} sx={{
+                    whiteSpace: "unset",
+                    wordBreak: "break-all"
+                  }}>{item}</MenuItem>
                 );
               })
             }

@@ -98,7 +98,7 @@ export const UserEditPage = ({ user, isError }: { user: string | undefined, isEr
         <CircularProgress color='inherit' />
       </Backdrop>
       <Layout title='ミズホエンジニアリング | パスワード変更'>
-        <Box sx={{ paddingTop: '2rem', width: '350px', marginLeft: 'auto', marginRight: 'auto', marginBottom: '3rem' }}>
+        <Box sx={{ paddingTop: '2rem', width: '280px', marginLeft: 'auto', marginRight: 'auto', marginBottom: '3rem' }}>
           {isUserLoading ? (
             <CircularProgress />
           ) : !userInfo.role ? (

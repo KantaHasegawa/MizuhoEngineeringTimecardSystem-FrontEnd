@@ -72,14 +72,15 @@ const UserListPage = () => {
       ) : (
         <Box sx={{ textAlign: 'center' }}>
           <form onSubmit={onSearchHandler}>
-            <TextField
-              id='outlined-basic'
-              label='検索'
-              variant='outlined'
-              name='inputText'
-              onChange={onChangeHandler}
-              size='small'
-            />
+              <TextField
+                id='outlined-basic'
+                label='検索'
+                variant='outlined'
+                name='inputText'
+                onChange={onChangeHandler}
+                size='small'
+                sx={{width: "10rem"}}
+              />
             <Tooltip title='検索'>
               <button type='submit' className='resetButton' onClick={onSearchHandler}>
                 <FontAwesomeIcon className='icon' icon={faSearch} size='2x' />
@@ -119,6 +120,7 @@ const UserListPage = () => {
                     color='primary'
                     page={pageNumber}
                     onChange={(e, page) => setPageNumber(page)}
+                    siblingCount={0}
                   />
                 </Grid>
               </Grid>
