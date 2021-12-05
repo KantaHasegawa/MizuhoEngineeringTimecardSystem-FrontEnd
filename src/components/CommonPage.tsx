@@ -113,14 +113,14 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
             setDialog(false);
           }}
         />
-        <Typography sx={{ fontSize: '0.8rem' }}>
+        <Typography >
           現在は未出勤です。現場に向かって出勤してください。
         </Typography>
         <Box sx={{ textAlign: 'center', margin: '3rem 0' }}>
           <Button
-            sx={{ width: '14rem' }}
+            sx={{ width: '16rem', height: '5rem', fontSize: "3rem" }}
             disabled={loading}
-            variant='outlined'
+            variant='contained'
             color='info'
             onClick={() => setDialog(true)}
           >
@@ -138,7 +138,7 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
             setDialog(false);
           }}
         />
-        <Typography sx={{ fontSize: '0.8rem' }}>
+        <Typography >
           現在は出勤中です。出勤時刻は
           {`${latestTimecard.attendance.slice(4, 6)}月${latestTimecard.attendance.slice(
             6,
@@ -151,9 +151,9 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
         </Typography>
         <Box sx={{ textAlign: 'center', margin: '3rem 0' }}>
           <Button
-            sx={{ width: '14rem' }}
+            sx={{ width: '16rem', height: '5rem', fontSize: "3rem" }}
             disabled={loading}
-            variant='outlined'
+            variant='contained'
             color='warning'
             onClick={() => setDialog(true)}
           >
@@ -207,10 +207,10 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
     ) : (
       <Box>
         <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>登録された勤務地</Typography>
-        <Typography sx={{ fontSize: '0.8rem' }}>
+        <Typography >
           ここに登録された場所の半径1km以内で出勤または退勤が出来ます。
         </Typography>
-        <Typography sx={{ fontSize: '0.8rem' }}>
+        <Typography >
           リンクをタップするとGoogleMapが開きます。
         </Typography>
         <Box sx={{ marginTop: '1rem', marginBottom: '3rem' }}>
@@ -237,7 +237,7 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
       <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>
         {user.name}さんの勤怠管理ページ
       </Typography>
-      <Typography sx={{ fontSize: '0.8rem' }}>
+      <Typography >
         このアプリケーションは位置情報を使用しますので端末の位置情報機能が無効になっている場合は有効にしてください。
       </Typography>{' '}
       <br />
