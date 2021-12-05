@@ -150,34 +150,15 @@ const TimecardListPage = () => {
     setLoading(true);
     const values = getValues();
     try {
-      const result = await axios.get<string>(
+      const result = await axios.get(
         `timecard/excel/${values.user}/${values.year}/${values.month}`,
       );
-      const blob = base64StringToBlob(
-        result.data,
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      );
-      if (window.navigator.msSaveOrOpenBlob) {
-        // for IE,Edge
-        window.navigator.msSaveOrOpenBlob(
-          blob,
-          `${values.year}年${values.month}月${values.user}.xlsx`,
-        );
-      } else {
-        // for chrome, firefox
-        const url = URL.createObjectURL(new Blob([blob], { type: 'text/csv' }));
-        const linkEl = document.createElement('a');
-        linkEl.href = url;
-        linkEl.setAttribute(
-          'download',
-          `${values.year}年${values.month}月${values.user}.xlsx`,
-        );
-        document.body.appendChild(linkEl);
-        linkEl.click();
-
-        URL.revokeObjectURL(url);
-        linkEl?.parentNode?.removeChild(linkEl);
-      }
+      const url = 'data:' + 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;' + ';base64,' + result.data;
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `${values.year}年${values.month}月${values.user}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
     } catch (err) {
       console.log(err);
     } finally {
@@ -225,7 +206,7 @@ const TimecardListPage = () => {
       ) : (
         <>
           <AlertDialog
-            msg={'Excelファイルを出力します 集計を表示するには保護ビューを解除してください'}
+            msg={'Excelファイルを出力します 集計を表示するには保護ビューを解除してください また端末がIOSの場合はブラウザにSafariを使用してください'}
             isOpen={dialog}
             doYes={async () => onExcelHandler()}
             doNo={() => {
