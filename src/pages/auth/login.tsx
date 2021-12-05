@@ -18,7 +18,6 @@ import { Controller, useForm } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import mizuhoLogo from '../../../public/mizuho-logo.png';
 import { isLogedInState, isUserLoadingState } from '../../components/atoms';
-import useCsrf from '../../hooks/useCsrf';
 import useCurrentUser from '../../hooks/useCurrentUser';
 import axios from '../../lib/axiosSetting';
 
@@ -44,9 +43,8 @@ const LoginPage = () => {
     if (isLogedIn) {
       router.push('/');
     }
-  }, []);
+  }, [isLogedIn]);
 
-  useCsrf();
   useCurrentUser();
 
   const onSubmit = async (data: FormData) => {
@@ -54,7 +52,7 @@ const LoginPage = () => {
     try {
       await axios.post(`auth/login`, data);
       setIsLogedIn(true);
-      setServerSideError("");
+      setServerSideError('');
       router.push('/');
       enqueueSnackbar('ログインしました', { variant: 'success' });
     } catch (err: any) {
@@ -78,7 +76,15 @@ const LoginPage = () => {
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
       </Head>
       <Container maxWidth='sm'>
-        <Box sx={{ paddingTop: '2rem', width: '280px', marginLeft: 'auto', marginRight: 'auto', marginBottom: "3rem" }}>
+        <Box
+          sx={{
+            paddingTop: '2rem',
+            width: '280px',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginBottom: '3rem',
+          }}
+        >
           {isUserLoading ? (
             <CircularProgress />
           ) : isLogedIn ? (
