@@ -74,7 +74,7 @@ const LoginPage = () => {
     if (isLogedIn) {
       router.push('/');
     }
-  }, []);
+  }, [isLogedIn]);
 
   useCsrf();
   useCurrentUser();

@@ -20,7 +20,7 @@ const IndexPage = () => {
     if (!isLogedIn) {
       router.push('/auth/login');
     }
-  }, []);
+  }, [isLogedIn]);
 
   return (
     <Layout title='ミズホエンジニアリング | ホーム'>
