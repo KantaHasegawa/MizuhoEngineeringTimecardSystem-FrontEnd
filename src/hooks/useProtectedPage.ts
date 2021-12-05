@@ -11,7 +11,7 @@ const useProtectedPage = () => {
     if (!isLogedIn || userInfo.role !== 'admin') {
       router.push('/auth/login');
     }
-  }, []);
+  }, [isLogedIn]);
 };
 
 export default useProtectedPage;
