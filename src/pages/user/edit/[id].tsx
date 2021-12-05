@@ -26,22 +26,22 @@ import axios from '../../../lib/axiosSetting';
 
 type TypeUser = {
   user: {
-    user: string,
-    role: string,
-    password: string,
-    attendance: string
-  }
-}
+    user: string;
+    role: string;
+    password: string;
+    attendance: string;
+  };
+};
 
 type RefreshTokenResponse = {
   accessToken: string;
-}
+};
 
 type FormData = {
   password: string;
 };
 
-export const UserEditPage = ({ user, isError }: { user: string | undefined, isError: boolean }) => {
+export const UserEditPage = ({ user, isError }: { user: string | undefined; isError: boolean }) => {
   useCurrentUser();
   useProtectedPage();
   useCsrf();
@@ -69,7 +69,7 @@ export const UserEditPage = ({ user, isError }: { user: string | undefined, isEr
       reset({
         password: '',
       });
-      setServerSideError("");
+      setServerSideError('');
       enqueueSnackbar('パスワードの変更に成功しました', { variant: 'success' });
     } catch (err: any) {
       enqueueSnackbar('パスワードの変更に失敗しました', { variant: 'error' });
@@ -89,7 +89,7 @@ export const UserEditPage = ({ user, isError }: { user: string | undefined, isEr
   }, []);
 
   if (isError) {
-    return (<ErrorComponent></ErrorComponent>);
+    return <ErrorComponent></ErrorComponent>;
   }
 
   return (
@@ -98,7 +98,15 @@ export const UserEditPage = ({ user, isError }: { user: string | undefined, isEr
         <CircularProgress color='inherit' />
       </Backdrop>
       <Layout title='ミズホエンジニアリング | パスワード変更'>
-        <Box sx={{ paddingTop: '2rem', width: '280px', marginLeft: 'auto', marginRight: 'auto', marginBottom: '3rem' }}>
+        <Box
+          sx={{
+            paddingTop: '2rem',
+            width: '280px',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginBottom: '3rem',
+          }}
+        >
           {isUserLoading ? (
             <CircularProgress />
           ) : !userInfo.role ? (
@@ -191,15 +199,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   if (!id || Array.isArray(id)) {
     return {
-      notFound: true
+      notFound: true,
     };
   }
 
   try {
-    const result = await serversideAxios.get<TypeUser>(`${host}user/show?name=${encodeURI(id)}`, { headers: { cookie: cookie! } });
+    const result = await serversideAxios.get<TypeUser>(`${host}user/show?name=${encodeURI(id)}`, {
+      headers: { cookie: cookie! },
+    });
     if (!result?.data?.user?.user) {
       return {
-        notFound: true
+        notFound: true,
       };
     }
     return { props: { user: result.data.user.user } };
@@ -207,14 +217,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     try {
       if (err.config && err.response && err.response.data.message === 'jwt expired') {
         const accessToken = await serversideAxios.get<RefreshTokenResponse>(`${host}auth/refresh`, {
-          headers: { cookie: cookie! }
+          headers: { cookie: cookie! },
         });
-        const result = await serversideAxios.get<TypeUser>(`${host}user/show?name=${encodeURI(id)}`, {
-          headers: { cookie: `accessToken=${accessToken.data.accessToken}` }
-        });
+        const result = await serversideAxios.get<TypeUser>(
+          `${host}user/show?name=${encodeURI(id)}`,
+          {
+            headers: { cookie: `accessToken=${accessToken.data.accessToken}` },
+          },
+        );
         if (!result?.data?.user?.user) {
           return {
-            notFound: true
+            notFound: true,
           };
         }
         return { props: { timecard: result.data.user.user } };

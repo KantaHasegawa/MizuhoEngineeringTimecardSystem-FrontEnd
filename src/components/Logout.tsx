@@ -1,6 +1,14 @@
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Tooltip, Backdrop, CircularProgress, useMediaQuery, ListItem, ListItemText, Box } from '@mui/material';
+import {
+  Tooltip,
+  Backdrop,
+  CircularProgress,
+  useMediaQuery,
+  ListItem,
+  ListItemText,
+  Box,
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
@@ -53,10 +61,10 @@ const Logout = () => {
         </Tooltip>
       ) : (
         <ListItem onClick={() => setDialog(true)}>
-          <Box sx={{ display: "block", width: "60px" }}>
+          <Box sx={{ display: 'block', width: '60px' }}>
             <FontAwesomeIcon icon={faSignOutAlt} size='2x' className='drawerIcon' />
           </Box>
-          <ListItemText primary="ログアウト" />
+          <ListItemText primary='ログアウト' />
         </ListItem>
       )}
     </>

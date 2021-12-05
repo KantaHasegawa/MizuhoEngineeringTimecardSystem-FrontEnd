@@ -11,7 +11,6 @@ import AuthProvider from '../components/AuthProvider';
 import Footer from '../components/Footer';
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }): JSX.Element => {
-
   Router.events.on('routeChangeStart', (url) => {
     NProgress.start();
   });

@@ -32,16 +32,16 @@ import axios from '../../lib/axiosSetting';
 
 type TypeUser = {
   user: {
-    user: string,
-    role: string,
-    password: string,
-    attendance: string
-  }
-}
+    user: string;
+    role: string;
+    password: string;
+    attendance: string;
+  };
+};
 
 type RefreshTokenResponse = {
   accessToken: string;
-}
+};
 
 export type TypeUserRelation = {
   workspot: string;
@@ -55,7 +55,7 @@ type TypeUserRelationList = {
   params: TypeUserRelation[];
 };
 
-const UserShowPage = ({ user, isError }: { user: string, isError: boolean }) => {
+const UserShowPage = ({ user, isError }: { user: string; isError: boolean }) => {
   useCurrentUser();
   useProtectedPaeg();
   useCsrf();
@@ -143,7 +143,7 @@ const UserShowPage = ({ user, isError }: { user: string, isError: boolean }) => 
   }, []);
 
   if (isError) {
-    return (<ErrorComponent></ErrorComponent>);
+    return <ErrorComponent></ErrorComponent>;
   }
 
   return (
@@ -168,7 +168,7 @@ const UserShowPage = ({ user, isError }: { user: string, isError: boolean }) => 
           <PermissionErrorComponent></PermissionErrorComponent>
         ) : (
           <>
-            <Box sx={{ width: "13rem" }}>
+            <Box sx={{ width: '13rem' }}>
               <Typography sx={{ fontSize: '1rem', fontWeight: 'bold', marginLeft: '3rem' }}>
                 {user}
               </Typography>
@@ -176,7 +176,14 @@ const UserShowPage = ({ user, isError }: { user: string, isError: boolean }) => 
             <div style={{ position: 'relative', zIndex: 1 }}>
               <SpeedDialComponent></SpeedDialComponent>
             </div>
-            <Box sx={{ padding: '0 1rem', textAlign: 'center', marginTop: '2rem', marginBottom: '3rem' }}>
+            <Box
+              sx={{
+                padding: '0 1rem',
+                textAlign: 'center',
+                marginTop: '2rem',
+                marginBottom: '3rem',
+              }}
+            >
               {!userRelationList ? (
                 <CircularProgress />
               ) : userRelationListIsError ? (
@@ -214,15 +221,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   if (!id || Array.isArray(id)) {
     return {
-      notFound: true
+      notFound: true,
     };
   }
 
   try {
-    const result = await serversideAxios.get<TypeUser>(`${host}user/show?name=${encodeURI(id)}`, { headers: { cookie: cookie! } });
+    const result = await serversideAxios.get<TypeUser>(`${host}user/show?name=${encodeURI(id)}`, {
+      headers: { cookie: cookie! },
+    });
     if (!result?.data?.user?.user) {
       return {
-        notFound: true
+        notFound: true,
       };
     }
     return { props: { user: result.data.user.user } };
@@ -230,14 +239,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     try {
       if (err.config && err.response && err.response.data.message === 'jwt expired') {
         const accessToken = await serversideAxios.get<RefreshTokenResponse>(`${host}auth/refresh`, {
-          headers: { cookie: cookie! }
+          headers: { cookie: cookie! },
         });
-        const result = await serversideAxios.get<TypeUser>(`${host}user/show?name=${encodeURI(id)}`, {
-          headers: { cookie: `accessToken=${accessToken.data.accessToken}` }
-        });
+        const result = await serversideAxios.get<TypeUser>(
+          `${host}user/show?name=${encodeURI(id)}`,
+          {
+            headers: { cookie: `accessToken=${accessToken.data.accessToken}` },
+          },
+        );
         if (!result?.data?.user?.user) {
           return {
-            notFound: true
+            notFound: true,
           };
         }
         return { props: { timecard: result.data.user.user } };

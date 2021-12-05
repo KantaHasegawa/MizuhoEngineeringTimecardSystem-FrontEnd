@@ -7,7 +7,7 @@ import {
   Typography,
   Stack,
   TextField,
-  Button
+  Button,
 } from '@mui/material';
 import serversideAxios from 'axios';
 import dayjs from 'dayjs';
@@ -30,31 +30,33 @@ import useWorkspotList from '../../../../hooks/useWorkspotList';
 import axios from '../../../../lib/axiosSetting';
 dayjs.extend(isSameOrBefore);
 
-type Timecard = {
-  user: string,
-  workspot: string,
-  attendance: string,
-  leave: string,
-  workTime: number,
-  regularWorkTime: number
-  irregularWorkTime: number,
-  rest: number,
-} | undefined
+type Timecard =
+  | {
+      user: string;
+      workspot: string;
+      attendance: string;
+      leave: string;
+      workTime: number;
+      regularWorkTime: number;
+      irregularWorkTime: number;
+      rest: number;
+    }
+  | undefined;
 
 type TimecardResponse = {
-  timecard: Timecard
-}
+  timecard: Timecard;
+};
 
 type RefreshTokenResponse = {
   accessToken: string;
-}
+};
 
 type TypeSelectedOption = {
   value: string;
   label: string;
 } | null;
 
-const TimecardEditPage = ({ timecard, isError }: { timecard: Timecard, isError: boolean }) => {
+const TimecardEditPage = ({ timecard, isError }: { timecard: Timecard; isError: boolean }) => {
   useCurrentUser();
   useProtectedPage();
   useCsrf();
@@ -64,9 +66,13 @@ const TimecardEditPage = ({ timecard, isError }: { timecard: Timecard, isError: 
   const { enqueueSnackbar } = useSnackbar();
   const { state: workspotState } = useWorkspotList();
   const [loading, setLoading] = useState(false);
-  const [leave, setLeave] = useState<dayjs.Dayjs | null>(timecard && timecard.leave !== "none" ? dayjs(timecard.leave) : null);
+  const [leave, setLeave] = useState<dayjs.Dayjs | null>(
+    timecard && timecard.leave !== 'none' ? dayjs(timecard.leave) : null,
+  );
   const [rest, setRest] = useState<number>(timecard ? timecard.rest : 60);
-  const [selectedWorkspot, setSelectedWorkspot] = useState<TypeSelectedOption>(timecard ? { label: timecard.workspot, value: timecard.workspot } : null);
+  const [selectedWorkspot, setSelectedWorkspot] = useState<TypeSelectedOption>(
+    timecard ? { label: timecard.workspot, value: timecard.workspot } : null,
+  );
   const selectBoxWorkspots =
     !workspotState.isLoading &&
     !workspotState.isError &&
@@ -138,7 +144,9 @@ const TimecardEditPage = ({ timecard, isError }: { timecard: Timecard, isError: 
     }
   }, []);
 
-  if (isError) { return (<ErrorComponent />); }
+  if (isError) {
+    return <ErrorComponent />;
+  }
   return (
     <>
       <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
@@ -154,7 +162,9 @@ const TimecardEditPage = ({ timecard, isError }: { timecard: Timecard, isError: 
         ) : (
           <>
             <Box>
-              <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>{`${timecard && timecard.user}さんの勤怠情報の編集`}</Typography>
+              <Typography sx={{ fontSize: '1rem', fontWeight: 'bold' }}>{`${
+                timecard && timecard.user
+              }さんの勤怠情報の編集`}</Typography>
               <Typography sx={{ fontSize: '0.8rem', marginBottom: '1rem' }}>
                 必要な情報を選択してください
               </Typography>
@@ -164,7 +174,7 @@ const TimecardEditPage = ({ timecard, isError }: { timecard: Timecard, isError: 
                   <MobileDateTimePicker
                     label='出勤時刻'
                     value={timecard && timecard.attendance}
-                    onChange={() => { }}
+                    onChange={() => {}}
                     disabled
                     renderInput={(params) => <TextField {...params} />}
                   />
@@ -179,8 +189,14 @@ const TimecardEditPage = ({ timecard, isError }: { timecard: Timecard, isError: 
                   />
                 </Stack>
               </LocalizationProvider>
-              <TextField fullWidth label="休憩時間"
-                type="number" value={rest} onChange={handleRestChange} sx={{ marginBottom: '1rem' }} />
+              <TextField
+                fullWidth
+                label='休憩時間'
+                type='number'
+                value={rest}
+                onChange={handleRestChange}
+                sx={{ marginBottom: '1rem' }}
+              />
               <Box sx={{ textAlign: 'center', marginBottom: '3rem' }}>
                 <Button
                   variant='outlined'
@@ -211,14 +227,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   if (!id || !attendance || Array.isArray(id) || Array.isArray(attendance)) {
     return {
-      notFound: true
+      notFound: true,
     };
   }
   try {
-    const result = await serversideAxios.get<TimecardResponse>(`${host}timecard/show?username=${encodeURI(id)}&attendance=${encodeURI(attendance)}`, { headers: { cookie: cookie! } });
+    const result = await serversideAxios.get<TimecardResponse>(
+      `${host}timecard/show?username=${encodeURI(id)}&attendance=${encodeURI(attendance)}`,
+      { headers: { cookie: cookie! } },
+    );
     if (!result?.data?.timecard) {
       return {
-        notFound: true
+        notFound: true,
       };
     }
     return { props: { timecard: result.data.timecard } };
@@ -226,14 +245,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     try {
       if (err.config && err.response && err.response.data.message === 'jwt expired') {
         const accessToken = await serversideAxios.get<RefreshTokenResponse>(`${host}auth/refresh`, {
-          headers: { cookie: cookie! }
+          headers: { cookie: cookie! },
         });
-        const result = await serversideAxios.get<TimecardResponse>(`${host}timecard/show?username=${encodeURI(id)}&attendance=${encodeURI(attendance)}`, {
-          headers: { cookie: `accessToken=${accessToken.data.accessToken}` }
-        });
+        const result = await serversideAxios.get<TimecardResponse>(
+          `${host}timecard/show?username=${encodeURI(id)}&attendance=${encodeURI(attendance)}`,
+          {
+            headers: { cookie: `accessToken=${accessToken.data.accessToken}` },
+          },
+        );
         if (!result?.data?.timecard) {
           return {
-            notFound: true
+            notFound: true,
           };
         }
         return { props: { timecard: result.data.timecard } };

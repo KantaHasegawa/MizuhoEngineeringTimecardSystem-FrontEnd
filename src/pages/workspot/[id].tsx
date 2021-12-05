@@ -37,12 +37,12 @@ type TypeWorkspot = {
     attendance: string;
     latitude: number;
     longitude: number;
-  }
-}
+  };
+};
 
 type RefreshTokenResponse = {
   accessToken: string;
-}
+};
 
 export type TypeWorkspotRelation = {
   attendance: string;
@@ -55,7 +55,7 @@ type TypeWorkspotRelationList = {
   params: TypeWorkspotRelation[];
 };
 
-const WorkspotShowPage = ({ workspot, isError }: { workspot: string, isError: boolean }) => {
+const WorkspotShowPage = ({ workspot, isError }: { workspot: string; isError: boolean }) => {
   useCurrentUser();
   useProtectedPage();
   useCsrf();
@@ -139,7 +139,7 @@ const WorkspotShowPage = ({ workspot, isError }: { workspot: string, isError: bo
   }, []);
 
   if (isError) {
-    return (<ErrorComponent></ErrorComponent>);
+    return <ErrorComponent></ErrorComponent>;
   }
 
   return (
@@ -172,7 +172,14 @@ const WorkspotShowPage = ({ workspot, isError }: { workspot: string, isError: bo
             <div style={{ position: 'relative', zIndex: 1 }}>
               <SpeedDialComponent></SpeedDialComponent>
             </div>
-            <Box sx={{ padding: '0 1rem', textAlign: 'center', marginTop: '2rem', marginBottom: '3rem' }}>
+            <Box
+              sx={{
+                padding: '0 1rem',
+                textAlign: 'center',
+                marginTop: '2rem',
+                marginBottom: '3rem',
+              }}
+            >
               {!workspotRelationList ? (
                 <CircularProgress />
               ) : workspotRelationListIsError ? (
@@ -210,15 +217,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   if (!id || Array.isArray(id)) {
     return {
-      notFound: true
+      notFound: true,
     };
   }
 
   try {
-    const result = await serversideAxios.get<TypeWorkspot>(`${host}workspot/show?name=${encodeURI(id)}`, { headers: { cookie: cookie! } });
+    const result = await serversideAxios.get<TypeWorkspot>(
+      `${host}workspot/show?name=${encodeURI(id)}`,
+      { headers: { cookie: cookie! } },
+    );
     if (!result?.data?.workspot?.workspot) {
       return {
-        notFound: true
+        notFound: true,
       };
     }
     return { props: { workspot: result.data.workspot.workspot } };
@@ -226,14 +236,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     try {
       if (err.config && err.response && err.response.data.message === 'jwt expired') {
         const accessToken = await serversideAxios.get<RefreshTokenResponse>(`${host}auth/refresh`, {
-          headers: { cookie: cookie! }
+          headers: { cookie: cookie! },
         });
-        const result = await serversideAxios.get<TypeWorkspot>(`${host}workspot/show?name=${encodeURI(id)}`, {
-          headers: { cookie: `accessToken=${accessToken.data.accessToken}` }
-        });
+        const result = await serversideAxios.get<TypeWorkspot>(
+          `${host}workspot/show?name=${encodeURI(id)}`,
+          {
+            headers: { cookie: `accessToken=${accessToken.data.accessToken}` },
+          },
+        );
         if (!result?.data?.workspot?.workspot) {
           return {
-            notFound: true
+            notFound: true,
           };
         }
         return { props: { timecard: result.data.workspot.workspot } };

@@ -1,6 +1,16 @@
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, CircularProgress, Box, Tooltip, Typography, Backdrop, Select, MenuItem, makeStyles } from '@mui/material';
+import {
+  Button,
+  CircularProgress,
+  Box,
+  Tooltip,
+  Typography,
+  Backdrop,
+  Select,
+  MenuItem,
+  makeStyles,
+} from '@mui/material';
 import serversideAxios from 'axios';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
@@ -23,16 +33,16 @@ import axios from '../../../lib/axiosSetting';
 
 type TypeUser = {
   user: {
-    user: string,
-    role: string,
-    password: string,
-    attendance: string
-  }
-}
+    user: string;
+    role: string;
+    password: string;
+    attendance: string;
+  };
+};
 
 type RefreshTokenResponse = {
   accessToken: string;
-}
+};
 
 export type TypeUserRelation = {
   workspot: string;
@@ -47,7 +57,7 @@ type TypeUserSelectBoxResponse = {
   relations: TypeUserRelation[];
 };
 
-const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolean }) => {
+const UserRelationEditPage = ({ user, isError }: { user: string; isError: boolean }) => {
   useCurrentUser();
   useProtectedPage();
   useCsrf();
@@ -56,7 +66,7 @@ const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolea
   const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string>("none");
+  const [selectedOption, setSelectedOption] = useState<string>('none');
 
   const { data: userSelectBoxResponse, error: userSelectBoxResponseIsError } =
     useFetchData<TypeUserSelectBoxResponse>(`relation/user/selectbox/${user}`);
@@ -74,7 +84,7 @@ const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolea
       };
       await axios.post('relation/new', params);
       mutate(`relation/user/selectbox/${user}`);
-      setSelectedOption("none");
+      setSelectedOption('none');
       enqueueSnackbar('登録に成功しました', { variant: 'success' });
     } catch (err) {
       enqueueSnackbar('登録に失敗しました', { variant: 'error' });
@@ -93,7 +103,7 @@ const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolea
       };
       await axios.post('relation/delete', params);
       mutate(`relation/user/selectbox/${user}`);
-      setSelectedOption("none");
+      setSelectedOption('none');
       enqueueSnackbar('削除に成功しました', { variant: 'success' });
     } catch (err) {
       enqueueSnackbar('削除に失敗しました', { variant: 'error' });
@@ -123,7 +133,7 @@ const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolea
   }, []);
 
   if (isError) {
-    return (<ErrorComponent></ErrorComponent>);
+    return <ErrorComponent></ErrorComponent>;
   }
 
   return (
@@ -148,28 +158,29 @@ const UserRelationEditPage = ({ user, isError }: { user: string, isError: boolea
                 <ErrorComponent></ErrorComponent>
               ) : (
                 <Box sx={{ marginBottom: '3rem' }}>
-                  <Select
-                    fullWidth
-                    value={selectedOption}
-                    onChange={onChange}>
-                    <MenuItem value="none">未選択</MenuItem>
-                    {
-                      userSelectBoxResponse.selectBoxItems.map((item, index) => {
-                        return (
-                          <MenuItem key={index} value={item} sx={{
-                            whiteSpace: "unset",
-                            wordBreak: "break-all"
-                          }}>{item}</MenuItem>
-                        );
-                      })
-                    }
+                  <Select fullWidth value={selectedOption} onChange={onChange}>
+                    <MenuItem value='none'>未選択</MenuItem>
+                    {userSelectBoxResponse.selectBoxItems.map((item, index) => {
+                      return (
+                        <MenuItem
+                          key={index}
+                          value={item}
+                          sx={{
+                            whiteSpace: 'unset',
+                            wordBreak: 'break-all',
+                          }}
+                        >
+                          {item}
+                        </MenuItem>
+                      );
+                    })}
                   </Select>
                   <Box sx={{ textAlign: 'center', margin: '1rem' }}>
                     <Button
                       sx={{ width: '6rem' }}
                       variant='outlined'
                       onClick={async () => onSubmit()}
-                      disabled={selectedOption === "none"}
+                      disabled={selectedOption === 'none'}
                     >
                       登録
                     </Button>
@@ -209,15 +220,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   if (!id || Array.isArray(id)) {
     return {
-      notFound: true
+      notFound: true,
     };
   }
 
   try {
-    const result = await serversideAxios.get<TypeUser>(`${host}user/show?name=${encodeURI(id)}`, { headers: { cookie: cookie! } });
+    const result = await serversideAxios.get<TypeUser>(`${host}user/show?name=${encodeURI(id)}`, {
+      headers: { cookie: cookie! },
+    });
     if (!result?.data?.user?.user) {
       return {
-        notFound: true
+        notFound: true,
       };
     }
     return { props: { user: result.data.user.user } };
@@ -225,14 +238,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     try {
       if (err.config && err.response && err.response.data.message === 'jwt expired') {
         const accessToken = await serversideAxios.get<RefreshTokenResponse>(`${host}auth/refresh`, {
-          headers: { cookie: cookie! }
+          headers: { cookie: cookie! },
         });
-        const result = await serversideAxios.get<TypeUser>(`${host}user/show?name=${encodeURI(id)}`, {
-          headers: { cookie: `accessToken=${accessToken.data.accessToken}` }
-        });
+        const result = await serversideAxios.get<TypeUser>(
+          `${host}user/show?name=${encodeURI(id)}`,
+          {
+            headers: { cookie: `accessToken=${accessToken.data.accessToken}` },
+          },
+        );
         if (!result?.data?.user?.user) {
           return {
-            notFound: true
+            notFound: true,
           };
         }
         return { props: { timecard: result.data.user.user } };

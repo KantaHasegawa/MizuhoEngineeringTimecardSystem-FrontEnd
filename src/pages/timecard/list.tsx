@@ -15,7 +15,7 @@ import {
   Box,
   Container,
   Select,
-  MenuItem
+  MenuItem,
 } from '@mui/material';
 import { base64StringToBlob } from 'blob-util';
 import dayjs from 'dayjs';
@@ -79,7 +79,9 @@ const TimecardListPage = () => {
   const [timecard, setTimecard] = useState<TypeTimecard[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [dialog, setDialog] = useState(false);
-  const { handleSubmit, control, watch, getValues } = useForm<FormData>({ defaultValues: { user: "none", year: dayjs().format("YYYY"), month: dayjs().format("MM") } });
+  const { handleSubmit, control, watch, getValues } = useForm<FormData>({
+    defaultValues: { user: 'none', year: dayjs().format('YYYY'), month: dayjs().format('MM') },
+  });
   const { state: userState } = useUserList();
   const years: string[] = [];
 
@@ -153,10 +155,14 @@ const TimecardListPage = () => {
       const result = await axios.get(
         `timecard/excel/${values.user}/${values.year}/${values.month}`,
       );
-      const url = 'data:' + 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;' + ';base64,' + result.data;
-      const link = document.createElement("a");
-      link.setAttribute("href", url);
-      link.setAttribute("download", `${values.year}年${values.month}月${values.user}.xlsx`);
+      const url =
+        'data:' +
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;' +
+        ';base64,' +
+        result.data;
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${values.year}年${values.month}月${values.user}.xlsx`);
       document.body.appendChild(link);
       link.click();
     } catch (err) {
@@ -206,7 +212,9 @@ const TimecardListPage = () => {
       ) : (
         <>
           <AlertDialog
-            msg={'Excelファイルを出力します 集計を表示するには保護ビューを解除してください また端末がIOSの場合はブラウザにSafariを使用してください'}
+            msg={
+              'Excelファイルを出力します 集計を表示するには保護ビューを解除してください また端末がIOSの場合はブラウザにSafariを使用してください'
+            }
             isOpen={dialog}
             doYes={async () => onExcelHandler()}
             doNo={() => {
@@ -221,18 +229,15 @@ const TimecardListPage = () => {
                   control={control}
                   render={({ field }) => (
                     <Box sx={{ marginBottom: '1rem' }}>
-                      <Select
-                        {...field}
-                        fullWidth
-                      >
-                        <MenuItem value={"none"}>未選択</MenuItem>
-                        {
-                          userState.data.map((item, index) => {
-                            return (
-                              <MenuItem key={index} value={item}>{item}</MenuItem>
-                            );
-                          })
-                        }
+                      <Select {...field} fullWidth>
+                        <MenuItem value={'none'}>未選択</MenuItem>
+                        {userState.data.map((item, index) => {
+                          return (
+                            <MenuItem key={index} value={item}>
+                              {item}
+                            </MenuItem>
+                          );
+                        })}
                       </Select>
                     </Box>
                   )}
@@ -242,18 +247,11 @@ const TimecardListPage = () => {
                   control={control}
                   render={({ field }) => (
                     <Box sx={{ marginBottom: '1rem' }}>
-                      <Select
-                        {...field}
-                        fullWidth
-                      >
-                        <MenuItem value={"none"}>未選択</MenuItem>
-                        {
-                          years.map((item, index) => {
-                            return (
-                              <MenuItem key={index} value={item}>{`${item}年`}</MenuItem>
-                            );
-                          })
-                        }
+                      <Select {...field} fullWidth>
+                        <MenuItem value={'none'}>未選択</MenuItem>
+                        {years.map((item, index) => {
+                          return <MenuItem key={index} value={item}>{`${item}年`}</MenuItem>;
+                        })}
                       </Select>
                     </Box>
                   )}
@@ -263,23 +261,20 @@ const TimecardListPage = () => {
                   control={control}
                   render={({ field }) => (
                     <Box sx={{ marginBottom: '1rem' }}>
-                      <Select
-                        {...field}
-                        fullWidth
-                      >
-                        <MenuItem value={"none"}>未選択</MenuItem>
-                        <MenuItem value={"01"}>1月</MenuItem>
-                        <MenuItem value={"02"}>2月</MenuItem>
-                        <MenuItem value={"03"}>3月</MenuItem>
-                        <MenuItem value={"04"}>4月</MenuItem>
-                        <MenuItem value={"05"}>5月</MenuItem>
-                        <MenuItem value={"06"}>6月</MenuItem>
-                        <MenuItem value={"07"}>7月</MenuItem>
-                        <MenuItem value={"08"}>8月</MenuItem>
-                        <MenuItem value={"09"}>9月</MenuItem>
-                        <MenuItem value={"10"}>10月</MenuItem>
-                        <MenuItem value={"11"}>11月</MenuItem>
-                        <MenuItem value={"12"}>12月</MenuItem>
+                      <Select {...field} fullWidth>
+                        <MenuItem value={'none'}>未選択</MenuItem>
+                        <MenuItem value={'01'}>1月</MenuItem>
+                        <MenuItem value={'02'}>2月</MenuItem>
+                        <MenuItem value={'03'}>3月</MenuItem>
+                        <MenuItem value={'04'}>4月</MenuItem>
+                        <MenuItem value={'05'}>5月</MenuItem>
+                        <MenuItem value={'06'}>6月</MenuItem>
+                        <MenuItem value={'07'}>7月</MenuItem>
+                        <MenuItem value={'08'}>8月</MenuItem>
+                        <MenuItem value={'09'}>9月</MenuItem>
+                        <MenuItem value={'10'}>10月</MenuItem>
+                        <MenuItem value={'11'}>11月</MenuItem>
+                        <MenuItem value={'12'}>12月</MenuItem>
                       </Select>
                     </Box>
                   )}
@@ -292,7 +287,11 @@ const TimecardListPage = () => {
                     }}
                     variant='outlined'
                     type='submit'
-                    disabled={watch('user') === 'none' || watch('year') === 'none' || watch('month') === 'none'}
+                    disabled={
+                      watch('user') === 'none' ||
+                      watch('year') === 'none' ||
+                      watch('month') === 'none'
+                    }
                   >
                     確定
                   </Button>
@@ -304,7 +303,11 @@ const TimecardListPage = () => {
                     variant='outlined'
                     color='success'
                     onClick={async () => setDialog(true)}
-                    disabled={watch('user') === 'none' || watch('year') === 'none' || watch('month') === 'none'}
+                    disabled={
+                      watch('user') === 'none' ||
+                      watch('year') === 'none' ||
+                      watch('month') === 'none'
+                    }
                   >
                     Excel
                   </Button>
@@ -397,12 +400,14 @@ const TimecardListPage = () => {
                       </TableCell>
                       <TableCell align='center'>
                         {row.regularWorkTime !== null &&
-                          `${Math.floor(row.regularWorkTime / 60)}時間${row.regularWorkTime % 60
+                          `${Math.floor(row.regularWorkTime / 60)}時間${
+                            row.regularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>
                         {row.irregularWorkTime !== null &&
-                          `${Math.floor(row.irregularWorkTime / 60)}時間${row.irregularWorkTime % 60
+                          `${Math.floor(row.irregularWorkTime / 60)}時間${
+                            row.irregularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>

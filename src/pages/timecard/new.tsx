@@ -9,7 +9,7 @@ import {
   Stack,
   Backdrop,
   Select,
-  MenuItem
+  MenuItem,
 } from '@mui/material';
 import dayjs from 'dayjs';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
@@ -45,8 +45,8 @@ const TimecardNewPage = () => {
   const [attendance, setAttendance] = useState<dayjs.Dayjs | null>(dayjs());
   const [leave, setLeave] = useState<dayjs.Dayjs | null>(null);
   const [rest, setRest] = useState<number>(60);
-  const [selectedUser, setSelectedUser] = useState<string>("none");
-  const [selectedWorkspot, setSelectedWorkspot] = useState<string>("none");
+  const [selectedUser, setSelectedUser] = useState<string>('none');
+  const [selectedWorkspot, setSelectedWorkspot] = useState<string>('none');
 
   const handleWorkspotChange = (event: any) => {
     setSelectedWorkspot(event?.target?.value);
@@ -82,8 +82,8 @@ const TimecardNewPage = () => {
     };
     try {
       await axios.post('timecard/admin/new', params);
-      setSelectedUser("none");
-      setSelectedWorkspot("none");
+      setSelectedUser('none');
+      setSelectedWorkspot('none');
       setAttendance(null);
       setLeave(null);
       setRest(60);
@@ -104,19 +104,15 @@ const TimecardNewPage = () => {
         ) : userState.isError ? (
           <ErrorComponent></ErrorComponent>
         ) : (
-          <Select
-            value={selectedUser}
-            onChange={handleUserChange}
-            fullWidth
-          >
-            <MenuItem value="none">未選択</MenuItem>
-            {
-              userState.data.map((item, index) => {
-                return (
-                  <MenuItem key={index} value={item}>{item}</MenuItem>
-                );
-              })
-            }
+          <Select value={selectedUser} onChange={handleUserChange} fullWidth>
+            <MenuItem value='none'>未選択</MenuItem>
+            {userState.data.map((item, index) => {
+              return (
+                <MenuItem key={index} value={item}>
+                  {item}
+                </MenuItem>
+              );
+            })}
           </Select>
         )}
       </Box>
@@ -131,22 +127,22 @@ const TimecardNewPage = () => {
         ) : workspotState.isError ? (
           <ErrorComponent></ErrorComponent>
         ) : (
-          <Select
-            value={selectedWorkspot}
-            onChange={handleWorkspotChange}
-            fullWidth
-          >
-            <MenuItem value="none" >未選択</MenuItem>
-            {
-              workspotState.data.map((item, index) => {
-                return (
-                  <MenuItem key={index} value={item} sx={{
-                    whiteSpace: "unset",
-                    wordBreak: "break-all"
-                  }}>{item}</MenuItem>
-                );
-              })
-            }
+          <Select value={selectedWorkspot} onChange={handleWorkspotChange} fullWidth>
+            <MenuItem value='none'>未選択</MenuItem>
+            {workspotState.data.map((item, index) => {
+              return (
+                <MenuItem
+                  key={index}
+                  value={item}
+                  sx={{
+                    whiteSpace: 'unset',
+                    wordBreak: 'break-all',
+                  }}
+                >
+                  {item}
+                </MenuItem>
+              );
+            })}
           </Select>
         )}
       </Box>
@@ -192,12 +188,20 @@ const TimecardNewPage = () => {
                 />
               </Stack>
             </LocalizationProvider>
-            <TextField fullWidth label="休憩時間"
-              type="number" value={rest} onChange={handleRestChange} sx={{ marginBottom: '1rem' }} />
+            <TextField
+              fullWidth
+              label='休憩時間'
+              type='number'
+              value={rest}
+              onChange={handleRestChange}
+              sx={{ marginBottom: '1rem' }}
+            />
             <Box sx={{ textAlign: 'center', marginBottom: '3rem' }}>
               <Button
                 variant='outlined'
-                disabled={!attendance || !leave || selectedUser === "none" || selectedWorkspot === "none"}
+                disabled={
+                  !attendance || !leave || selectedUser === 'none' || selectedWorkspot === 'none'
+                }
                 onClick={async () => onClickHandler()}
                 sx={{ width: '13rem' }}
               >
