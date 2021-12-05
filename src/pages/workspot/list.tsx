@@ -88,7 +88,7 @@ const WorkspotListPage = () => {
               name='inputText'
               size='small'
               onChange={onChangeHandler}
-              sx={{ width: "10rem" }}
+              sx={{ width: '10rem' }}
             />
             <Tooltip title='検索'>
               <button type='submit' className='resetButton' onClick={onSearchHandler}>
