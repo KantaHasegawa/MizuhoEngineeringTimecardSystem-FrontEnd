@@ -10,6 +10,9 @@
 
 [https://github.com/KantaHasegawa/MizuhoEngineeringTimecardSystem-BackEnd](https://github.com/KantaHasegawa/MizuhoEngineeringTimecardSystem-BackEnd "https://github.com/KantaHasegawa/MizuhoEngineeringTimecardSystem-BackEnd")
 
+↓旧システム  
+https://github.com/KantaHasegawa/MizuhoEngineering_attendance_manager  
+
 ![1638714244045.png](image/README/1638714244045.png)
 
 ![1638714263791.png](image/README/1638714263791.png)
