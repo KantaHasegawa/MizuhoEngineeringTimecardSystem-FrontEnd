@@ -79,7 +79,7 @@ const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
   const getCurrentPositionSuccessFunction = async (position: GeolocationPosition) => {
     if (position.coords.accuracy > 1000) {
       enqueueSnackbar(
-        '取得した位置情報の精度が悪いようです。Wifiを使用している場合は切断してください。',
+        '取得した位置情報の精度が悪いようです。電波状況の良い場所に移動するか、PCでアクセスしている場合は携帯端末に切り替えてください。',
         { variant: 'warning' },
       );
       setLoading(false);
