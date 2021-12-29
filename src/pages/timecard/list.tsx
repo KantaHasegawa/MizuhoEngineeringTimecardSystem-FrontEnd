@@ -17,13 +17,13 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
-import { base64StringToBlob } from 'blob-util';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ja';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
+import { isMobile } from 'react-device-detect';
 import { Controller, useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { mutate } from 'swr';
@@ -151,24 +151,40 @@ const TimecardListPage = () => {
     setDialog(false);
     setLoading(true);
     const values = getValues();
-    try {
-      const result = await axios.get(
-        `timecard/excel/${values.user}/${values.year}/${values.month}`,
-      );
-      const url =
-        'data:' +
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;' +
-        ';base64,' +
-        result.data;
-      const link = document.createElement('a');
-      link.setAttribute('href', url);
-      link.setAttribute('download', `${values.year}年${values.month}月${values.user}.xlsx`);
-      document.body.appendChild(link);
-      link.click();
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoading(false);
+    if (isMobile) {
+      try {
+        const result = await axios.get<string>(
+          `timecard/excel/${values.user}/${values.year}/${values.month}/true`,
+        );
+        const link = document.createElement('a');
+        link.setAttribute('href', result.data);
+        document.body.appendChild(link);
+        link.click();
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      try {
+        const result = await axios.get(
+          `timecard/excel/${values.user}/${values.year}/${values.month}/false`,
+        );
+        const url =
+          'data:' +
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;' +
+          ';base64,' +
+          result.data;
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `${values.year}年${values.month}月${values.user}.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -213,7 +229,7 @@ const TimecardListPage = () => {
         <>
           <AlertDialog
             msg={
-              'Excelファイルを出力します 集計を表示するには保護ビューを解除してください また端末がIOSの場合はブラウザにSafariを使用してください'
+              'Excelファイルを出力します 集計を表示するにはダウンロード後Excelで開き保護ビューを解除してください'
             }
             isOpen={dialog}
             doYes={async () => onExcelHandler()}
@@ -400,14 +416,12 @@ const TimecardListPage = () => {
                       </TableCell>
                       <TableCell align='center'>
                         {row.regularWorkTime !== null &&
-                          `${Math.floor(row.regularWorkTime / 60)}時間${
-                            row.regularWorkTime % 60
+                          `${Math.floor(row.regularWorkTime / 60)}時間${row.regularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>
                         {row.irregularWorkTime !== null &&
-                          `${Math.floor(row.irregularWorkTime / 60)}時間${
-                            row.irregularWorkTime % 60
+                          `${Math.floor(row.irregularWorkTime / 60)}時間${row.irregularWorkTime % 60
                           }分`}
                       </TableCell>
                       <TableCell align='center'>
