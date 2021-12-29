@@ -135,7 +135,7 @@ const LoginPage = () => {
                               pattern: { value: /^[ぁ-んァ-ヶーｱ-ﾝﾞﾟ一-龠]*$/, message: '' },
                             }}
                             render={({ field }) => (
-                              <TextField size='small' fullWidth label='氏名' {...field} />
+                              <TextField size='small' id="username" fullWidth label='氏名' autoComplete='on' {...field} />
                             )}
                           />
                           <Typography sx={{ fontSize: '0.8rem' }} color='#f44336'>
@@ -158,7 +158,7 @@ const LoginPage = () => {
                               pattern: { value: /^[0-9a-zA-Z]+$/, message: '' },
                             }}
                             render={({ field }) => (
-                              <TextField size='small' fullWidth label='パスワード' {...field} />
+                              <TextField size='small' id="password" fullWidth label='パスワード' type="password" autoComplete='on' {...field} />
                             )}
                           />
                           <Typography sx={{ fontSize: '0.8rem' }} color='#f44336'>
