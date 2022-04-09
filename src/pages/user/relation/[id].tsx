@@ -25,7 +25,6 @@ import ErrorComponent from '../../../components/ErrorComponent';
 import Layout from '../../../components/Layout';
 import PermissionErrorComponent from '../../../components/PermissionErrorComponent';
 import { isUserLoadingState, userInfoState } from '../../../components/atoms';
-import useCsrf from '../../../hooks/useCsrf';
 import useCurrentUser from '../../../hooks/useCurrentUser';
 import useFetchData from '../../../hooks/useFetchData';
 import useProtectedPage from '../../../hooks/useProtectedPage';
@@ -60,7 +59,6 @@ type TypeUserSelectBoxResponse = {
 const UserRelationEditPage = ({ user, isError }: { user: string; isError: boolean }) => {
   useCurrentUser();
   useProtectedPage();
-  useCsrf();
   const router = useRouter();
   const isUserLoading = useRecoilValue(isUserLoadingState);
   const userInfo = useRecoilValue(userInfoState);

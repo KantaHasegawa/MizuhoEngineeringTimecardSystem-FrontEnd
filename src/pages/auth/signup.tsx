@@ -16,7 +16,6 @@ import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
 import { isUserLoadingState, userInfoState } from '../../components/atoms';
-import useCsrf from '../../hooks/useCsrf';
 import useCurrentUser from '../../hooks/useCurrentUser';
 import useProtectedPage from '../../hooks/useProtectedPage';
 import axios from '../../lib/axiosSetting';
@@ -41,7 +40,6 @@ const SignUpPage = () => {
 
   useCurrentUser();
   useProtectedPage();
-  useCsrf();
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
