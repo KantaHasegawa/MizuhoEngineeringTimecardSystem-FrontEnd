@@ -31,9 +31,3 @@ export const isUserErrorState = atom<Boolean>({
   default: false,
   effects_UNSTABLE: [persistAtom],
 });
-
-export const csrfTokenState = atom<string>({
-  key: 'csrfTokenState',
-  default: '',
-  effects_UNSTABLE: [persistAtom],
-});

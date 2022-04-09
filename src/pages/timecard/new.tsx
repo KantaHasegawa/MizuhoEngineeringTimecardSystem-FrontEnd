@@ -20,7 +20,6 @@ import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
 import { isUserLoadingState, userInfoState } from '../../components/atoms';
-import useCsrf from '../../hooks/useCsrf';
 import useCurrentUser from '../../hooks/useCurrentUser';
 import useProtectedPage from '../../hooks/useProtectedPage';
 import useUserList from '../../hooks/useUserList';
@@ -35,7 +34,6 @@ type TypeSelectedOption = {
 const TimecardNewPage = () => {
   useCurrentUser();
   useProtectedPage();
-  useCsrf();
   const isUserLoading = useRecoilValue(isUserLoadingState);
   const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();

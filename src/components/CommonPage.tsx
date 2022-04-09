@@ -7,7 +7,6 @@ import { useState } from 'react';
 // eslint-disable-next-line import/named
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window';
 import { mutate } from 'swr';
-import useCsrf from '../hooks/useCsrf';
 import useFetchData from '../hooks/useFetchData';
 import axios from '../lib/axiosSetting';
 import AlertDialog from './AlertDialog';
@@ -56,7 +55,6 @@ const isTimecardStatus = (timecard: TypeTimecard): TypeTimecardStatus => {
 };
 
 const CommonPage = ({ user }: { user: TypeCurrentUser }) => {
-  useCsrf();
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState(false);
   const [dialog, setDialog] = useState(false);

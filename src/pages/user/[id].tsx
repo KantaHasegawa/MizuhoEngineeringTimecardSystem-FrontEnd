@@ -24,7 +24,6 @@ import ErrorComponent from '../../components/ErrorComponent';
 import Layout from '../../components/Layout';
 import PermissionErrorComponent from '../../components/PermissionErrorComponent';
 import { isUserLoadingState, userInfoState } from '../../components/atoms';
-import useCsrf from '../../hooks/useCsrf';
 import useCurrentUser from '../../hooks/useCurrentUser';
 import useFetchData from '../../hooks/useFetchData';
 import useProtectedPaeg from '../../hooks/useProtectedPage';
@@ -58,7 +57,6 @@ type TypeUserRelationList = {
 const UserShowPage = ({ user, isError }: { user: string; isError: boolean }) => {
   useCurrentUser();
   useProtectedPaeg();
-  useCsrf();
   const router = useRouter();
   const { mutate } = useSWRConfig();
   const { enqueueSnackbar } = useSnackbar();
