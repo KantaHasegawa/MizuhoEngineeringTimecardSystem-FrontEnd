@@ -207,7 +207,7 @@ export default WorkspotRelationEditPage;
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const host =
     process.env.NODE_ENV === 'development'
-      ? 'http://backend:4000/api/v1/'
+      ? 'http://localhost:4000/api/v1/'
       : process.env.NEXT_PUBLIC_API_HOST;
   const cookie = ctx.req?.headers.cookie;
   const { id } = ctx.query;
