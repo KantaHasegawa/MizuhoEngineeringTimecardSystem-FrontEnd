@@ -9,6 +9,7 @@ import {
   CircularProgress,
   Backdrop,
 } from '@mui/material';
+import axiosClass from 'axios';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -39,7 +40,6 @@ const LoginPage = () => {
     formState: { errors },
   } = useForm<FormData>();
 
-
   useEffect(() => {
     if (isLogedIn) {
       router.push('/');
@@ -56,13 +56,13 @@ const LoginPage = () => {
       setServerSideError('');
       router.push('/');
       enqueueSnackbar('ログインしました', { variant: 'success' });
-    } catch (err: any) {
-      console.log(err);
-      alert(err);
-      enqueueSnackbar('ログインに失敗しました', { variant: 'error' });
-      if (err?.response?.data) {
-        setServerSideError(err.response.data.message);
+    } catch (err: unknown) {
+      if (axiosClass.isAxiosError(err)) {
+        alert(err);
+        alert(err.response);
+        alert(err.response?.data);
       }
+      enqueueSnackbar('ログインに失敗しました', { variant: 'error' });
     } finally {
       setLoading(false);
     }
