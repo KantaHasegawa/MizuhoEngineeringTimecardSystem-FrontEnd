@@ -39,6 +39,7 @@ const LoginPage = () => {
     formState: { errors },
   } = useForm<FormData>();
 
+
   useEffect(() => {
     if (isLogedIn) {
       router.push('/');
@@ -56,8 +57,10 @@ const LoginPage = () => {
       router.push('/');
       enqueueSnackbar('ログインしました', { variant: 'success' });
     } catch (err: any) {
+      console.log(err);
+      alert(err);
       enqueueSnackbar('ログインに失敗しました', { variant: 'error' });
-      if (err?.response?.data?.messege) {
+      if (err?.response?.data) {
         setServerSideError(err.response.data.message);
       }
     } finally {
@@ -135,7 +138,14 @@ const LoginPage = () => {
                               pattern: { value: /^[ぁ-んァ-ヶーｱ-ﾝﾞﾟ一-龠]*$/, message: '' },
                             }}
                             render={({ field }) => (
-                              <TextField size='small' id="username" fullWidth label='氏名' autoComplete='on' {...field} />
+                              <TextField
+                                size='small'
+                                id='username'
+                                fullWidth
+                                label='氏名'
+                                autoComplete='on'
+                                {...field}
+                              />
                             )}
                           />
                           <Typography sx={{ fontSize: '0.8rem' }} color='#f44336'>
@@ -158,7 +168,15 @@ const LoginPage = () => {
                               pattern: { value: /^[0-9a-zA-Z]+$/, message: '' },
                             }}
                             render={({ field }) => (
-                              <TextField size='small' id="password" fullWidth label='パスワード' type="password" autoComplete='on' {...field} />
+                              <TextField
+                                size='small'
+                                id='password'
+                                fullWidth
+                                label='パスワード'
+                                type='password'
+                                autoComplete='on'
+                                {...field}
+                              />
                             )}
                           />
                           <Typography sx={{ fontSize: '0.8rem' }} color='#f44336'>
