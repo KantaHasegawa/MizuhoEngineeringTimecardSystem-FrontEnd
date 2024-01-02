@@ -45,14 +45,22 @@ type FormData = {
 };
 
 type TypeAxiosResponse = {
-  user: string;
-  workspot: string;
-  attendance: string;
-  leave: string;
-  workTime: number;
-  regularWorkTime: number;
-  irregularWorkTime: number;
-  rest: number;
+  attendanceCount: number,
+  sumRegularWorkTime: number,
+  sumIrregularWorkTime: number,
+  avgIrregularWorkTime: number,
+  items: {
+    rest: number;
+    workspot: string;
+    irregularWorkTime: number;
+    leave: string;
+    user: string;
+    workTime: number;
+    attendance: string;
+    regularWorkTime: number;
+    early: number;
+    late: number;
+  }[]
 };
 
 type TypeTimecard = {
@@ -62,6 +70,8 @@ type TypeTimecard = {
   workspot: string | null;
   attendance: string | null;
   leave: string | null;
+  early: number | null,
+  late: number | null,
   workTime: number | null;
   regularWorkTime: number | null;
   irregularWorkTime: number | null;
@@ -75,6 +85,9 @@ const TimecardListPage = () => {
   const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
   const [timecard, setTimecard] = useState<TypeTimecard[] | null>(null);
+  const [sumRegularWorkTime, setSumRegularWorkTime] = useState<number | null>(null);
+  const [sumIrregularWorkTime, setSumIrregularWorkTime] = useState<number | null>(null);
+  const [avgIrregularWorkTime, setAvgIrregularWorkTime] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [dialog, setDialog] = useState(false);
   const { handleSubmit, control, watch, getValues } = useForm<FormData>({
@@ -90,14 +103,17 @@ const TimecardListPage = () => {
   const onSubmit = async (data: FormData) => {
     setLoading(true);
     try {
-      const result = await axios.get<TypeAxiosResponse[]>(
+      const result = await axios.get<TypeAxiosResponse>(
         `timecard/index/${data.user}/${data.year}/${data.month}`,
       );
+      setSumRegularWorkTime(result.data.sumRegularWorkTime);
+      setSumIrregularWorkTime(result.data.sumIrregularWorkTime);
+      setAvgIrregularWorkTime(result.data.avgIrregularWorkTime);
       const daysInMonth = dayjs(`${data.year}-${data.month}`).daysInMonth();
       const newArray: TypeTimecard[] = [];
       let flag = false;
       for (let i = 1; i <= daysInMonth; i++) {
-        for (let item of result.data) {
+        for (let item of result.data.items) {
           let itemDate = Number(item.attendance.slice(6, 8));
           if (i < itemDate) break;
           if (i === itemDate) {
@@ -108,6 +124,8 @@ const TimecardListPage = () => {
               workspot: item.workspot,
               attendance: item.attendance,
               leave: item.leave,
+              early: item.early,
+              late: item.late,
               workTime: item.workTime,
               regularWorkTime: item.regularWorkTime,
               irregularWorkTime: item.irregularWorkTime,
@@ -129,6 +147,8 @@ const TimecardListPage = () => {
             workspot: null,
             attendance: null,
             leave: null,
+            early: null,
+            late: null,
             workTime: null,
             regularWorkTime: null,
             irregularWorkTime: null,
@@ -346,6 +366,36 @@ const TimecardListPage = () => {
               <TableHead>
                 <TableRow>
                   <TableCell align='center'>
+                    <h3>合計基本労働時間</h3>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <h3>合計時間外労働時間</h3>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <h3>平均時間外労働時間</h3>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                  <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableCell align='center'> {sumRegularWorkTime !== null &&
+                      `${Math.floor(sumRegularWorkTime / 60)}時間${sumRegularWorkTime % 60}分`}
+                    </TableCell>
+                    <TableCell align='center'> {sumIrregularWorkTime !== null &&
+                      `${Math.floor(sumIrregularWorkTime / 60)}時間${sumIrregularWorkTime % 60}分`}
+                    </TableCell>
+                    <TableCell align='center'> {avgIrregularWorkTime !== null &&
+                      `${Math.floor(avgIrregularWorkTime / 60)}時間${avgIrregularWorkTime % 60}分`}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+            </Table>
+          </TableContainer>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 1300, marginBottom: '2rem' }} aria-label='simple table'>
+              <TableHead>
+                <TableRow>
+                  <TableCell align='center'>
                     <h3>日</h3>
                   </TableCell>
                   <TableCell align='center'>
@@ -359,6 +409,12 @@ const TimecardListPage = () => {
                   </TableCell>
                   <TableCell align='center'>
                     <h3>退勤時刻</h3>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <h3>定時出勤</h3>
+                  </TableCell>
+                  <TableCell align='center'>
+                    <h3>定時退勤</h3>
                   </TableCell>
                   <TableCell align='center'>
                     <h3>勤務時間</h3>
@@ -407,6 +463,28 @@ const TimecardListPage = () => {
                       </TableCell>
                       <TableCell align='center'>
                         {row.leave && `${row.leave.slice(8, 10)}:${row.leave.slice(10, 12)}`}
+                      </TableCell>
+                      <TableCell align='center'>
+                        {
+                          row.early === null ? (
+                            <span></span>
+                          ) : row.early < 0 ? (
+                            <span>{`+${Math.abs(Math.floor(row.early / 60))}時間${Math.abs(row.early % 60)}分`}</span>
+                          ) : (
+                            <span>{`-${Math.abs(Math.floor(row.early / 60))}時間${Math.abs(row.early % 60)}分`}</span>
+                          )
+                        }
+                      </TableCell>
+                      <TableCell align='center'>
+                      {
+                          row.late === null ? (
+                            <span></span>
+                          ) : row.late < 0 ? (
+                            <span>{`-${Math.abs(Math.floor(row.late / 60))}時間${Math.abs(row.late % 60)}分`}</span>
+                          ) : (
+                            <span>{`+${Math.abs(Math.floor(row.late / 60))}時間${Math.abs(row.late % 60)}分`}</span>
+                          )
+                        }
                       </TableCell>
                       <TableCell align='center'>
                         {row.workTime !== null &&

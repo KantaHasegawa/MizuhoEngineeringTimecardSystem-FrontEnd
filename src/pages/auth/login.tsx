@@ -57,11 +57,6 @@ const LoginPage = () => {
       router.push('/');
       enqueueSnackbar('ログインしました', { variant: 'success' });
     } catch (err: unknown) {
-      if (axiosClass.isAxiosError(err)) {
-        alert(err);
-        alert(err.response);
-        alert(err.response?.data);
-      }
       enqueueSnackbar('ログインに失敗しました', { variant: 'error' });
     } finally {
       setLoading(false);
