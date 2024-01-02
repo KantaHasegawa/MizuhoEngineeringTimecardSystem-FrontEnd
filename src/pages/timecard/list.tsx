@@ -379,13 +379,13 @@ const TimecardListPage = () => {
               <TableBody>
                   <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell align='center'> {sumRegularWorkTime !== null &&
-                      `${Math.floor(sumRegularWorkTime / 60)}時間${sumRegularWorkTime % 60}分`}
+                      `${Math.floor(sumRegularWorkTime / 60)}時間${Math.floor(sumRegularWorkTime % 60)}分`}
                     </TableCell>
                     <TableCell align='center'> {sumIrregularWorkTime !== null &&
-                      `${Math.floor(sumIrregularWorkTime / 60)}時間${sumIrregularWorkTime % 60}分`}
+                      `${Math.floor(sumIrregularWorkTime / 60)}時間${Math.floor(sumIrregularWorkTime % 60)}分`}
                     </TableCell>
                     <TableCell align='center'> {avgIrregularWorkTime !== null &&
-                      `${Math.floor(avgIrregularWorkTime / 60)}時間${avgIrregularWorkTime % 60}分`}
+                      `${Math.floor(avgIrregularWorkTime / 60)}時間${Math.floor(avgIrregularWorkTime % 60)}分`}
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -469,9 +469,9 @@ const TimecardListPage = () => {
                           row.early === null ? (
                             <span></span>
                           ) : row.early < 0 ? (
-                            <span>{`+${Math.abs(Math.floor(row.early / 60))}時間${Math.abs(row.early % 60)}分`}</span>
+                            <span>{`+${Math.abs(Math.floor(row.early / 60))}時間${Math.abs(Math.floor(row.early % 60))}分`}</span>
                           ) : (
-                            <span>{`-${Math.abs(Math.floor(row.early / 60))}時間${Math.abs(row.early % 60)}分`}</span>
+                            <span>{`-${Math.abs(Math.floor(row.early / 60))}時間${Math.abs(Math.floor(row.early % 60))}分`}</span>
                           )
                         }
                       </TableCell>
@@ -480,9 +480,9 @@ const TimecardListPage = () => {
                           row.late === null ? (
                             <span></span>
                           ) : row.late < 0 ? (
-                            <span>{`-${Math.abs(Math.floor(row.late / 60))}時間${Math.abs(row.late % 60)}分`}</span>
+                            <span>{`-${Math.abs(Math.floor(row.late / 60))}時間${Math.abs(Math.floor(row.late % 60))}分`}</span>
                           ) : (
-                            <span>{`+${Math.abs(Math.floor(row.late / 60))}時間${Math.abs(row.late % 60)}分`}</span>
+                            <span>{`+${Math.abs(Math.floor(row.late / 60))}時間${Math.abs(Math.floor(row.late % 60))}分`}</span>
                           )
                         }
                       </TableCell>
