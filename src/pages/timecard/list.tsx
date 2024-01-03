@@ -85,6 +85,7 @@ const TimecardListPage = () => {
   const userInfo = useRecoilValue(userInfoState);
   const { enqueueSnackbar } = useSnackbar();
   const [timecard, setTimecard] = useState<TypeTimecard[] | null>(null);
+  const [attendanceCount, setAttendanceCount] = useState<number | null>(null);
   const [sumRegularWorkTime, setSumRegularWorkTime] = useState<number | null>(null);
   const [sumIrregularWorkTime, setSumIrregularWorkTime] = useState<number | null>(null);
   const [avgIrregularWorkTime, setAvgIrregularWorkTime] = useState<number | null>(null);
@@ -106,6 +107,7 @@ const TimecardListPage = () => {
       const result = await axios.get<TypeAxiosResponse>(
         `timecard/index/${data.user}/${data.year}/${data.month}`,
       );
+      setAttendanceCount(result.data.attendanceCount);
       setSumRegularWorkTime(result.data.sumRegularWorkTime);
       setSumIrregularWorkTime(result.data.sumIrregularWorkTime);
       setAvgIrregularWorkTime(result.data.avgIrregularWorkTime);
@@ -365,6 +367,9 @@ const TimecardListPage = () => {
             <Table sx={{ minWidth: 1300, marginBottom: '2rem' }} aria-label='simple table'>
               <TableHead>
                 <TableRow>
+                <TableCell align='center'>
+                    <h3>出勤日数</h3>
+                  </TableCell>
                   <TableCell align='center'>
                     <h3>合計基本労働時間</h3>
                   </TableCell>
@@ -378,6 +383,7 @@ const TimecardListPage = () => {
               </TableHead>
               <TableBody>
                   <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                  <TableCell align='center'> {`${attendanceCount !== null && attendanceCount}日`} </TableCell>
                     <TableCell align='center'> {sumRegularWorkTime !== null &&
                       `${Math.floor(sumRegularWorkTime / 60)}時間${Math.floor(sumRegularWorkTime % 60)}分`}
                     </TableCell>
